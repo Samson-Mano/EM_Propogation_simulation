@@ -6,6 +6,8 @@
 #include <iomanip>
 
 // Window includes
+#include "../tool_window/inlcondition_window.h"
+#include "../tool_window/model_window.h"
 #include "../tool_window/options_window.h"
 #include "../tool_window/solver_window.h"
 
@@ -20,7 +22,8 @@ public:
 
 	geom_store();
 	~geom_store();
-	void init(options_window* op_window, solver_window* sol_window);
+	void init(options_window* op_window, solver_window* sol_window,
+		model_window* md_window, inlcondition_window* inl_window);
 	void fini();
 
 	// Functions to control the origin
@@ -39,5 +42,7 @@ private:
 	// View options ptr and Material window ptr
 	options_window* op_window = nullptr;
 	solver_window* sol_window = nullptr;
+	model_window* md_window = nullptr;
+	inlcondition_window* inl_window = nullptr;
 
 };

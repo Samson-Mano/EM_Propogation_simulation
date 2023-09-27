@@ -66,12 +66,36 @@ void app_window::init()
 	// Window initialize success
 	is_glwindow_success = true;
 
+	//___________________________________________________________________________
+	std::ifstream model_file("model_data.txt", std::ifstream::in);
+	// Read the Raw Data
+	// Read the entire file into a string
+	std::string file_contents((std::istreambuf_iterator<char>(model_file)),
+		std::istreambuf_iterator<char>());
+
+	// Split the string into lines
+	std::istringstream iss(file_contents);
+	std::string line;
+	std::vector<std::string> lines;
+	while (std::getline(iss, line))
+	{
+		lines.push_back(line);
+	}
+	//___________________________________________________________________________
+
+	double grid_length = std::stod(lines[0]); // Grid length
+	double segment_length = std::stoi(lines[1]); // Segement length
+	double space_permittivity = std::stod(lines[2]); // Space permittivity (electric constant)
+	double material_density = std::stod(lines[3]);  // Material density
+
 	// Intialize tool windows
+	inl_window.init(); // Initial condition window
+	md_window.init(grid_length, segment_length, space_permittivity, material_density); // Model window
 	op_window.init(); // Option window
 	sol_window.init(); // Solver window
 
 	// Initialize the geometry
-	geom.init(&op_window, &sol_window);
+	geom.init(&op_window, &sol_window,&md_window,&inl_window);
 
 
 	// Set the mouse button callback function with the user pointer pointing to the mouseHandler object
@@ -197,6 +221,18 @@ void app_window::menu_events()
 		// File menu item
 		if (ImGui::BeginMenu("File"))
 		{
+			if (ImGui::MenuItem("Model"))
+			{
+				// Handle menu Model
+
+			}
+
+			if (ImGui::MenuItem("Condition"))
+			{
+				// Handle menu Condition
+
+			}
+
 			if (ImGui::MenuItem("Options"))
 			{
 				// Handle menu Options
@@ -221,8 +257,10 @@ void app_window::menu_events()
 	}
 
 	// Execute window render operation
-	op_window.render_window();
-	sol_window.render_window();
+	md_window.render_window(isWindowSizeChanging); // model window
+	inl_window.render_window();  // initial condition window
+	op_window.render_window();  // Option window
+	sol_window.render_window();  // Solver window
 
 	// Pop the custom font after using it
 	ImGui::PopFont();

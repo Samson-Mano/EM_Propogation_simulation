@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <fstream>
 //____ OpenGL dependencies
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -15,9 +16,10 @@
 //---- File event handler
 #include "events_handler/file_events.h"
 //____ Tool Window
+#include "tool_window/inlcondition_window.h"
+#include "tool_window/model_window.h"
 #include "tool_window/options_window.h"
 #include "tool_window/solver_window.h"
-
 
 
 class app_window
@@ -40,6 +42,8 @@ public:
 	geom_store geom;
 
 	// Tool window variable
+	inlcondition_window inl_window;
+	model_window md_window;
 	options_window op_window;
 	solver_window sol_window;
 

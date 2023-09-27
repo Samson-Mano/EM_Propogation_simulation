@@ -10,7 +10,7 @@ geom_store::~geom_store()
 	// Empty Destructor
 }
 
-void geom_store::init(options_window* op_window,solver_window* sol_window)
+void geom_store::init(options_window* op_window,solver_window* sol_window, model_window* md_window, inlcondition_window* inl_window)
 {
 	// Initialize
 	// Initialize the geometry parameters

@@ -93,6 +93,12 @@
     <ClCompile Include="src\tool_window\solver_window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\tool_window\model_window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tool_window\inlcondition_window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\app_window.h">
@@ -182,6 +188,12 @@
     <ClInclude Include="src\tool_window\solver_window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\tool_window\model_window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tool_window\inlcondition_window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Font Include="resources\fonts\CanadaDBNormal.ttf" />
@@ -201,5 +213,9 @@
     <None Include="resources\dlls\freetype.dll" />
     <None Include="resources\dlls\glew32.dll" />
     <None Include="resources\dlls\glfw3.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="src\tool_window\model_data.txt" />
+    <Text Include="model_data.txt" />
   </ItemGroup>
 </Project>

@@ -142,6 +142,8 @@
     <ClCompile Include="src\ImGui\implot.cpp" />
     <ClCompile Include="src\ImGui\implot_items.cpp" />
     <ClCompile Include="src\ImGui\stb_implement.cpp" />
+    <ClCompile Include="src\tool_window\inlcondition_window.cpp" />
+    <ClCompile Include="src\tool_window\model_window.cpp" />
     <ClCompile Include="src\tool_window\options_window.cpp" />
     <ClCompile Include="src\tool_window\solver_window.cpp" />
   </ItemGroup>
@@ -173,6 +175,8 @@
     <ClInclude Include="src\ImGui\imstb_truetype.h" />
     <ClInclude Include="src\ImGui\stb_image.h" />
     <ClInclude Include="src\ImGui\stb_implement.h" />
+    <ClInclude Include="src\tool_window\inlcondition_window.h" />
+    <ClInclude Include="src\tool_window\model_window.h" />
     <ClInclude Include="src\tool_window\options_window.h" />
     <ClInclude Include="src\tool_window\solver_window.h" />
   </ItemGroup>
@@ -193,6 +197,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </None>
     <None Include="resources\dlls\glfw3.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="model_data.txt" />
+    <Text Include="src\tool_window\model_data.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
