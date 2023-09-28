@@ -94,6 +94,8 @@ void app_window::init()
 	op_window.init(); // Option window
 	sol_window.init(); // Solver window
 
+	geom.update_WindowDimension(window_width, window_height);
+
 	// Initialize the geometry
 	geom.init(&op_window, &sol_window,&md_window,&inl_window);
 
@@ -224,7 +226,7 @@ void app_window::menu_events()
 			if (ImGui::MenuItem("Model"))
 			{
 				// Handle menu Model
-
+				md_window.is_show_window = true;
 			}
 
 			if (ImGui::MenuItem("Condition"))

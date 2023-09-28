@@ -99,6 +99,33 @@
     <ClCompile Include="src\tool_window\inlcondition_window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\geometry_store\geometry_objects\dynamic_line_list_store.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\geometry_store\geometry_objects\dynamic_point_list_store.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\geometry_store\geometry_objects\label_list_store.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\geometry_store\geometry_objects\line_list_store.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\geometry_store\geometry_objects\point_list_store.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\geometry_store\geometry_objects\tri_list_store.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\geometry_store\fe_objects\elementline_list_store.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\geometry_store\fe_objects\nodes_list_store.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\geometry_store\fe_objects\elementtri_list_store.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\app_window.h">
@@ -194,6 +221,33 @@
     <ClInclude Include="src\tool_window\inlcondition_window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\geometry_store\geometry_objects\dynamic_line_list_store.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\geometry_store\geometry_objects\dynamic_point_list_store.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\geometry_store\geometry_objects\label_list_store.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\geometry_store\geometry_objects\line_list_store.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\geometry_store\geometry_objects\point_list_store.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\geometry_store\geometry_objects\tri_list_store.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\geometry_store\fe_objects\elementline_list_store.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\geometry_store\fe_objects\nodes_list_store.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\geometry_store\fe_objects\elementtri_list_store.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Font Include="resources\fonts\CanadaDBNormal.ttf" />
@@ -213,6 +267,16 @@
     <None Include="resources\dlls\freetype.dll" />
     <None Include="resources\dlls\glew32.dll" />
     <None Include="resources\dlls\glfw3.dll" />
+    <None Include="resources\shaders\constraint_frag_shader.frag" />
+    <None Include="resources\shaders\constraint_vert_shader.vert" />
+    <None Include="resources\shaders\load_frag_shader.frag" />
+    <None Include="resources\shaders\load_vert_shader.vert" />
+    <None Include="resources\shaders\point_frag_shader.frag" />
+    <None Include="resources\shaders\point_vert_shader.vert" />
+    <None Include="resources\shaders\ptmass_frag_shader.frag" />
+    <None Include="resources\shaders\ptmass_vert_shader.vert" />
+    <None Include="resources\shaders\text_frag_shader.frag" />
+    <None Include="resources\shaders\text_vert_shader.vert" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="src\tool_window\model_data.txt" />

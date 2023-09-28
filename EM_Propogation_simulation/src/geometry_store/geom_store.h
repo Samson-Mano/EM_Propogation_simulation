@@ -11,6 +11,13 @@
 #include "../tool_window/options_window.h"
 #include "../tool_window/solver_window.h"
 
+// FE Objects
+#include "fe_objects/nodes_list_store.h"
+#include "fe_objects/elementline_list_store.h"
+
+// Geometry objects
+#include "geometry_objects/label_list_store.h"
+
 class geom_store
 {
 public:
@@ -38,6 +45,16 @@ public:
 	void paint_geometry();
 
 private:
+	// General geometry properties
+	double gird_length = 0.0;
+	double gird_spacing = 0.0;
+	double space_permittivity = 0.0;
+	double material_density = 0.0;
+
+	// geomerty object
+	nodes_list_store boundary_nodes;
+	elementline_list_store boundary_lines;
+	label_list_store model_labels;
 
 	// View options ptr and Material window ptr
 	options_window* op_window = nullptr;
@@ -45,4 +62,12 @@ private:
 	model_window* md_window = nullptr;
 	inlcondition_window* inl_window = nullptr;
 
+	// Create geometry
+	void create_geometry();
+
+	std::pair<glm::vec2, glm::vec2> findMinMaxXY(const std::unordered_map<int, node_store>& model_nodes);
+	glm::vec2 findGeometricCenter(const std::unordered_map<int, node_store>& model_nodes);
+
+
+	void paint_model(); // Paint the model
 };
