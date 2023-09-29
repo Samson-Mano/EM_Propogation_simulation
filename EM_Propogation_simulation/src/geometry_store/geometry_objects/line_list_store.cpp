@@ -60,20 +60,20 @@ void line_list_store::add_line(int& line_id, glm::vec2& line_startpt_loc, glm::v
 
 void line_list_store::set_buffer()
 {
-	// Define the node vertices of the model for a node (2 position, 2 defl, 3 color  & 1 defl value) 
+	// Define the line vertices of the model for a node (2 position, 2 defl, 3 color  & 1 defl value) 
 	const unsigned int line_vertex_count = 8 * 2 * line_count;
 	float* line_vertices = new float[line_vertex_count];
 
-	unsigned int line_indices_count = 2 * line_count; // 1 indices to form a point
+	unsigned int line_indices_count = 2 * line_count; // 2 indices to form a line
 	unsigned int* line_vertex_indices = new unsigned int[line_indices_count];
 
 	unsigned int line_v_index = 0;
 	unsigned int line_i_index = 0;
 
-	// Set the node vertices
+	// Set the line vertices
 	for (auto& ln : lineMap)
 	{
-		// Add  points buffers
+		// Add line buffers
 		get_line_buffer(ln, line_vertices, line_v_index, line_vertex_indices, line_i_index);
 	}
 
@@ -85,7 +85,7 @@ void line_list_store::set_buffer()
 
 	unsigned int line_vertex_size = line_vertex_count * sizeof(float); // Size of the node_vertex
 
-	// Create the Node Deflection buffers
+	// Create the line buffers
 	line_buffer.CreateBuffers(line_vertices, line_vertex_size, line_vertex_indices, line_indices_count, line_pt_layout);
 
 	// Set the point size
@@ -98,7 +98,7 @@ void line_list_store::set_buffer()
 
 void line_list_store::paint_lines()
 {
-	// Paint all the points
+	// Paint all the lines
 	line_shader.Bind();
 	line_buffer.Bind();
 	glDrawElements(GL_LINES, (2*line_count), GL_UNSIGNED_INT, 0);

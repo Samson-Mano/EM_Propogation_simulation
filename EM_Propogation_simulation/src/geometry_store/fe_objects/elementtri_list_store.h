@@ -24,6 +24,8 @@ public:
 	void add_elementtriangle(int& tri_id, node_store* nd1, node_store* nd2, node_store* nd3);
 	void set_buffer();
 	void paint_elementtriangles();
+	void paint_elementtriangles_boundarylines();
+	void paint_elementtriangles_boundarypts();
 
 	void update_geometry_matrices(bool set_modelmatrix, bool set_pantranslation, bool set_zoomtranslation, bool set_transparency, bool set_deflscale);
 
