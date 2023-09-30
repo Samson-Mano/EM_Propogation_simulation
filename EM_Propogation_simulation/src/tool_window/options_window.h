@@ -7,11 +7,14 @@
 class options_window
 {
 public:
-	bool is_show_nodenumber = true;
-	bool is_show_nodecoord = false;
-	bool is_show_linenumber = true;
-	bool is_show_linelength = false;
-	bool is_show_loadvalue = true;
+	bool is_show_gridnode = true;
+	bool is_show_gridnodenumber = false;
+	bool is_show_gridnodecoord = false;
+
+	bool is_show_gridtris = true;
+	bool is_show_gridtris_shrunk = false;
+	bool is_show_gridboundary = true;
+
 	bool is_show_window = false;
 
 	options_window();

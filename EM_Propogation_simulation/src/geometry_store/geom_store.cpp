@@ -78,6 +78,9 @@ void geom_store::update_model_matrix()
 	boundary_nodes.update_geometry_matrices(true, false, false, false, false);
 	boundary_lines.update_geometry_matrices(true, false, false, false, false);
 	model_labels.update_opengl_uniforms(true, false, false, false, false);
+
+	grid_nodes.update_geometry_matrices(true, false, false, false, false);
+	grid_trimesh.update_geometry_matrices(true, false, false, false, false);
 	//model_loads.update_geometry_matrices(true, false, false, false, false);
 	//model_ptmass.update_geometry_matrices(true, false, false, false, false);
 	//model_inlcond.update_geometry_matrices(true, false, false, false, false);
@@ -106,6 +109,9 @@ void geom_store::update_model_zoomfit()
 	boundary_nodes.update_geometry_matrices(false, true, true, false, false);
 	boundary_lines.update_geometry_matrices(false, true, true, false, false);
 	model_labels.update_opengl_uniforms(false, true, true, false, false);
+
+	grid_nodes.update_geometry_matrices(false, true, true, false, false);
+	grid_trimesh.update_geometry_matrices(false, true, true, false, false);
 	//model_loads.update_geometry_matrices(false, true, true, false, false);
 	//model_ptmass.update_geometry_matrices(false, true, true, false, false);
 	//model_inlcond.update_geometry_matrices(false, true, true, false, false);
@@ -134,6 +140,9 @@ void geom_store::update_model_pan(glm::vec2& transl)
 	boundary_nodes.update_geometry_matrices(false, true, false, false, false);
 	boundary_lines.update_geometry_matrices(false, true, false, false, false);
 	model_labels.update_opengl_uniforms(false, true, false, false, false);
+
+	grid_nodes.update_geometry_matrices(false, true, false, false, false);
+	grid_trimesh.update_geometry_matrices(false, true, false, false, false);
 	//model_loads.update_geometry_matrices(false, true, false, false, false);
 	//model_ptmass.update_geometry_matrices(false, true, false, false, false);
 	//model_inlcond.update_geometry_matrices(false, true, false, false, false);
@@ -159,6 +168,9 @@ void geom_store::update_model_zoom(double& z_scale)
 	boundary_nodes.update_geometry_matrices(false, false, true, false, false);
 	boundary_lines.update_geometry_matrices(false, false, true, false, false);
 	model_labels.update_opengl_uniforms(false, false, true, false, false);
+
+	grid_nodes.update_geometry_matrices(false, false, true, false, false);
+	grid_trimesh.update_geometry_matrices(false, false, true, false, false);
 	//model_loads.update_geometry_matrices(false, false, true, false, false);
 	//model_ptmass.update_geometry_matrices(false, false, true, false, false);
 	//model_inlcond.update_geometry_matrices(false, false, true, false, false);
@@ -192,6 +204,9 @@ void geom_store::update_model_transperency(bool is_transparent)
 	boundary_nodes.update_geometry_matrices(false, false, false, true, false);
 	boundary_lines.update_geometry_matrices(false, false, false, true, false);
 	model_labels.update_opengl_uniforms(false, false, false, true, false);
+
+	grid_nodes.update_geometry_matrices(false, false, false, true, false);
+	grid_trimesh.update_geometry_matrices(false, false, false, true, false);
 	//model_loads.update_geometry_matrices(false, false, false, true, false);
 	//model_ptmass.update_geometry_matrices(false, false, false, true, false);
 	//model_inlcond.update_geometry_matrices(false, false, false, true, false);
@@ -211,15 +226,20 @@ void geom_store::create_geometry()
 	is_geometry_set = false;
 
 	// Initialize the model items
+	// Boundary
 	this->boundary_nodes.init(&geom_param);
 	this->boundary_lines.init(&geom_param);
 	this->model_labels.init(&geom_param);
+
+	// Triangle mesh
+	this->grid_trimesh.init(&geom_param);
+	this->grid_nodes.init(&geom_param);
 
 	// Initialize the boundary pts
 	int node_id = 0;
 	int line_id = 0;
 	glm::vec2 node_pt = glm::vec2(0.0, 0.0);
-	double percent_increase = 0.1;
+	double percent_increase = 0.0;
 	double pt = (gird_length + (gird_length * percent_increase)) * 0.5;
 
 	// Add the origin pt and four boundary nodes
@@ -274,6 +294,66 @@ void geom_store::create_geometry()
 	node_pt = glm::vec2(0.0, -pt);
 	this->model_labels.add_text(temp_str, node_pt, glm::vec2(0), geom_param.geom_colors.node_color, 0, false, false);
 
+	//_______________________________________________________________________________________________________________
+	// Create the mesh
+	// Calculate the number of rows and columns
+	int numRows = static_cast<int>(gird_length / gird_spacing);
+	int numCols = numRows; // Assuming a square grid
+
+	// Calculate the origin (center) of the grid
+	double originX = gird_length / 2.0f;
+	double originY = gird_length / 2.0f;
+
+	// Iterate over the rows and columns to create triangle nodes
+	node_id = 0;
+	for (int row = 0; row < numRows; ++row)
+	{
+		for (int col = 0; col < numCols; ++col)
+		{
+			// Calculate the coordinates of the nodes
+			double left_x = (col * gird_spacing) - originX;
+			double bottom_y = originY - ((row + 1) * gird_spacing);
+
+			node_pt = glm::vec2(left_x, bottom_y);
+			// Create the node
+			this->grid_nodes.add_node(node_id, node_pt);
+
+			node_id++;
+		}
+	}
+
+	// Iterate over the rows and columns to create triangles
+	node_id = 0;
+	int tri_id = 0;
+	for (int row = 0; row < numRows - 1; ++row)
+	{
+		for (int col = 0; col < numCols - 1; ++col)
+		{
+			// Calculate the IDs of the four corner nodes of the square
+			int bottomLeftNode = node_id;
+			int bottomRightNode = node_id + 1;
+			int topLeftNode = node_id + numCols;
+			int topRightNode = (node_id + numCols) + 1;
+
+			// Create the lower triangle
+			this->grid_trimesh.add_elementtriangle(tri_id,
+				&grid_nodes.nodeMap[bottomLeftNode],
+				&grid_nodes.nodeMap[bottomRightNode],
+				&grid_nodes.nodeMap[topLeftNode]);
+			tri_id++;
+
+			// Create the upper triangle
+			this->grid_trimesh.add_elementtriangle(tri_id,
+				&grid_nodes.nodeMap[topRightNode],
+				&grid_nodes.nodeMap[topLeftNode],
+				&grid_nodes.nodeMap[bottomRightNode]);
+			tri_id++;
+
+			node_id++;
+		}
+		node_id++; // Skip the last node in each row
+	}
+
 	// Geometry is loaded
 	is_geometry_set = true;
 
@@ -291,10 +371,14 @@ void geom_store::create_geometry()
 	update_model_zoomfit();
 
 	// Set the geometry buffers
+	// Boundary
 	this->boundary_nodes.set_buffer();
 	this->boundary_lines.set_buffer();
 	this->model_labels.set_buffer();
 
+	// Triangle mesh
+	this->grid_trimesh.set_buffer();
+	this->grid_nodes.set_buffer();
 }
 
 
@@ -374,9 +458,51 @@ void geom_store::paint_model()
 	//____________________________________________________________
 
 	// Paint the model
+	// Boundary
 	boundary_nodes.paint_model_nodes();
 	boundary_lines.paint_elementlines();
 	model_labels.paint_text();
+
+	// Traingle mesh
+	if (op_window->is_show_gridtris == true)
+	{
+		// Paint the triangle mesh
+		if (op_window->is_show_gridtris_shrunk == false)
+		{
+			grid_trimesh.paint_elementtriangles();
+		}
+		else
+		{
+			// Paint the traingle mesh shrunk
+			grid_trimesh.paint_elementtriangles_shrunk();
+		}
+	}
+
+	if (op_window->is_show_gridboundary == true)
+	{
+		// Paint the triangle mesh boundary
+		grid_trimesh.paint_elementtriangles_boundarylines();
+	}
+
+	if (op_window->is_show_gridnode == true)
+	{
+		// Paint the grid nodes
+		grid_nodes.paint_model_nodes();
+
+	}
+
+	if (op_window->is_show_gridnodenumber == true)
+	{
+		// Paint the grid node ID
+		grid_nodes.paint_label_node_ids();
+	}
+
+	if (op_window->is_show_gridnodecoord == true)
+	{
+		// Paint the grid point
+		grid_nodes.paint_label_node_coords();
+	}
+
 
 	if (md_window->is_show_window == true)
 	{

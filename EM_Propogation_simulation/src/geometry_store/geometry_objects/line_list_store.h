@@ -40,6 +40,5 @@ private:
 	Shader line_shader;
 
 	void get_line_buffer(line_store& ln, float* line_vertices, unsigned int& line_v_index, unsigned int* line_vertex_indices, unsigned int& line_i_index);
-
 };
 

@@ -13,12 +13,15 @@ options_window::~options_window()
 void options_window::init()
 {
     // Initialize the options
-    is_show_nodenumber = true;
-    is_show_nodecoord = false;
-    is_show_linenumber = true;
-    is_show_linelength = false;
-    is_show_loadvalue = true;
-    is_show_window = false;
+     is_show_gridnode = true;
+     is_show_gridnodenumber = false;
+     is_show_gridnodecoord = false;
+
+     is_show_gridtris = true;
+     is_show_gridtris_shrunk = false;
+     is_show_gridboundary = true;
+
+     is_show_window = false;
 }
 
 void options_window::render_window()
@@ -30,11 +33,14 @@ void options_window::render_window()
     ImGui::Begin("View Options");
 
     // Add 5 checkboxes
-    ImGui::Checkbox("Show Node ID", &is_show_nodenumber);
-    ImGui::Checkbox("Show Node Coordinates", &is_show_nodecoord);
-    ImGui::Checkbox("Show line ID", &is_show_linenumber);
-    ImGui::Checkbox("Show line length", &is_show_linelength);
-    ImGui::Checkbox("Show load value", &is_show_loadvalue);
+    ImGui::Checkbox("Show Grid Node", &is_show_gridnode);
+    ImGui::Checkbox("Show Grid Node ID", &is_show_gridnodenumber);
+    ImGui::Checkbox("Show Grid Node Coordinates", &is_show_gridnodecoord);
+
+
+    ImGui::Checkbox("Show Grid Mesh", &is_show_gridtris);
+    ImGui::Checkbox("Show Grid Mesh Triangle shrunk", &is_show_gridtris_shrunk);
+    ImGui::Checkbox("Show Grid Boundary", &is_show_gridboundary);
 
     // Add a "Close" button
     if (ImGui::Button("Close"))

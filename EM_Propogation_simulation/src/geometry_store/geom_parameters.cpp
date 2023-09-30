@@ -28,4 +28,9 @@ void geom_parameters::init()
 	geom_colors.ptmass_color = glm::vec3(0.82f, 0.77f, 0.92f);
 	geom_colors.inlcond_displ_color = glm::vec3(0.96f, 0.5f, 0.1f);
 	geom_colors.inlcond_velo_color = glm::vec3(0.54f, 0.06f, 0.31f);
+
+	// Traingle mesh
+	geom_colors.triangle_color = glm::vec3(0.82f, 0.77f, 0.92f);
+	geom_colors.triangle_boundary = geom_colors.triangle_color*0.8f;
+	geom_colors.triangle_node = geom_colors.triangle_color * 0.6f;
 }

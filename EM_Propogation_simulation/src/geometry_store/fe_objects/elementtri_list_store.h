@@ -24,6 +24,7 @@ public:
 	void add_elementtriangle(int& tri_id, node_store* nd1, node_store* nd2, node_store* nd3);
 	void set_buffer();
 	void paint_elementtriangles();
+	void paint_elementtriangles_shrunk();
 	void paint_elementtriangles_boundarylines();
 	void paint_elementtriangles_boundarypts();
 
@@ -34,4 +35,17 @@ private:
 	line_list_store element_boundarylines;
 	point_list_store element_boundarypts;
 	tri_list_store element_tris;
+	tri_list_store element_tris_shrunk;
+
+	void addtriangle_boundarylines(const glm::vec2& nd_pt1, const glm::vec2& nd_pt2, const glm::vec2& nd_pt3);
+	bool customLineStoreBinarySearch(const std::vector<line_store>& vec, const line_store& target);
+	void customLineStoreSort(std::vector<line_store>& vec);
+	line_store getLine(const glm::vec2& line_startpt_loc, const glm::vec2& line_endpt_loc);
+	bool compareLines(const line_store& a, const line_store& b);
+
+	void addtriangle_boundarypts(const glm::vec2& nd_pt1, const glm::vec2& nd_pt2, const glm::vec2& nd_pt3);
+	bool customPointStoreBinarySearch(const std::vector<point_store>& vec, const point_store& target);
+	void customPointStoreSort(std::vector<point_store>& vec);
+	point_store getPoint(const glm::vec2& pt_loc);
+	bool comparePoints(const point_store& a, const point_store& b);
 };

@@ -238,7 +238,7 @@ void app_window::menu_events()
 			if (ImGui::MenuItem("Options"))
 			{
 				// Handle menu Options
-
+				op_window.is_show_window = true;
 			}
 
 			if (ImGui::MenuItem("Solve"))
