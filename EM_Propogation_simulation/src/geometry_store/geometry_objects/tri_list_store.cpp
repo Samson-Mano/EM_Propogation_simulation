@@ -26,7 +26,7 @@ void tri_list_store::init(geom_parameters* geom_param_ptr)
 	triMap.clear();
 }
 
-void tri_list_store::add_tri(int& tri_id, glm::vec2& tript1_loc, glm::vec2& tript2_loc, glm::vec2& tript3_loc, glm::vec2 tript1_offset, glm::vec2 tript2_offset, glm::vec2 tript3_offset, glm::vec3& tript1_color, glm::vec3& tript2_color, glm::vec3& tript3_color, bool is_offset)
+void tri_list_store::add_tri(int& tri_id, const glm::vec2& tript1_loc, const glm::vec2& tript2_loc, const glm::vec2& tript3_loc, glm::vec2 tript1_offset, glm::vec2 tript2_offset, glm::vec2 tript3_offset, glm::vec3& tript1_color, glm::vec3& tript2_color, glm::vec3& tript3_color, bool is_offset)
 {
 	// Create a temporary points
 	tri_store temp_tri;

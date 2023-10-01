@@ -15,6 +15,7 @@ struct elementtri_store
 class elementtri_list_store
 {
 public:
+	const int tri_level = 0; // 0 - 1 triangle, 1 - 4 triangle, 2 - 16 triangle
 	unsigned int elementtri_count = 0;
 	std::unordered_map<int, elementtri_store> elementtriMap; // Create an unordered_map to store Triangles with ID as key
 
@@ -37,12 +38,17 @@ private:
 	tri_list_store element_tris;
 	tri_list_store element_tris_shrunk;
 
+	// Sub divide triangle
+	void subdivide_Triangle(int tri_level, const glm::vec2& node_pt1, const glm::vec2& node_pt2, const glm::vec2& node_pt3);
+
+	// Add triangle boundary lines
 	void addtriangle_boundarylines(const glm::vec2& nd_pt1, const glm::vec2& nd_pt2, const glm::vec2& nd_pt3);
 	bool customLineStoreBinarySearch(const std::vector<line_store>& vec, const line_store& target);
 	void customLineStoreSort(std::vector<line_store>& vec);
 	line_store getLine(const glm::vec2& line_startpt_loc, const glm::vec2& line_endpt_loc);
 	bool compareLines(const line_store& a, const line_store& b);
 
+	// Add triangle boundary points
 	void addtriangle_boundarypts(const glm::vec2& nd_pt1, const glm::vec2& nd_pt2, const glm::vec2& nd_pt3);
 	bool customPointStoreBinarySearch(const std::vector<point_store>& vec, const point_store& target);
 	void customPointStoreSort(std::vector<point_store>& vec);

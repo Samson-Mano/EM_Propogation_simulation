@@ -47,41 +47,68 @@ void elementtri_list_store::add_elementtriangle(int& tri_id, node_store* nd1, no
 	elementtri_count++;
 
 	//__________________________ Add the Triangle
-	glm::vec3 temp_tri_color = geom_param_ptr->geom_colors.triangle_color;
+	int tri_level = this->tri_level;
 	glm::vec2 node_pt1 = (*nd1).node_pt;
 	glm::vec2 node_pt2 = (*nd2).node_pt;
 	glm::vec2 node_pt3 = (*nd3).node_pt;
 
+	subdivide_Triangle(tri_level, node_pt1, node_pt2, node_pt3);
+}
 
-	// Main triangle
-	element_tris.add_tri(tri_id, node_pt1, node_pt2, node_pt3,
-		glm::vec2(0), glm::vec2(0), glm::vec2(0),
-		temp_tri_color, temp_tri_color, temp_tri_color, false);
+void elementtri_list_store::subdivide_Triangle(int tri_level, const glm::vec2& node_pt1,
+	const glm::vec2& node_pt2,
+	const glm::vec2& node_pt3)
+{
+	// Recursive function to subdivide triangle
+	if (tri_level == 0)
+	{
+		int tri_id = element_tris.tri_count;
+		glm::vec3 temp_tri_color = geom_param_ptr->geom_colors.triangle_color;
+		// Main triangle
+		element_tris.add_tri(tri_id, node_pt1, node_pt2, node_pt3,
+			glm::vec2(0), glm::vec2(0), glm::vec2(0),
+			temp_tri_color, temp_tri_color, temp_tri_color, false);
 
-	// Main triangle as shrunk
-	double midpt_x = (node_pt1.x + node_pt2.x + node_pt3.x) / 3.0f;
-	double midpt_y = (node_pt1.y + node_pt2.y + node_pt3.y) / 3.0f;
-	double shrink_factor = geom_param_ptr->traingle_shrunk_factor;
+		// Main triangle as shrunk
+		double midpt_x = (node_pt1.x + node_pt2.x + node_pt3.x) / 3.0f;
+		double midpt_y = (node_pt1.y + node_pt2.y + node_pt3.y) / 3.0f;
+		double shrink_factor = geom_param_ptr->traingle_shrunk_factor;
 
-	glm::vec2 shrunk_node_pt1 = glm::vec2((midpt_x * (1 - shrink_factor) + (node_pt1.x * shrink_factor)),
-		(midpt_y * (1 - shrink_factor) + (node_pt1.y * shrink_factor)));
-	glm::vec2 shrunk_node_pt2 = glm::vec2((midpt_x * (1 - shrink_factor) + (node_pt2.x * shrink_factor)),
-		(midpt_y * (1 - shrink_factor) + (node_pt2.y * shrink_factor)));
-	glm::vec2 shrunk_node_pt3 = glm::vec2((midpt_x * (1 - shrink_factor) + (node_pt3.x * shrink_factor)),
-		(midpt_y * (1 - shrink_factor) + (node_pt3.y * shrink_factor)));
+		glm::vec2 shrunk_node_pt1 = glm::vec2((midpt_x * (1 - shrink_factor) + (node_pt1.x * shrink_factor)),
+			(midpt_y * (1 - shrink_factor) + (node_pt1.y * shrink_factor)));
+		glm::vec2 shrunk_node_pt2 = glm::vec2((midpt_x * (1 - shrink_factor) + (node_pt2.x * shrink_factor)),
+			(midpt_y * (1 - shrink_factor) + (node_pt2.y * shrink_factor)));
+		glm::vec2 shrunk_node_pt3 = glm::vec2((midpt_x * (1 - shrink_factor) + (node_pt3.x * shrink_factor)),
+			(midpt_y * (1 - shrink_factor) + (node_pt3.y * shrink_factor)));
 
-	element_tris_shrunk.add_tri(tri_id, shrunk_node_pt1, shrunk_node_pt2, shrunk_node_pt3,
-		glm::vec2(0), glm::vec2(0), glm::vec2(0),
-		temp_tri_color, temp_tri_color, temp_tri_color, false);
+		element_tris_shrunk.add_tri(tri_id, shrunk_node_pt1, shrunk_node_pt2, shrunk_node_pt3,
+			glm::vec2(0), glm::vec2(0), glm::vec2(0),
+			temp_tri_color, temp_tri_color, temp_tri_color, false);
 
 
-	//__________________________ Add the Triangle boundary points
-	addtriangle_boundarylines(node_pt1, node_pt2, node_pt3);
+		//__________________________ Add the Triangle boundary points
+		addtriangle_boundarylines(node_pt1, node_pt2, node_pt3);
 
-	//__________________________ Add the Triangle boundary lines
-	addtriangle_boundarypts(node_pt1, node_pt2, node_pt3);
+		//__________________________ Add the Triangle boundary lines
+		addtriangle_boundarypts(node_pt1, node_pt2, node_pt3);
+	}
+	else
+	{
+		// Calculate midpoints of the edges
+		glm::vec2 mid1 = (node_pt1 + node_pt2) / 2.0f;
+		glm::vec2 mid2 = (node_pt2 + node_pt3) / 2.0f;
+		glm::vec2 mid3 = (node_pt1 + node_pt3) / 2.0f;
+
+		// Recursively subdivide each of the four smaller triangles
+		subdivide_Triangle(tri_level - 1, node_pt1, mid1, mid3);
+		subdivide_Triangle(tri_level - 1, mid1, node_pt2, mid2);
+		subdivide_Triangle(tri_level - 1, mid2, node_pt3, mid3);
+		subdivide_Triangle(tri_level - 1, mid1, mid2, mid3);
+
+	}
 
 }
+
 
 void elementtri_list_store::set_buffer()
 {

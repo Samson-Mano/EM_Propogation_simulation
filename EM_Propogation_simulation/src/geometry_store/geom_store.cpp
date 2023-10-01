@@ -239,7 +239,7 @@ void geom_store::create_geometry()
 	int node_id = 0;
 	int line_id = 0;
 	glm::vec2 node_pt = glm::vec2(0.0, 0.0);
-	double percent_increase = 0.0;
+	double percent_increase = 0.05;
 	double pt = (gird_length + (gird_length * percent_increase)) * 0.5;
 
 	// Add the origin pt and four boundary nodes
@@ -306,13 +306,13 @@ void geom_store::create_geometry()
 
 	// Iterate over the rows and columns to create triangle nodes
 	node_id = 0;
-	for (int row = 0; row < numRows; ++row)
+	for (int row = 0; row <= numRows; ++row)
 	{
-		for (int col = 0; col < numCols; ++col)
+		for (int col = 0; col <= numCols; ++col)
 		{
 			// Calculate the coordinates of the nodes
 			double left_x = (col * gird_spacing) - originX;
-			double bottom_y = originY - ((row + 1) * gird_spacing);
+			double bottom_y = originY - (row  * gird_spacing);
 
 			node_pt = glm::vec2(left_x, bottom_y);
 			// Create the node
@@ -325,15 +325,15 @@ void geom_store::create_geometry()
 	// Iterate over the rows and columns to create triangles
 	node_id = 0;
 	int tri_id = 0;
-	for (int row = 0; row < numRows - 1; ++row)
+	for (int row = 0; row <= numRows-1; ++row)
 	{
-		for (int col = 0; col < numCols - 1; ++col)
+		for (int col = 0; col <= numCols-1; ++col)
 		{
 			// Calculate the IDs of the four corner nodes of the square
 			int bottomLeftNode = node_id;
 			int bottomRightNode = node_id + 1;
-			int topLeftNode = node_id + numCols;
-			int topRightNode = (node_id + numCols) + 1;
+			int topLeftNode = node_id + (numCols+1);
+			int topRightNode = (node_id + (numCols+1)) + 1;
 
 			// Create the lower triangle
 			this->grid_trimesh.add_elementtriangle(tri_id,
