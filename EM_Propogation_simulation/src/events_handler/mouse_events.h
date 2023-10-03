@@ -1,4 +1,5 @@
 #pragma once
+#define NOMINMAX
 #include <glm/vec2.hpp>
 #include "../geometry_store/geom_store.h"
 

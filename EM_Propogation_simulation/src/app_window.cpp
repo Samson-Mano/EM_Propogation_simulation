@@ -232,7 +232,7 @@ void app_window::menu_events()
 			if (ImGui::MenuItem("Condition"))
 			{
 				// Handle menu Condition
-
+				inl_window.is_show_window = true;
 			}
 
 			if (ImGui::MenuItem("Options"))
