@@ -11,14 +11,13 @@ struct geom_color_theme
 	glm::vec3 background_color = glm::vec3(0);
 	glm::vec3 node_color = glm::vec3(0);
 	glm::vec3 line_color = glm::vec3(0);
+	glm::vec3 charge_path_color = glm::vec3(0);
 	glm::vec3 triangle_color = glm::vec3(0);
 	glm::vec3 triangle_boundary = glm::vec3(0);
 	glm::vec3 triangle_node = glm::vec3(0);
 	glm::vec3 constraint_color = glm::vec3(0);
 	glm::vec3 load_color = glm::vec3(0);
 	glm::vec3 ptmass_color = glm::vec3(0);
-	glm::vec3 inlcond_displ_color = glm::vec3(0);
-	glm::vec3 inlcond_velo_color = glm::vec3(0);
 };
 
 

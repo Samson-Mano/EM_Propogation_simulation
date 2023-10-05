@@ -48,9 +48,6 @@
     <ClCompile Include="src\ImGui\stb_implement.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\events_handler\file_events.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\events_handler\mouse_event_handler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -171,9 +168,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ImGui\stb_implement.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\events_handler\file_events.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\events_handler\mouse_event_handler.h">

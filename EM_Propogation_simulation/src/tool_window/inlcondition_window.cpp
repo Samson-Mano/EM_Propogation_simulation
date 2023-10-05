@@ -50,7 +50,54 @@ void inlcondition_window::render_window()
 	// Display the selected option
 	ImGui::Text("Selected Option: %s", (selected_curvepath_option == 0) ? "Closed curve" : "Open curve");
 
+	//_________________________________________________________________________________________
+	// Input box to give input via text
+	static bool scale_input_mode = false;
+	static char path_scale_str[8] = ""; // buffer to store input path scale string
+	static int path_scale_input = path_scale_factor; // buffer to store input path scale value
 
+	// Button to switch to input mode
+	if (!scale_input_mode)
+	{
+		if (ImGui::Button("Input Path Scale Factor"))
+		{
+			scale_input_mode = true;
+			snprintf(path_scale_str, 8, "%i", path_scale_input); // set the buffer to path scale factor
+		}
+	}
+	else // input mode
+	{
+		// Text box to input angle value
+		ImGui::SetNextItemWidth(60.0f);
+		if (ImGui::InputText("##InputPathScale", path_scale_str, IM_ARRAYSIZE(path_scale_str), ImGuiInputTextFlags_CharsDecimal)) // ImGuiInputTextFlags_CharsDecimal
+		{
+			// convert the input string to float
+			path_scale_input = static_cast<int>(atoi(path_scale_str));
+			// limit the value to 0 - 1000 range
+			path_scale_input = fmaxf(0.0f, fminf(path_scale_input, 1000));
+			// set the angle to input value
+			path_scale_factor = path_scale_input;
+		}
+
+		// Button to switch back to slider mode
+		ImGui::SameLine();
+		if (ImGui::Button("OK"))
+		{
+			scale_input_mode = false;
+		}
+	}
+
+	// Slider for angle
+	path_scale_input = path_scale_factor;
+
+	ImGui::Text("Path Scale Factor");
+	ImGui::SameLine();
+	ImGui::SliderInt("Scale Factor", &path_scale_input, 0, 1000, "%i");
+
+	path_scale_factor = path_scale_input;
+	
+	//_________________________________________________________________________________________
+	
 	// Oscillation frequency
 	// Text for Oscillation frequenyc
 	//_________________________________________________________________________________________
@@ -452,7 +499,7 @@ void inlcondition_window::import_dxfdata_geometry()
 	// Mid point and scale factor
 	double mid_x = (min_x + max_x) / 2.0;
 	double mid_y = (min_y + max_y) / 2.0;
-	double scale_factor = 1.0 / std::max(max_x - min_x, max_y - min_y);
+	double scale_factor = path_scale_factor / std::max(max_x - min_x, max_y - min_y);
 
 
 	// Save the values
@@ -461,7 +508,6 @@ void inlcondition_window::import_dxfdata_geometry()
 		// Clear the previous path
 		this->curve_paths.clear();
 
-		std::string line;
 		std::ostringstream scaled_dxf_input; // Create an ostringstream object for scaled input
 
 		scaled_dxf_input << std::fixed << std::setprecision(6); // Set precision to 6 decimal places
@@ -475,6 +521,7 @@ void inlcondition_window::import_dxfdata_geometry()
 			scaled_dxf_input << pt.pt_id << ", " << scaled_x << ", " << scaled_y << "\n";
 		}
 
+		std::string line;
 		std::string input_str = scaled_dxf_input.str();
 		std::istringstream iss_temp(input_str);
 

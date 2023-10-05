@@ -120,7 +120,6 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\app_window.cpp" />
-    <ClCompile Include="src\events_handler\file_events.cpp" />
     <ClCompile Include="src\events_handler\mouse_events.cpp" />
     <ClCompile Include="src\events_handler\mouse_event_handler.cpp" />
     <ClCompile Include="src\geometry_store\fe_objects\charge_path_store.cpp" />
@@ -159,7 +158,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\app_window.h" />
-    <ClInclude Include="src\events_handler\file_events.h" />
     <ClInclude Include="src\events_handler\mouse_events.h" />
     <ClInclude Include="src\events_handler\mouse_event_handler.h" />
     <ClInclude Include="src\geometry_store\fe_objects\charge_path_store.h" />

@@ -15,7 +15,7 @@ void nodes_list_store::init(geom_parameters* geom_param_ptr)
 	// Set the geometry parameters
 	this->geom_param_ptr = geom_param_ptr;
 
-	// Set the geometry parameters for the labels (and clear the labels)
+	// Set the geometry parameters for the points and labels (and clear the labels)
 	node_points.init(geom_param_ptr);
 	node_id_labels.init(geom_param_ptr);
 	node_coord_labels.init(geom_param_ptr);

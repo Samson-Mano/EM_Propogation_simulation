@@ -81,7 +81,7 @@ void geom_store::update_model_matrix()
 
 	grid_nodes.update_geometry_matrices(true, false, false, false, false);
 	grid_trimesh.update_geometry_matrices(true, false, false, false, false);
-	//model_loads.update_geometry_matrices(true, false, false, false, false);
+	charge_path.update_geometry_matrices(true, false, false, false, false);
 	//model_ptmass.update_geometry_matrices(true, false, false, false, false);
 	//model_inlcond.update_geometry_matrices(true, false, false, false, false);
 
@@ -112,7 +112,7 @@ void geom_store::update_model_zoomfit()
 
 	grid_nodes.update_geometry_matrices(false, true, true, false, false);
 	grid_trimesh.update_geometry_matrices(false, true, true, false, false);
-	//model_loads.update_geometry_matrices(false, true, true, false, false);
+	charge_path.update_geometry_matrices(false, true, true, false, false);
 	//model_ptmass.update_geometry_matrices(false, true, true, false, false);
 	//model_inlcond.update_geometry_matrices(false, true, true, false, false);
 
@@ -143,7 +143,7 @@ void geom_store::update_model_pan(glm::vec2& transl)
 
 	grid_nodes.update_geometry_matrices(false, true, false, false, false);
 	grid_trimesh.update_geometry_matrices(false, true, false, false, false);
-	//model_loads.update_geometry_matrices(false, true, false, false, false);
+	charge_path.update_geometry_matrices(false, true, false, false, false);
 	//model_ptmass.update_geometry_matrices(false, true, false, false, false);
 	//model_inlcond.update_geometry_matrices(false, true, false, false, false);
 
@@ -171,7 +171,7 @@ void geom_store::update_model_zoom(double& z_scale)
 
 	grid_nodes.update_geometry_matrices(false, false, true, false, false);
 	grid_trimesh.update_geometry_matrices(false, false, true, false, false);
-	//model_loads.update_geometry_matrices(false, false, true, false, false);
+	charge_path.update_geometry_matrices(false, false, true, false, false);
 	//model_ptmass.update_geometry_matrices(false, false, true, false, false);
 	//model_inlcond.update_geometry_matrices(false, false, true, false, false);
 
@@ -207,7 +207,7 @@ void geom_store::update_model_transperency(bool is_transparent)
 
 	grid_nodes.update_geometry_matrices(false, false, false, true, false);
 	grid_trimesh.update_geometry_matrices(false, false, false, true, false);
-	//model_loads.update_geometry_matrices(false, false, false, true, false);
+	charge_path.update_geometry_matrices(false, false, false, true, false);
 	//model_ptmass.update_geometry_matrices(false, false, false, true, false);
 	//model_inlcond.update_geometry_matrices(false, false, false, true, false);
 
@@ -234,6 +234,7 @@ void geom_store::create_geometry()
 	// Triangle mesh
 	this->grid_trimesh.init(&geom_param);
 	this->grid_nodes.init(&geom_param);
+	this->charge_path.init(&geom_param);
 
 	// Initialize the boundary pts
 	int node_id = 0;
@@ -354,6 +355,10 @@ void geom_store::create_geometry()
 		node_id++; // Skip the last node in each row
 	}
 
+	// Create a simple initial oscillation path
+
+
+
 	// Geometry is loaded
 	is_geometry_set = true;
 
@@ -379,6 +384,7 @@ void geom_store::create_geometry()
 	// Triangle mesh
 	this->grid_trimesh.set_buffer();
 	this->grid_nodes.set_buffer();
+	this->charge_path.set_buffer();
 }
 
 
@@ -503,6 +509,15 @@ void geom_store::paint_model()
 		grid_nodes.paint_label_node_coords();
 	}
 
+	if (inl_window->execute_apply_path == true)
+	{
+		// Execute the application of new path
+		inl_window->execute_apply_path = false;
+
+		// Create new path
+		this->charge_path.add_path(inl_window->curve_paths, inl_window->selected_curvepath_option, inl_window->oscillation_freq);
+	}
+
 
 	if (md_window->is_show_window == true)
 	{
@@ -514,4 +529,9 @@ void geom_store::paint_model()
 			md_window->is_execute_apply = false;
 		}
 	}
+
+
+	// Paint the charge path
+	charge_path.paint_charge_path();
+
 }

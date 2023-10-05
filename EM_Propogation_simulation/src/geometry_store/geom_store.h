@@ -15,6 +15,7 @@
 #include "fe_objects/nodes_list_store.h"
 #include "fe_objects/elementline_list_store.h"
 #include "fe_objects/elementtri_list_store.h"
+#include "fe_objects/charge_path_store.h"
 
 // Geometry objects
 #include "geometry_objects/label_list_store.h"
@@ -53,6 +54,7 @@ private:
 	double material_density = 0.0;
 
 	// geomerty object
+	charge_path_store charge_path;
 	elementtri_list_store grid_trimesh;
 	nodes_list_store grid_nodes;
 	nodes_list_store boundary_nodes;
