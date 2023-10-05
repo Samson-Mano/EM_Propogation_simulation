@@ -126,6 +126,9 @@
     <ClCompile Include="src\geometry_store\fe_objects\elementtri_list_store.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\geometry_store\fe_objects\charge_path_store.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\app_window.h">
@@ -246,6 +249,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\geometry_store\fe_objects\elementtri_list_store.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\geometry_store\fe_objects\charge_path_store.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
