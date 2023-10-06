@@ -26,6 +26,9 @@ public:
 	const double m_pi = 3.14159265358979323846;
 	bool is_geometry_set = false;
 
+	// Analysis complete
+	bool is_analysis_complete = false;
+
 	// Main Variable to strore the geometry parameters
 	geom_parameters geom_param;
 
@@ -75,4 +78,6 @@ private:
 
 
 	void paint_model(); // Paint the model
+
+	void paint_postprocess(); // Paint the results
 };

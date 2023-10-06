@@ -447,6 +447,9 @@ void geom_store::paint_geometry()
 	// Paint the model
 	paint_model();
 
+	// Paint the postprocessing results
+	paint_postprocess();
+
 }
 
 
@@ -518,6 +521,12 @@ void geom_store::paint_model()
 		this->charge_path.add_path(inl_window->curve_paths, inl_window->selected_curvepath_option, inl_window->oscillation_freq);
 	}
 
+	if (sol_window->is_show_window == true)
+	{
+		// Solver window
+
+	}
+
 
 	if (md_window->is_show_window == true)
 	{
@@ -533,5 +542,128 @@ void geom_store::paint_model()
 
 	// Paint the charge path
 	charge_path.paint_charge_path();
+
+}
+
+
+void geom_store::paint_postprocess()
+{
+	// Check closing sequence for Solver window
+	if (sol_window->execute_close == true)
+	{
+		// Execute the close sequence
+		if (is_analysis_complete == true)
+		{
+			// Analysis is complete (but clear the results anyway beacuse results will be loaded at open)
+			sol_window->is_analysis_complete = false;
+
+			// Solver analysis is complete
+			update_model_transperency(false);
+		}
+
+		sol_window->execute_close = false;
+	}
+
+	// Check whether the solver window is open or not
+	if (sol_window->is_show_window == false)
+	{
+		return;
+	}
+
+	// Paint the analysis result
+	if (is_analysis_complete == true)
+	{
+		// Update the deflection scale
+		geom_param.normalized_defl_scale = 1.0f;
+		geom_param.defl_scale = sol_window->deformation_scale_max;
+
+		// pulse_result_lineelements.update_geometry_matrices(false, false, false, false, true);
+		// pulse_result_nodes.update_geometry_matrices(false, false, false, false, true);
+
+		// ______________________________________________________________________________________
+
+		// Paint the pulse lines
+		// pulse_result_lineelements.paint_pulse_elementlines(sol_pulse_window->time_step);
+
+		// Paint the pulse nodes
+		// pulse_result_nodes.paint_pulse_nodes(sol_pulse_window->time_step);
+	}
+
+
+	// Execute open for the solver
+	if (sol_window->execute_open == true)
+	{
+		// Execute the open sequence
+		if (inl_window->curve_imported == false)
+		{
+			// Exit the window (when modal analysis is not complete)
+			sol_window->is_show_window = false;
+		}
+		else
+		{
+			// Charge path oscillation
+			sol_window->charge_oscillation_freq = inl_window->oscillation_freq;
+	
+			// Modal analysis is complete (check whether frequency response analysis is complete or not)
+			if (is_analysis_complete == true)
+			{
+				// Set the pulse response analysis result
+				//sol_pulse_window->pulse_response_analysis_complete = true;
+				//sol_pulse_window->time_interval_atrun = pulse_response_result.time_interval;
+				//sol_pulse_window->time_step_count = pulse_response_result.time_step_count;
+
+				//// Reset the buffers for pulse result nodes and lines
+				//pulse_result_lineelements.set_buffer();
+				//pulse_result_nodes.set_buffer();
+
+				// Pulse response analysis is complete
+				update_model_transperency(true);
+			}
+
+		}
+		sol_window->execute_open = false;
+	}
+
+	// Execute the solve
+	if (sol_window->execute_solve == true)
+	{
+		// Execute the Charge oscillation solve
+		//pulse_analysis_solver pulse_solver;
+		//pulse_solver.pulse_analysis_start(model_nodes,
+		//	model_lineelements,
+		//	model_constarints,
+		//	model_loads,
+		//	model_ptmass,
+		//	model_inlcond,
+		//	mat_window->material_list,
+		//	sol_modal_window->is_include_consistent_mass_matrix,
+		//	md_solver,
+		//	modal_results,
+		//	sol_pulse_window->total_simulation_time,
+		//	sol_pulse_window->time_interval,
+		//	sol_pulse_window->damping_ratio,
+		//	pulse_response_result,
+		//	pulse_result_nodes,
+		//	pulse_result_lineelements,
+		//	is_pulse_analysis_complete);
+
+		// Check whether the modal analysis is complete or not
+		if (is_analysis_complete == true)
+		{
+			//// Set the pulse response analysis result
+			//sol_pulse_window->pulse_response_analysis_complete = true;
+			//sol_pulse_window->time_interval_atrun = pulse_response_result.time_interval;
+			//sol_pulse_window->time_step_count = pulse_response_result.time_step_count;
+
+			//// Reset the buffers for pulse result nodes and lines
+			//pulse_result_lineelements.set_buffer();
+			//pulse_result_nodes.set_buffer();
+
+			//// Pulse response analysis is complete
+			//update_model_transperency(true);
+		}
+		sol_window->execute_solve = false;
+	}
+
 
 }

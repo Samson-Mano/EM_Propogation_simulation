@@ -244,7 +244,8 @@ void app_window::menu_events()
 			if (ImGui::MenuItem("Solve"))
 			{
 				// Handle menu Solve
-
+				sol_window.execute_open = true;
+				sol_window.is_show_window = true;
 			}
 
 			if (ImGui::MenuItem("Exit"))
