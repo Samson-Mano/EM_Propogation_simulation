@@ -67,6 +67,8 @@ public:
 	geom_parameters();
 	~geom_parameters();
 	void init();
+
+	glm::vec3 getContourColor(float value);
 private:
 
 };

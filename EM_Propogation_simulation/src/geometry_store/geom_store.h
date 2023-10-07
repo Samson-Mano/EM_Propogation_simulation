@@ -17,6 +17,9 @@
 #include "fe_objects/elementtri_list_store.h"
 #include "fe_objects/charge_path_store.h"
 
+// Solver
+#include "../fe_solver/charge_oscillation_solver.h"
+
 // Geometry objects
 #include "geometry_objects/label_list_store.h"
 
@@ -63,6 +66,10 @@ private:
 	nodes_list_store boundary_nodes;
 	elementline_list_store boundary_lines;
 	label_list_store model_labels;
+
+	// Result mesh
+
+
 
 	// View options ptr and Material window ptr
 	options_window* op_window = nullptr;

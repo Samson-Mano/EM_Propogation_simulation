@@ -122,10 +122,12 @@
     <ClCompile Include="src\app_window.cpp" />
     <ClCompile Include="src\events_handler\mouse_events.cpp" />
     <ClCompile Include="src\events_handler\mouse_event_handler.cpp" />
+    <ClCompile Include="src\fe_solver\charge_oscillation_solver.cpp" />
     <ClCompile Include="src\geometry_store\fe_objects\charge_path_store.cpp" />
     <ClCompile Include="src\geometry_store\fe_objects\elementline_list_store.cpp" />
     <ClCompile Include="src\geometry_store\fe_objects\elementtri_list_store.cpp" />
     <ClCompile Include="src\geometry_store\fe_objects\nodes_list_store.cpp" />
+    <ClCompile Include="src\geometry_store\fe_objects\nodevector_list_store.cpp" />
     <ClCompile Include="src\geometry_store\geometry_buffers\font_atlas.cpp" />
     <ClCompile Include="src\geometry_store\geometry_buffers\gBuffers.cpp" />
     <ClCompile Include="src\geometry_store\geometry_buffers\IndexBuffer.cpp" />
@@ -160,10 +162,12 @@
     <ClInclude Include="src\app_window.h" />
     <ClInclude Include="src\events_handler\mouse_events.h" />
     <ClInclude Include="src\events_handler\mouse_event_handler.h" />
+    <ClInclude Include="src\fe_solver\charge_oscillation_solver.h" />
     <ClInclude Include="src\geometry_store\fe_objects\charge_path_store.h" />
     <ClInclude Include="src\geometry_store\fe_objects\elementline_list_store.h" />
     <ClInclude Include="src\geometry_store\fe_objects\elementtri_list_store.h" />
     <ClInclude Include="src\geometry_store\fe_objects\nodes_list_store.h" />
+    <ClInclude Include="src\geometry_store\fe_objects\nodevector_list_store.h" />
     <ClInclude Include="src\geometry_store\geometry_buffers\font_atlas.h" />
     <ClInclude Include="src\geometry_store\geometry_buffers\gBuffers.h" />
     <ClInclude Include="src\geometry_store\geometry_buffers\IndexBuffer.h" />

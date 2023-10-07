@@ -10,7 +10,7 @@ geom_store::~geom_store()
 	// Empty Destructor
 }
 
-void geom_store::init(options_window* op_window,solver_window* sol_window, model_window* md_window, inlcondition_window* inl_window)
+void geom_store::init(options_window* op_window, solver_window* sol_window, model_window* md_window, inlcondition_window* inl_window)
 {
 	// Initialize
 	// Initialize the geometry parameters
@@ -313,7 +313,7 @@ void geom_store::create_geometry()
 		{
 			// Calculate the coordinates of the nodes
 			double left_x = (col * gird_spacing) - originX;
-			double bottom_y = originY - (row  * gird_spacing);
+			double bottom_y = originY - (row * gird_spacing);
 
 			node_pt = glm::vec2(left_x, bottom_y);
 			// Create the node
@@ -326,15 +326,15 @@ void geom_store::create_geometry()
 	// Iterate over the rows and columns to create triangles
 	node_id = 0;
 	int tri_id = 0;
-	for (int row = 0; row <= numRows-1; ++row)
+	for (int row = 0; row <= numRows - 1; ++row)
 	{
-		for (int col = 0; col <= numCols-1; ++col)
+		for (int col = 0; col <= numCols - 1; ++col)
 		{
 			// Calculate the IDs of the four corner nodes of the square
 			int bottomLeftNode = node_id;
 			int bottomRightNode = node_id + 1;
-			int topLeftNode = node_id + (numCols+1);
-			int topRightNode = (node_id + (numCols+1)) + 1;
+			int topLeftNode = node_id + (numCols + 1);
+			int topRightNode = (node_id + (numCols + 1)) + 1;
 
 			// Create the lower triangle
 			this->grid_trimesh.add_elementtriangle(tri_id,
@@ -356,7 +356,24 @@ void geom_store::create_geometry()
 	}
 
 	// Create a simple initial oscillation path
+	std::ostringstream scaled_dxf_input; // Create an ostringstream object for scaled input
 
+	scaled_dxf_input << 0 << ", " << 0.0 << ", " << 100.0 << "\n";
+	scaled_dxf_input << 0 << ", " << 0.0 << ", " << -100.0 << "\n";
+
+
+	std::string currve_pt;
+	std::vector<std::string> curve_paths;
+	std::string input_str = scaled_dxf_input.str();
+	std::istringstream iss_temp(input_str);
+
+	while (std::getline(iss_temp, currve_pt))
+	{
+		curve_paths.push_back(currve_pt);
+	}
+
+	inl_window->curve_imported = true;
+	this->charge_path.add_path(curve_paths, 0, 1.0);
 
 
 	// Geometry is loaded
@@ -603,7 +620,7 @@ void geom_store::paint_postprocess()
 		{
 			// Charge path oscillation
 			sol_window->charge_oscillation_freq = inl_window->oscillation_freq;
-	
+
 			// Modal analysis is complete (check whether frequency response analysis is complete or not)
 			if (is_analysis_complete == true)
 			{
