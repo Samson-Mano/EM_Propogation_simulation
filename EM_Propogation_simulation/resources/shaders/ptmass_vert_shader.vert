@@ -3,7 +3,9 @@
 uniform mat4 modelMatrix;
 uniform mat4 panTranslation;
 uniform float zoomscale;
-uniform float deflscale;
+
+uniform float normalized_deflscale; // Sine cycle from animation (-1 to 1)
+uniform float deflscale; // Deflection scale value = normalized_deflscale (varies 0 to 1) * max deformation
 uniform float transparency = 1.0f;
 uniform float geom_scale;
 

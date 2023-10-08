@@ -2,6 +2,13 @@
 #include <iostream>
 #include <fstream>
 
+// FE Objects
+#include "../geometry_store/fe_objects/nodes_list_store.h"
+#include "../geometry_store/fe_objects/charge_path_store.h"
+
+// Result Objects
+#include "../geometry_store/geometry_objects/dynamic_texture_list_store.h"
+#include "../geometry_store/fe_objects/nodevector_list_store.h"
 
 #pragma warning(push)
 #pragma warning (disable : 26451)
@@ -32,7 +39,13 @@ public:
 
 	charge_oscillation_solver();
 	~charge_oscillation_solver();
-	void charge_oscillation_analysis_start();
+	void charge_oscillation_analysis_start(const nodes_list_store& grid_nodes,
+										   const charge_path_store& charge_path,
+											const double total_simulation_time,
+											const double time_interval,
+											dynamic_texture_list_store& charge_path_data,
+											nodevector_list_store& node_vector,
+											bool& is_analysis_complete);
 
 
 private:

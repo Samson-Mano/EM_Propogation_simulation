@@ -83,6 +83,7 @@ void charge_path_store::add_path(std::vector<std::string> curve_paths, int path_
 	int i = 0;
 	int line_id = 0;
 	glm::vec2 point1 = path_points.pointMap[0].point_loc;
+	this->charge_total_length = 0.0;
 
 	for (i = 1; i < path_points.point_count; i++)
 	{
@@ -90,6 +91,9 @@ void charge_path_store::add_path(std::vector<std::string> curve_paths, int path_
 
 		path_lines.add_line(line_id, point1, point2, glm::vec2(0), glm::vec2(0), temp_color, temp_color, false);
 		line_id++;
+
+		// Calculate the length
+		this->charge_total_length = this->charge_total_length + std::sqrt(std::pow(point2.x - point1.x, 2) + std::pow(point2.y - point1.y, 2));
 
 		// re initialize point
 		point1 = point2;
@@ -100,8 +104,11 @@ void charge_path_store::add_path(std::vector<std::string> curve_paths, int path_
 		// closed path so close the loop
 		glm::vec2 point2 = path_points.pointMap[0].point_loc;
 		path_lines.add_line(line_id, point1, point2, glm::vec2(0), glm::vec2(0), temp_color, temp_color, false);
+
+		this->charge_total_length = this->charge_total_length + std::sqrt(std::pow(point2.x - point1.x, 2) + std::pow(point2.y - point1.y, 2));
 	}
 
+	
 	is_pathset = true;
 
 	// Set the buffer

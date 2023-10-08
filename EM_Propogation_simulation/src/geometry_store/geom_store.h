@@ -17,6 +17,10 @@
 #include "fe_objects/elementtri_list_store.h"
 #include "fe_objects/charge_path_store.h"
 
+// Result Objects
+#include "geometry_objects/dynamic_texture_list_store.h"
+#include "fe_objects/nodevector_list_store.h"
+
 // Solver
 #include "../fe_solver/charge_oscillation_solver.h"
 
@@ -68,7 +72,8 @@ private:
 	label_list_store model_labels;
 
 	// Result mesh
-
+	dynamic_texture_list_store charge_path_data;
+	nodevector_list_store node_vector;
 
 
 	// View options ptr and Material window ptr

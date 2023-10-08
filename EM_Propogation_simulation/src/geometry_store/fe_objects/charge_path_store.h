@@ -20,6 +20,7 @@ public:
 	std::unordered_map<int, charge_path_points> chargePathMap; // Create an unordered_map to store nodes with ID as key
 	int path_type = -1; // Path type is closed path or open path
 	double charge_oscillation_freq = 0;
+	double charge_total_length = 0.0;
 	bool is_pathset = false;
 
 	charge_path_store();

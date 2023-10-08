@@ -538,13 +538,6 @@ void geom_store::paint_model()
 		this->charge_path.add_path(inl_window->curve_paths, inl_window->selected_curvepath_option, inl_window->oscillation_freq);
 	}
 
-	if (sol_window->is_show_window == true)
-	{
-		// Solver window
-
-	}
-
-
 	if (md_window->is_show_window == true)
 	{
 		// Edit model window is open
@@ -624,16 +617,16 @@ void geom_store::paint_postprocess()
 			// Modal analysis is complete (check whether frequency response analysis is complete or not)
 			if (is_analysis_complete == true)
 			{
-				// Set the pulse response analysis result
-				//sol_pulse_window->pulse_response_analysis_complete = true;
-				//sol_pulse_window->time_interval_atrun = pulse_response_result.time_interval;
+				// Set the charge oscillation analysis result
+				sol_window->is_analysis_complete = true;
+				// sol_window->time_interval_atrun = sol_window.time_interval;
 				//sol_pulse_window->time_step_count = pulse_response_result.time_step_count;
 
-				//// Reset the buffers for pulse result nodes and lines
+				//// Reset the buffers for charge analysis (charge path)
 				//pulse_result_lineelements.set_buffer();
 				//pulse_result_nodes.set_buffer();
 
-				// Pulse response analysis is complete
+				// Charge analysis is complete
 				update_model_transperency(true);
 			}
 
@@ -667,8 +660,8 @@ void geom_store::paint_postprocess()
 		// Check whether the modal analysis is complete or not
 		if (is_analysis_complete == true)
 		{
-			//// Set the pulse response analysis result
-			//sol_pulse_window->pulse_response_analysis_complete = true;
+			// Set the charge oscillation analysis result
+			sol_window->is_analysis_complete = true;
 			//sol_pulse_window->time_interval_atrun = pulse_response_result.time_interval;
 			//sol_pulse_window->time_step_count = pulse_response_result.time_step_count;
 
@@ -676,8 +669,8 @@ void geom_store::paint_postprocess()
 			//pulse_result_lineelements.set_buffer();
 			//pulse_result_nodes.set_buffer();
 
-			//// Pulse response analysis is complete
-			//update_model_transperency(true);
+			// Charge analysis is complete
+			update_model_transperency(true);
 		}
 		sol_window->execute_solve = false;
 	}
