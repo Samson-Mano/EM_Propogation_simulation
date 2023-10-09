@@ -25,7 +25,7 @@ public:
 	void init(geom_parameters* geom_param_ptr);
 	void add_texture(int& dyn_texture_id, glm::vec2& dyn_texture_loc, std::vector<glm::vec2>& dyn_point_offset, double& texture_value);
 	void set_buffer();
-	void paint_points(const int& dyn_index);
+	void paint_textures(const int& dyn_index);
 	void update_buffer(const int& dyn_index);
 	void clear_textures();
 	void update_opengl_uniforms(bool set_modelmatrix, bool set_pantranslation, bool set_zoomtranslation, bool set_transparency, bool set_deflscale);

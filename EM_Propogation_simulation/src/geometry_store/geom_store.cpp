@@ -373,6 +373,8 @@ void geom_store::create_geometry()
 	}
 
 	inl_window->curve_imported = true;
+
+	// Add the path
 	this->charge_path.add_path(curve_paths, 0, 1.0);
 
 
@@ -638,6 +640,16 @@ void geom_store::paint_postprocess()
 	if (sol_window->execute_solve == true)
 	{
 		// Execute the Charge oscillation solve
+		charge_oscillation_solver ch_solver;
+
+		ch_solver.charge_oscillation_analysis_start(grid_nodes,
+			charge_path,
+			sol_window->total_simulation_time,
+			sol_window->time_interval,
+			node_vector,
+			is_analysis_complete);
+
+
 		//pulse_analysis_solver pulse_solver;
 		//pulse_solver.pulse_analysis_start(model_nodes,
 		//	model_lineelements,

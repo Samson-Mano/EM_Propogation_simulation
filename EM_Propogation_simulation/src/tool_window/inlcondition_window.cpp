@@ -160,7 +160,7 @@ void inlcondition_window::render_window()
 	// Add a "Close" button (Close the initial condition window)
 	if (ImGui::Button("Close"))
 	{
-		curve_imported = false;
+		// curve_imported = false;
 		is_show_window = false;
 	}
 

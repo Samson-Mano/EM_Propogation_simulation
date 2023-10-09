@@ -101,7 +101,7 @@ void dynamic_texture_list_store::set_buffer()
 
 }
 
-void dynamic_texture_list_store::paint_points(const int& dyn_index)
+void dynamic_texture_list_store::paint_textures(const int& dyn_index)
 {
 	// Paint all the textures
 	dyn_tx_texture.Bind();
