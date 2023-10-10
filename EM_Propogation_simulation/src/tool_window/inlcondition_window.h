@@ -24,7 +24,7 @@ public:
 	std::vector<std::string> curve_paths;
 	int selected_curvepath_option = 0; // type of curve path
 	int path_scale_factor = 100;
-	double oscillation_freq = 1.0; // Oscillation frequency
+	// double oscillation_freq = 1.0; // Oscillation frequency
 
 	inlcondition_window();
 	~inlcondition_window();

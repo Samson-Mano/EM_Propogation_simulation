@@ -1,9 +1,9 @@
 #pragma once
 #include <iostream>
+#include "../geometry_store/geom_parameters.h"
 #include "../ImGui/imgui.h"
 #include "../ImGui/imgui_impl_glfw.h"
 #include "../ImGui/imgui_impl_opengl3.h"
-
 
 class solver_window
 {
@@ -22,7 +22,7 @@ public:
 	bool show_vector_plot = true;
 
 	// Charge oscillation frequency
-	double charge_oscillation_freq = 0.0f;
+	double charge_oscillation_freq = 1.0f;
 
 	// Simulation time control variable
 	double total_simulation_time = 10.0f;
@@ -44,5 +44,5 @@ public:
 	void init();
 	void render_window();
 private:
-
+	Stopwatch stopwatch;
 };

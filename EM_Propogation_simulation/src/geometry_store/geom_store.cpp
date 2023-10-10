@@ -375,7 +375,7 @@ void geom_store::create_geometry()
 	inl_window->curve_imported = true;
 
 	// Add the path
-	this->charge_path.add_path(curve_paths, 0, 1.0);
+	this->charge_path.add_path(curve_paths, 0);
 
 
 	// Geometry is loaded
@@ -537,7 +537,7 @@ void geom_store::paint_model()
 		inl_window->execute_apply_path = false;
 
 		// Create new path
-		this->charge_path.add_path(inl_window->curve_paths, inl_window->selected_curvepath_option, inl_window->oscillation_freq);
+		this->charge_path.add_path(inl_window->curve_paths, inl_window->selected_curvepath_option);
 	}
 
 	if (md_window->is_show_window == true)
@@ -589,13 +589,13 @@ void geom_store::paint_postprocess()
 		geom_param.normalized_defl_scale = 1.0f;
 		geom_param.defl_scale = sol_window->deformation_scale_max;
 
-		// pulse_result_lineelements.update_geometry_matrices(false, false, false, false, true);
+		charge_path.update_geometry_matrices(false, false, false, true, true);
 		// pulse_result_nodes.update_geometry_matrices(false, false, false, false, true);
 
 		// ______________________________________________________________________________________
 
-		// Paint the pulse lines
-		// pulse_result_lineelements.paint_pulse_elementlines(sol_pulse_window->time_step);
+		// Paint the charge path
+		charge_path.paint_charge_oscillation(sol_window->time_step);
 
 		// Paint the pulse nodes
 		// pulse_result_nodes.paint_pulse_nodes(sol_pulse_window->time_step);
@@ -613,19 +613,15 @@ void geom_store::paint_postprocess()
 		}
 		else
 		{
-			// Charge path oscillation
-			sol_window->charge_oscillation_freq = inl_window->oscillation_freq;
 
 			// Modal analysis is complete (check whether frequency response analysis is complete or not)
 			if (is_analysis_complete == true)
 			{
 				// Set the charge oscillation analysis result
 				sol_window->is_analysis_complete = true;
-				// sol_window->time_interval_atrun = sol_window.time_interval;
-				//sol_pulse_window->time_step_count = pulse_response_result.time_step_count;
 
-				//// Reset the buffers for charge analysis (charge path)
-				//pulse_result_lineelements.set_buffer();
+				// Reset the buffers for charge analysis (charge path)
+				// pulse_result_lineelements.set_buffer();
 				//pulse_result_nodes.set_buffer();
 
 				// Charge analysis is complete
@@ -644,6 +640,7 @@ void geom_store::paint_postprocess()
 
 		ch_solver.charge_oscillation_analysis_start(grid_nodes,
 			charge_path,
+			sol_window->charge_oscillation_freq,
 			sol_window->total_simulation_time,
 			sol_window->time_interval,
 			node_vector,
@@ -674,11 +671,11 @@ void geom_store::paint_postprocess()
 		{
 			// Set the charge oscillation analysis result
 			sol_window->is_analysis_complete = true;
-			//sol_pulse_window->time_interval_atrun = pulse_response_result.time_interval;
-			//sol_pulse_window->time_step_count = pulse_response_result.time_step_count;
+			sol_window->time_interval_atrun = ch_solver.time_interval;
+			sol_window->time_step_count = ch_solver.time_step_count;
 
-			//// Reset the buffers for pulse result nodes and lines
-			//pulse_result_lineelements.set_buffer();
+			// Reset the buffers for pulse result nodes and lines
+			charge_path.set_path_buffer();
 			//pulse_result_nodes.set_buffer();
 
 			// Charge analysis is complete

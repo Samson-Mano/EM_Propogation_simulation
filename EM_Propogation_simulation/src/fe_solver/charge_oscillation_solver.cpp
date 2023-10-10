@@ -12,6 +12,7 @@ charge_oscillation_solver::~charge_oscillation_solver()
 
 void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_list_store& grid_nodes, 
 	charge_path_store& charge_path, 
+	const double charge_oscillation_freq,
 	const double total_simulation_time, 
 	const double time_interval, 
 	nodevector_list_store& node_vector, 
@@ -37,9 +38,13 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 	//std::vector<double> segment_length = charge_path.segment_length; // Individual path segment length
 
 	double param_t = 0.0;
-	double angular_freq = 2.0 * m_pi * charge_path.charge_oscillation_freq; // Angular charge oscillation frequency
+	double angular_freq = 2.0 * m_pi * charge_oscillation_freq; // Angular charge oscillation frequency
 	int cycle_n = 1;
 	double t1 = 0.0;
+
+	// Charge origin
+	glm::vec2 charge_origin = charge_path.get_charge_path_location_at_t(0);
+	double max_dist = 0.0;
 
 	for (double time_t = 0.0; time_t <= total_simulation_time; time_t = time_t + time_interval)
 	{
@@ -51,7 +56,7 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 				t1 = time_t;
 				cycle_n++;
 			}
-			param_t = 0.25 * (1.0 - std::cos(angular_freq * (time_t - t1)));
+			param_t = 0.5 * (1.0 - std::cos(angular_freq * (time_t - t1)));
 
 		}
 		else
@@ -59,13 +64,27 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 			param_t = 0.5 * (1.0 - std::cos(angular_freq * time_t));
 		}
 		
+		// get the charge location
 		glm::vec2 ch_at_t = charge_path.get_charge_path_location_at_t(param_t);
 
-		std::cout << ch_at_t.x << "," << ch_at_t.y << std::endl;
+		// Distance 
+		double dist = std::sqrt(std::pow(charge_origin.x - ch_at_t.x,2) + std::pow(charge_origin.y - ch_at_t.y,2));
+		if (dist > max_dist)
+		{
+			// Set the maximum distance
+			max_dist = dist;
+		}
 
-
+		// Add to the list
+		charge_loc_at_t.push_back(ch_at_t);
 	}
 
+
+	// Add the charge path
+	this->time_interval = time_interval;
+	this->time_step_count = static_cast<int>(charge_loc_at_t.size());
+
+	charge_path.add_charge_oscillation(charge_loc_at_t[0], charge_loc_at_t);
 
 
 	is_analysis_complete = true;

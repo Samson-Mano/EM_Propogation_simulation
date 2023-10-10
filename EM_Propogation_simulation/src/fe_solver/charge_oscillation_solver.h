@@ -34,12 +34,14 @@ class charge_oscillation_solver
 {
 public:
 	const double m_pi = 3.14159265358979323846;
-
+	double time_interval = 0.0;
+	int time_step_count = 0;
 
 	charge_oscillation_solver();
 	~charge_oscillation_solver();
 	void charge_oscillation_analysis_start(const nodes_list_store& grid_nodes,
 										   charge_path_store& charge_path,
+											const double charge_oscillation_freq,
 											const double total_simulation_time,
 											const double time_interval,
 											nodevector_list_store& node_vector,

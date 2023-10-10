@@ -25,7 +25,7 @@ void geom_parameters::init()
 	geom_colors.line_color = glm::vec3(0.0f, 0.2f, 0.6f);
 	geom_colors.constraint_color = glm::vec3(0.6f, 0.0f, 0.6f);
 	geom_colors.load_color = glm::vec3(0.0f, 1.0f, 0.0f);
-	geom_colors.ptmass_color = glm::vec3(0.82f, 0.77f, 0.92f);
+	geom_colors.ptmass_color = glm::vec3(0.0f, 1.0f, 0.0f);
 
 
 	// Color of the charge path
@@ -79,3 +79,15 @@ void geom_parameters::init()
 	color = glm::vec3(r, g, b);
 	return color;
 }
+
+
+
+ void Stopwatch::reset_time()
+ {
+	 m_startTime = std::chrono::high_resolution_clock::now();
+ }
+
+ double Stopwatch::current_elapsed() const
+ {
+	 return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_startTime).count() / 1000.0;
+ }

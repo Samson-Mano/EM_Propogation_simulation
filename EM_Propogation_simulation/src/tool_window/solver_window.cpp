@@ -36,7 +36,49 @@ void solver_window::render_window()
 
 	// Show Modal analysis results
 //________________________________________________________________________________________
-	ImGui::Text("Charge Oscillation Frequency = %.3f Hz", static_cast<float>(charge_oscillation_freq));
+
+	// Oscillation frequency
+	// Text for Oscillation frequenyc
+	//_________________________________________________________________________________________
+	// Input box to give input via text
+	static bool oscillationfreq_input_mode = false;
+	static char oscillationfreq_str[16] = ""; // buffer to store input Oscillation frequency string
+	static float oscillationfreq_input = static_cast<float>(charge_oscillation_freq); // buffer to store input Oscillation frequency
+
+	// Button to switch to input mode
+	if (!oscillationfreq_input_mode)
+	{
+		if (ImGui::Button("Oscillation Frequency"))
+		{
+			oscillationfreq_input_mode = true;
+			snprintf(oscillationfreq_str, 16, "%.3f", oscillationfreq_input); // set the buffer to current Oscillation frequency
+		}
+	}
+	else // input mode
+	{
+		// Text box to input Oscillation Frequency
+		ImGui::SetNextItemWidth(60.0f);
+		if (ImGui::InputText("##InputOscillationFreq", oscillationfreq_str, IM_ARRAYSIZE(oscillationfreq_str), ImGuiInputTextFlags_CharsDecimal))
+		{
+			// convert the input string to int
+			oscillationfreq_input = static_cast<float>(atof(oscillationfreq_str));
+			// set the Oscillation Frequency to input value
+			charge_oscillation_freq = oscillationfreq_input;
+		}
+
+		// Button to switch back to slider mode
+		ImGui::SameLine();
+		if (ImGui::Button("OK"))
+		{
+			oscillationfreq_input_mode = false;
+		}
+	}
+
+	//___________________________________________________________________________________________________________________________
+
+	// Text for Gird length
+	ImGui::SameLine();
+	ImGui::Text("Oscillation frequency = %.3f", charge_oscillation_freq);
 
 	// Inputs
 	// Text for total simulation time
@@ -294,7 +336,35 @@ void solver_window::render_window()
 
 	//______________________________________________ END of Imgui interface ___________________
 
+	// Cycle through the pulse response time step
+	if (is_analysis_complete == true)
+	{
 
+		if (animate_play == true)
+		{
+			// Stop watch
+			if ((stopwatch.current_elapsed() * animation_speed) > time_interval_atrun)
+			{
+				stopwatch.reset_time(); // reset the time
+				time_step++; // increment the time step
+
+				// Adjust the time step such that it didnot exceed the time_step_total
+				if (time_step >= time_step_count)
+				{
+					time_step = 0;
+				}
+			}
+		}
+		else if (animate_pause == true)
+		{
+			// Pause the animation
+		}
+		else
+		{
+			// Stop the animation (show the end of animation)
+			time_step = time_step_count - 1;
+		}
+	}
 
 
 }

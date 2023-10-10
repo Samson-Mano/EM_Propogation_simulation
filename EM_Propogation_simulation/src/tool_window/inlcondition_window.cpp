@@ -97,49 +97,6 @@ void inlcondition_window::render_window()
 	path_scale_factor = path_scale_input;
 	
 	//_________________________________________________________________________________________
-	
-	// Oscillation frequency
-	// Text for Oscillation frequenyc
-	//_________________________________________________________________________________________
-	// Input box to give input via text
-	static bool oscillationfreq_input_mode = false;
-	static char oscillationfreq_str[16] = ""; // buffer to store input Oscillation frequency string
-	static float oscillationfreq_input = static_cast<float>(oscillation_freq); // buffer to store input Oscillation frequency
-
-	// Button to switch to input mode
-	if (!oscillationfreq_input_mode)
-	{
-		if (ImGui::Button("Oscillation Frequency"))
-		{
-			oscillationfreq_input_mode = true;
-			snprintf(oscillationfreq_str, 16, "%.3f", oscillationfreq_input); // set the buffer to current Oscillation frequency
-		}
-	}
-	else // input mode
-	{
-		// Text box to input Oscillation Frequency
-		ImGui::SetNextItemWidth(60.0f);
-		if (ImGui::InputText("##InputOscillationFreq", oscillationfreq_str, IM_ARRAYSIZE(oscillationfreq_str), ImGuiInputTextFlags_CharsDecimal))
-		{
-			// convert the input string to int
-			oscillationfreq_input = static_cast<float>(atof(oscillationfreq_str));
-			// set the Oscillation Frequency to input value
-			oscillation_freq = oscillationfreq_input;
-		}
-
-		// Button to switch back to slider mode
-		ImGui::SameLine();
-		if (ImGui::Button("OK"))
-		{
-			oscillationfreq_input_mode = false;
-		}
-	}
-
-	//___________________________________________________________________________________________________________________________
-
-	// Text for Gird length
-	ImGui::SameLine();
-	ImGui::Text("Oscillation frequency = %.3f", oscillation_freq);
 
 	ImGui::Spacing();
 	ImGui::Spacing();

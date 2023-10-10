@@ -5,6 +5,18 @@
 #include <glm/ext.hpp>
 #include <sstream>
 #include "geometry_buffers/font_atlas.h"
+#include <chrono>
+
+class Stopwatch
+{
+public:
+	void reset_time();
+	double current_elapsed() const;
+
+private:
+	std::chrono::time_point<std::chrono::high_resolution_clock> m_startTime = std::chrono::high_resolution_clock::time_point();
+	// std::chrono::time_point<std::chrono::high_resolution_clock> m_endTime;
+};
 
 struct geom_color_theme
 {

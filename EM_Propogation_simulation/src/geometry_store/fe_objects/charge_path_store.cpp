@@ -26,10 +26,10 @@ void charge_path_store::init(geom_parameters* geom_param_ptr)
 	chargePathMap.clear();
 }
 
-void charge_path_store::add_path(std::vector<std::string> curve_paths, int path_type, double charge_oscillation_freq)
+void charge_path_store::add_path(std::vector<std::string> curve_paths, int path_type)
 {
 	// Check the input
-	if (curve_paths.size() < 2 || charge_oscillation_freq < 0.001)
+	if (curve_paths.size() < 2)
 	{
 		// Input error
 		return;
@@ -113,14 +113,14 @@ void charge_path_store::add_path(std::vector<std::string> curve_paths, int path_
 
 		// Calculate the length
 		segment_length = std::sqrt(std::pow(point2.x - point1.x, 2) + std::pow(point2.y - point1.y, 2));
-		this->charge_total_length = this->charge_total_length + std::sqrt(std::pow(point2.x - point1.x, 2) + std::pow(point2.y - point1.y, 2));
-		this->segment_length.push_back(segment_length);
+		// this->charge_total_length = this->charge_total_length + std::sqrt(std::pow(point2.x - point1.x, 2) + std::pow(point2.y - point1.y, 2));
+		// this->segment_length.push_back(segment_length);
 
 	}
 
 	// Assign Path type & charge oscillation
 	this->path_type = path_type;
-	this->charge_oscillation_freq = charge_oscillation_freq;
+	// this->charge_oscillation_freq = charge_oscillation_freq;
 
 	is_pathset = true;
 
@@ -128,18 +128,15 @@ void charge_path_store::add_path(std::vector<std::string> curve_paths, int path_
 	set_buffer();
 }
 
-void charge_path_store::add_charge_oscillation(const double total_simulation_time, const double time_interval)
+void charge_path_store::add_charge_oscillation(glm::vec2& charge_origin, std::vector<glm::vec2>& charge_path_pts)
 {
 	// Charge oscillation path
 	path_tracks.clear_textures();
 
-
-
-
-
-
-	// Set the buffers
-	path_tracks.set_buffer();
+	// Add the path points to the texture
+	int id = 0;
+	double value = 10.0;
+	path_tracks.add_texture(id, charge_origin, charge_path_pts, value);
 
 }
 
@@ -149,6 +146,12 @@ void charge_path_store::set_buffer()
 	// Set the buffers for the Model
 	path_points.set_buffer();
 	path_lines.set_buffer();
+}
+
+void charge_path_store::set_path_buffer()
+{
+	// Set the path buffer
+	path_tracks.set_buffer();
 }
 
 glm::vec2 charge_path_store::get_charge_path_location_at_t(const double& param_t)
@@ -198,7 +201,7 @@ glm::vec2 charge_path_store::get_charge_path_location_at_t(const double& param_t
 	int pt_index1 = seg_index; // point index 1
 	int pt_index2 = 0;
 
-	if (seg_index != pt_count)
+	if ((seg_index+1) != pt_count)
 	{
 		pt_index2 = pt_index1 + 1;
 	}
@@ -230,6 +233,6 @@ void charge_path_store::update_geometry_matrices(bool set_modelmatrix, bool set_
 	// Update model openGL uniforms
 	path_points.update_opengl_uniforms(set_modelmatrix, set_pantranslation, set_zoomtranslation, set_transparency, set_deflscale);
 	path_lines.update_opengl_uniforms(set_modelmatrix, set_pantranslation, set_zoomtranslation, set_transparency, set_deflscale);
-	path_tracks.update_opengl_uniforms(set_modelmatrix, set_pantranslation, set_zoomtranslation, set_transparency, set_deflscale);
+	path_tracks.update_opengl_uniforms(set_modelmatrix, set_pantranslation, set_zoomtranslation, false, set_deflscale);
 
 }
