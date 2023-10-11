@@ -223,6 +223,8 @@
     <None Include="resources\dlls\glfw3.dll" />
     <None Include="resources\shaders\constraint_frag_shader.frag" />
     <None Include="resources\shaders\constraint_vert_shader.vert" />
+    <None Include="resources\shaders\dyntexture_frag_shader.frag" />
+    <None Include="resources\shaders\dyntexture_vert_shader.vert" />
     <None Include="resources\shaders\load_frag_shader.frag" />
     <None Include="resources\shaders\load_vert_shader.vert" />
     <None Include="resources\shaders\point_frag_shader.frag" />

@@ -675,6 +675,8 @@ void geom_store::paint_postprocess()
 			sol_window->time_step_count = ch_solver.time_step_count;
 
 			// Reset the buffers for pulse result nodes and lines
+			charge_path.update_geometry_matrices(false, false, false, true, true);
+
 			charge_path.set_path_buffer();
 			//pulse_result_nodes.set_buffer();
 

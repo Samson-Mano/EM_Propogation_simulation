@@ -18,8 +18,8 @@ void dynamic_texture_list_store::init(geom_parameters* geom_param_ptr)
 	// Create the shader and Texture for the drawing the constraints
 	std::filesystem::path shadersPath = geom_param_ptr->resourcePath;
 
-	dyn_texture_shader.create_shader((shadersPath.string() + "/resources/shaders/ptmass_vert_shader.vert").c_str(),
-		(shadersPath.string() + "/resources/shaders/ptmass_frag_shader.frag").c_str());
+	dyn_texture_shader.create_shader((shadersPath.string() + "/resources/shaders/dyntexture_vert_shader.vert").c_str(),
+		(shadersPath.string() + "/resources/shaders/dyntexture_frag_shader.frag").c_str());
 
 	// Set texture uniform
 	dyn_texture_shader.setUniform("u_Texture", 0);
@@ -33,12 +33,11 @@ void dynamic_texture_list_store::init(geom_parameters* geom_param_ptr)
 	dyn_textureMap.clear();
 }
 
-void dynamic_texture_list_store::add_texture(int& dyn_texture_id, glm::vec2& dyn_texture_loc, std::vector<glm::vec2>& dyn_point_offset,double& texture_value)
+void dynamic_texture_list_store::add_texture(int& dyn_texture_id, std::vector<glm::vec2>& dyn_texture_loc,double& texture_value)
 {
 	dynamic_texture_store dyn_temp_tx;
 	dyn_temp_tx.dyn_texture_id = dyn_texture_id;
-	dyn_temp_tx.dyn_texture_loc = dyn_texture_loc;
-	dyn_temp_tx.dyn_point_offset = dyn_point_offset; // Dynamic point offset
+	dyn_temp_tx.dyn_texture_loc = dyn_texture_loc; // Dynamic point location
 	dyn_temp_tx.texture_value = texture_value; // Texture value
 
 	if (std::abs(texture_value) > max_texture_value)
@@ -83,13 +82,11 @@ void dynamic_texture_list_store::set_buffer()
 	VertexBufferLayout texture_layout;
 	texture_layout.AddFloat(2);  // Position
 	texture_layout.AddFloat(2);  // Center
-	texture_layout.AddFloat(2);  // Defl
 	texture_layout.AddFloat(3);  // Color
 	texture_layout.AddFloat(2);  // Texture co-ordinate
-	texture_layout.AddFloat(1);  // Is Deflection
 
-	// Define the texture vertices of the model for texture (2 position, 2 center, 2 defl, 3 color, 2 texture coord  & 1 defl value) 
-	unsigned int texture_vertex_count = 4 * 12 * dyn_texture_count;
+	// Define the texture vertices of the model for texture (2 position, 2 center, 3 color & 2 texture coord) 
+	unsigned int texture_vertex_count = 4 * 9 * dyn_texture_count;
 	unsigned int texture_vertex_size = texture_vertex_count * sizeof(float);
 
 	// Allocate space for vertex buffers
@@ -120,8 +117,8 @@ void dynamic_texture_list_store::paint_textures(const int& dyn_index)
 
 void dynamic_texture_list_store::update_buffer(const int& dyn_index)
 {
-	// Define the texture vertices of the model for texture (2 position, 2 center, 2 defl, 3 color, 2 texture coord  & 1 defl value) 
-	const unsigned int texture_vertex_count = 4 * 12 * dyn_texture_count;
+	// Define the texture vertices of the model for texture (2 position, 2 center, 3 color & 2 texture coord) 
+	const unsigned int texture_vertex_count = 4 * 9 * dyn_texture_count;
 	float* texture_vertices = new float[texture_vertex_count];
 
 	unsigned int texture_v_index = 0;
@@ -191,118 +188,92 @@ void dynamic_texture_list_store::get_texture_vertex_buffer(dynamic_texture_store
 {
 	// Constraint color
 	glm::vec3 tx_color = geom_param_ptr->geom_colors.ptmass_color;
-	float corner_size = static_cast<float>(-3.4 * (dyn_tx.texture_value / max_texture_value) * (geom_param_ptr->node_circle_radii / geom_param_ptr->geom_scale));
+	float corner_size = static_cast<float>(-3.4 * (dyn_tx.texture_value / max_texture_value) * (geom_param_ptr->charge_circle_radii / geom_param_ptr->geom_scale));
 
 	// Set the Point mass vertices Corner 1 Top Left
-	dyn_point_vertices[dyn_point_v_index + 0] = dyn_tx.dyn_texture_loc.x - corner_size;
-	dyn_point_vertices[dyn_point_v_index + 1] = dyn_tx.dyn_texture_loc.y + corner_size;
+	dyn_point_vertices[dyn_point_v_index + 0] = dyn_tx.dyn_texture_loc[dyn_index].x - corner_size;
+	dyn_point_vertices[dyn_point_v_index + 1] = dyn_tx.dyn_texture_loc[dyn_index].y + corner_size;
 
 	// Set the node center
-	dyn_point_vertices[dyn_point_v_index + 2] = dyn_tx.dyn_texture_loc.x;
-	dyn_point_vertices[dyn_point_v_index + 3] = dyn_tx.dyn_texture_loc.y;
-
-	// Defl value
-	dyn_point_vertices[dyn_point_v_index + 4] = dyn_tx.dyn_point_offset[dyn_index].x;
-	dyn_point_vertices[dyn_point_v_index + 5] = dyn_tx.dyn_point_offset[dyn_index].y;
+	dyn_point_vertices[dyn_point_v_index + 2] = dyn_tx.dyn_texture_loc[dyn_index].x;
+	dyn_point_vertices[dyn_point_v_index + 3] = dyn_tx.dyn_texture_loc[dyn_index].y;
 
 	// Set the node color
-	dyn_point_vertices[dyn_point_v_index + 6] = tx_color.x;
-	dyn_point_vertices[dyn_point_v_index + 7] = tx_color.y;
-	dyn_point_vertices[dyn_point_v_index + 8] = tx_color.z;
+	dyn_point_vertices[dyn_point_v_index + 4] = tx_color.x;
+	dyn_point_vertices[dyn_point_v_index + 5] = tx_color.y;
+	dyn_point_vertices[dyn_point_v_index + 6] = tx_color.z;
 
 	// Set the Texture co-ordinates
-	dyn_point_vertices[dyn_point_v_index + 9] = 0.0;
-	dyn_point_vertices[dyn_point_v_index + 10] = 0.0;
+	dyn_point_vertices[dyn_point_v_index + 7] = 0.0;
+	dyn_point_vertices[dyn_point_v_index + 8] = 0.0;
 
-	// Set the defl_value
-	dyn_point_vertices[dyn_point_v_index + 11] = true; // offset is enabled for Dynamic points
 
 	// Increment
-	dyn_point_v_index = dyn_point_v_index + 12;
+	dyn_point_v_index = dyn_point_v_index + 9;
 
 
 	// Set the Point mass vertices Corner 2 Top Right
-	dyn_point_vertices[dyn_point_v_index + 0] = dyn_tx.dyn_texture_loc.x + corner_size;
-	dyn_point_vertices[dyn_point_v_index + 1] = dyn_tx.dyn_texture_loc.y + corner_size;
+	dyn_point_vertices[dyn_point_v_index + 0] = dyn_tx.dyn_texture_loc[dyn_index].x + corner_size;
+	dyn_point_vertices[dyn_point_v_index + 1] = dyn_tx.dyn_texture_loc[dyn_index].y + corner_size;
 
 	// Set the node center
-	dyn_point_vertices[dyn_point_v_index + 2] = dyn_tx.dyn_texture_loc.x;
-	dyn_point_vertices[dyn_point_v_index + 3] = dyn_tx.dyn_texture_loc.y;
-
-	// Defl value
-	dyn_point_vertices[dyn_point_v_index + 4] = dyn_tx.dyn_point_offset[dyn_index].x;
-	dyn_point_vertices[dyn_point_v_index + 5] = dyn_tx.dyn_point_offset[dyn_index].y;
+	dyn_point_vertices[dyn_point_v_index + 2] = dyn_tx.dyn_texture_loc[dyn_index].x;
+	dyn_point_vertices[dyn_point_v_index + 3] = dyn_tx.dyn_texture_loc[dyn_index].y;
 
 	// Set the node color
-	dyn_point_vertices[dyn_point_v_index + 6] = tx_color.x;
-	dyn_point_vertices[dyn_point_v_index + 7] = tx_color.y;
-	dyn_point_vertices[dyn_point_v_index + 8] = tx_color.z;
+	dyn_point_vertices[dyn_point_v_index + 4] = tx_color.x;
+	dyn_point_vertices[dyn_point_v_index + 5] = tx_color.y;
+	dyn_point_vertices[dyn_point_v_index + 6] = tx_color.z;
 
 	// Set the Texture co-ordinates
-	dyn_point_vertices[dyn_point_v_index + 9] = 1.0;
-	dyn_point_vertices[dyn_point_v_index + 10] = 0.0;
-
-	// Set the defl_value
-	dyn_point_vertices[dyn_point_v_index + 11] = true; // offset is enabled for Dynamic points
+	dyn_point_vertices[dyn_point_v_index + 7] = 1.0;
+	dyn_point_vertices[dyn_point_v_index + 8] = 0.0;
 
 	// Increment
-	dyn_point_v_index = dyn_point_v_index + 12;
+	dyn_point_v_index = dyn_point_v_index + 9;
 
 
 	// Set the Point Mass vertices Corner 3 Bot Right
-	dyn_point_vertices[dyn_point_v_index + 0] = dyn_tx.dyn_texture_loc.x + corner_size;
-	dyn_point_vertices[dyn_point_v_index + 1] = dyn_tx.dyn_texture_loc.y - corner_size;
+	dyn_point_vertices[dyn_point_v_index + 0] = dyn_tx.dyn_texture_loc[dyn_index].x + corner_size;
+	dyn_point_vertices[dyn_point_v_index + 1] = dyn_tx.dyn_texture_loc[dyn_index].y - corner_size;
 
 	// Set the node center
-	dyn_point_vertices[dyn_point_v_index + 2] = dyn_tx.dyn_texture_loc.x;
-	dyn_point_vertices[dyn_point_v_index + 3] = dyn_tx.dyn_texture_loc.y;
-
-	// Defl value
-	dyn_point_vertices[dyn_point_v_index + 4] = dyn_tx.dyn_point_offset[dyn_index].x;
-	dyn_point_vertices[dyn_point_v_index + 5] = dyn_tx.dyn_point_offset[dyn_index].y;
+	dyn_point_vertices[dyn_point_v_index + 2] = dyn_tx.dyn_texture_loc[dyn_index].x;
+	dyn_point_vertices[dyn_point_v_index + 3] = dyn_tx.dyn_texture_loc[dyn_index].y;
 
 	// Set the node color
-	dyn_point_vertices[dyn_point_v_index + 6] = tx_color.x;
-	dyn_point_vertices[dyn_point_v_index + 7] = tx_color.y;
-	dyn_point_vertices[dyn_point_v_index + 8] = tx_color.z;
+	dyn_point_vertices[dyn_point_v_index + 4] = tx_color.x;
+	dyn_point_vertices[dyn_point_v_index + 5] = tx_color.y;
+	dyn_point_vertices[dyn_point_v_index + 6] = tx_color.z;
 
 	// Set the Texture co-ordinates
-	dyn_point_vertices[dyn_point_v_index + 9] = 1.0;
-	dyn_point_vertices[dyn_point_v_index + 10] = 1.0;
+	dyn_point_vertices[dyn_point_v_index + 7] = 1.0;
+	dyn_point_vertices[dyn_point_v_index + 8] = 1.0;
 
-	// Set the defl_value
-	dyn_point_vertices[dyn_point_v_index + 11] = true; // offset is enabled for Dynamic points
 
 	// Increment
-	dyn_point_v_index = dyn_point_v_index + 12;
+	dyn_point_v_index = dyn_point_v_index + 9;
 
 
 	// Set the Constraint vertices Corner 4 Bot Left
-	dyn_point_vertices[dyn_point_v_index + 0] = dyn_tx.dyn_texture_loc.x - corner_size;
-	dyn_point_vertices[dyn_point_v_index + 1] = dyn_tx.dyn_texture_loc.y - corner_size;
+	dyn_point_vertices[dyn_point_v_index + 0] = dyn_tx.dyn_texture_loc[dyn_index].x - corner_size;
+	dyn_point_vertices[dyn_point_v_index + 1] = dyn_tx.dyn_texture_loc[dyn_index].y - corner_size;
 
 	// Set the node center
-	dyn_point_vertices[dyn_point_v_index + 2] = dyn_tx.dyn_texture_loc.x;
-	dyn_point_vertices[dyn_point_v_index + 3] = dyn_tx.dyn_texture_loc.y;
-
-	// Defl value
-	dyn_point_vertices[dyn_point_v_index + 4] = dyn_tx.dyn_point_offset[dyn_index].x;
-	dyn_point_vertices[dyn_point_v_index + 5] = dyn_tx.dyn_point_offset[dyn_index].y;
+	dyn_point_vertices[dyn_point_v_index + 2] = dyn_tx.dyn_texture_loc[dyn_index].x;
+	dyn_point_vertices[dyn_point_v_index + 3] = dyn_tx.dyn_texture_loc[dyn_index].y;
 
 	// Set the node color
-	dyn_point_vertices[dyn_point_v_index + 6] = tx_color.x;
-	dyn_point_vertices[dyn_point_v_index + 7] = tx_color.y;
-	dyn_point_vertices[dyn_point_v_index + 8] = tx_color.z;
+	dyn_point_vertices[dyn_point_v_index + 4] = tx_color.x;
+	dyn_point_vertices[dyn_point_v_index + 5] = tx_color.y;
+	dyn_point_vertices[dyn_point_v_index + 6] = tx_color.z;
 
 	// Set the Texture co-ordinates
-	dyn_point_vertices[dyn_point_v_index + 9] = 0.0;
-	dyn_point_vertices[dyn_point_v_index + 10] = 1.0;
-
-	// Set the defl_value
-	dyn_point_vertices[dyn_point_v_index + 11] = true; // offset is enabled for Dynamic points
+	dyn_point_vertices[dyn_point_v_index + 7] = 0.0;
+	dyn_point_vertices[dyn_point_v_index + 8] = 1.0;
 
 	// Increment
-	dyn_point_v_index = dyn_point_v_index + 12;
+	dyn_point_v_index = dyn_point_v_index + 9;
 
 }
 

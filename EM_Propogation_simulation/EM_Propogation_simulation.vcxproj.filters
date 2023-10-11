@@ -297,6 +297,8 @@
     <None Include="resources\shaders\text_vert_shader.vert" />
     <None Include="resources\shaders\tri_frag_shader.frag" />
     <None Include="resources\shaders\tri_vert_shader.vert" />
+    <None Include="resources\shaders\dyntexture_vert_shader.vert" />
+    <None Include="resources\shaders\dyntexture_frag_shader.frag" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="src\tool_window\model_data.txt" />

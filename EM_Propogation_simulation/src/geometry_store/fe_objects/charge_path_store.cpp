@@ -114,21 +114,22 @@ void charge_path_store::add_path(std::vector<std::string> curve_paths, int path_
 		// Calculate the length
 		segment_length = std::sqrt(std::pow(point2.x - point1.x, 2) + std::pow(point2.y - point1.y, 2));
 		// this->charge_total_length = this->charge_total_length + std::sqrt(std::pow(point2.x - point1.x, 2) + std::pow(point2.y - point1.y, 2));
-		// this->segment_length.push_back(segment_length);
+		this->charge_total_length = this->charge_total_length + segment_length;
+		this->segment_length.push_back(segment_length);
 
+		// Add the first point as end point to complete the loop
+		path_points.add_point(path_points.pointMap[0].point_id, path_points.pointMap[0].point_loc, path_points.pointMap[0].point_offset, temp_color, false);
 	}
 
 	// Assign Path type & charge oscillation
 	this->path_type = path_type;
-	// this->charge_oscillation_freq = charge_oscillation_freq;
-
 	is_pathset = true;
 
 	// Set the buffer
 	set_buffer();
 }
 
-void charge_path_store::add_charge_oscillation(glm::vec2& charge_origin, std::vector<glm::vec2>& charge_path_pts)
+void charge_path_store::add_charge_oscillation(std::vector<glm::vec2>& charge_path_pts)
 {
 	// Charge oscillation path
 	path_tracks.clear_textures();
@@ -136,7 +137,7 @@ void charge_path_store::add_charge_oscillation(glm::vec2& charge_origin, std::ve
 	// Add the path points to the texture
 	int id = 0;
 	double value = 10.0;
-	path_tracks.add_texture(id, charge_origin, charge_path_pts, value);
+	path_tracks.add_texture(id, charge_path_pts, value);
 
 }
 

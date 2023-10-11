@@ -43,7 +43,6 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 	double t1 = 0.0;
 
 	// Charge origin
-	glm::vec2 charge_origin = charge_path.get_charge_path_location_at_t(0);
 	double max_dist = 0.0;
 
 	for (double time_t = 0.0; time_t <= total_simulation_time; time_t = time_t + time_interval)
@@ -67,14 +66,6 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 		// get the charge location
 		glm::vec2 ch_at_t = charge_path.get_charge_path_location_at_t(param_t);
 
-		// Distance 
-		double dist = std::sqrt(std::pow(charge_origin.x - ch_at_t.x,2) + std::pow(charge_origin.y - ch_at_t.y,2));
-		if (dist > max_dist)
-		{
-			// Set the maximum distance
-			max_dist = dist;
-		}
-
 		// Add to the list
 		charge_loc_at_t.push_back(ch_at_t);
 	}
@@ -84,7 +75,7 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 	this->time_interval = time_interval;
 	this->time_step_count = static_cast<int>(charge_loc_at_t.size());
 
-	charge_path.add_charge_oscillation(charge_loc_at_t[0], charge_loc_at_t);
+	charge_path.add_charge_oscillation(charge_loc_at_t);
 
 
 	is_analysis_complete = true;

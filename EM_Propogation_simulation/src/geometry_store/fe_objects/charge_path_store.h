@@ -30,7 +30,7 @@ public:
 	~charge_path_store();
 	void init(geom_parameters* geom_param_ptr);
 	void add_path(std::vector<std::string> curve_paths,int path_type);
-	void add_charge_oscillation(glm::vec2& charge_origin, std::vector<glm::vec2>& charge_path_pts);
+	void add_charge_oscillation(std::vector<glm::vec2>& charge_path_pts);
 	void set_buffer();
 	void set_path_buffer();
 	glm::vec2 get_charge_path_location_at_t(const double& param_t);

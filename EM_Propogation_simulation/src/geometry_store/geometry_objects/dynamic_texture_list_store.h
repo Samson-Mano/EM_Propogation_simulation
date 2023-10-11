@@ -6,8 +6,7 @@
 struct dynamic_texture_store
 {
 	int dyn_texture_id = 0;
-	glm::vec2 dyn_texture_loc = glm::vec2(0);
-	std::vector<glm::vec2> dyn_point_offset; // Dynamic point offset
+	std::vector<glm::vec2> dyn_texture_loc; // Dynamic point location
 	double texture_value = 0.0;
 };
 
@@ -23,7 +22,7 @@ public:
 	dynamic_texture_list_store();
 	~dynamic_texture_list_store();
 	void init(geom_parameters* geom_param_ptr);
-	void add_texture(int& dyn_texture_id, glm::vec2& dyn_texture_loc, std::vector<glm::vec2>& dyn_point_offset, double& texture_value);
+	void add_texture(int& dyn_texture_id, std::vector<glm::vec2>& dyn_point_loc, double& texture_value);
 	void set_buffer();
 	void paint_textures(const int& dyn_index);
 	void update_buffer(const int& dyn_index);
