@@ -129,10 +129,15 @@ void charge_path_store::add_path(std::vector<std::string> curve_paths, int path_
 	set_buffer();
 }
 
-void charge_path_store::add_charge_oscillation(std::vector<glm::vec2>& charge_path_pts)
+void charge_path_store::add_charge_oscillation(std::vector<glm::vec2>& charge_path_pts, std::vector<glm::vec2>& charge_velocity, std::vector<glm::vec2>& charge_acceleration)
 {
 	// Charge oscillation path
 	path_tracks.clear_textures();
+
+	// Add the values points, velocity & acceleration
+	ch_location_at_t = charge_path_pts;
+	ch_velocity_at_t = charge_velocity;
+	ch_acceleration_at_t = charge_acceleration;
 
 	// Add the path points to the texture
 	int id = 0;
@@ -155,22 +160,12 @@ void charge_path_store::set_path_buffer()
 	path_tracks.set_buffer();
 }
 
-glm::vec2 charge_path_store::get_charge_path_location_at_t(const double& param_t)
+std::pair<glm::vec2, glm::vec2>  charge_path_store::get_charge_path_location_at_t(const double& param_t)
 {
 	// Charge path point
 	double length_at_t = 0.0;
 	
-	//if (path_type == 0)
-	//{
-	//	// closed loop
-	//	length_at_t = 0.5 * param_t * this->charge_total_length;
-	//}
-	//else
-	//{
-	//	// open curve
-	//	length_at_t = param_t * this->charge_total_length;
-	//}
-
+	// Amount of length travelled based on param t (0 - 1)
 	length_at_t = param_t * this->charge_total_length;
 
 	int pt_count = static_cast<int>(chargePathMap.size()); // point count
@@ -212,7 +207,18 @@ glm::vec2 charge_path_store::get_charge_path_location_at_t(const double& param_t
 	double pt_at_t_x = (chargePathMap[pt_index1].path_pts.x * (1 - segment_t_ratio)) + (chargePathMap[pt_index2].path_pts.x * segment_t_ratio);
 	double pt_at_t_y = (chargePathMap[pt_index1].path_pts.y * (1 - segment_t_ratio)) + (chargePathMap[pt_index2].path_pts.y * segment_t_ratio);
 
-	return glm::vec2(pt_at_t_x, pt_at_t_y);
+
+	// Make the pair (1 - Location of the charge, 2 - Direction vector of the charge)
+	glm::vec2 location_at_t = glm::vec2(pt_at_t_x, pt_at_t_y); // Location
+
+	// Find the direction vector from two point
+	glm::vec2 direction_vector = chargePathMap[pt_index2].path_pts - chargePathMap[pt_index1].path_pts;
+
+	// Normalized the direction vector 
+	glm::vec2 normalized_direction_vector = glm::normalize(direction_vector);
+
+
+	return std::make_pair(location_at_t,normalized_direction_vector);
 }
 
 

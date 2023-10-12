@@ -26,14 +26,19 @@ public:
 	double charge_total_length = 0.0;
 	bool is_pathset = false;
 
+	// Path location, velocity and acceleration
+	std::vector<glm::vec2> ch_location_at_t;
+	std::vector<glm::vec2> ch_velocity_at_t;
+	std::vector<glm::vec2> ch_acceleration_at_t;
+
 	charge_path_store();
 	~charge_path_store();
 	void init(geom_parameters* geom_param_ptr);
 	void add_path(std::vector<std::string> curve_paths,int path_type);
-	void add_charge_oscillation(std::vector<glm::vec2>& charge_path_pts);
+	void add_charge_oscillation(std::vector<glm::vec2>& charge_path_pts, std::vector<glm::vec2>& charge_velocity, std::vector<glm::vec2>& charge_acceleration);
 	void set_buffer();
 	void set_path_buffer();
-	glm::vec2 get_charge_path_location_at_t(const double& param_t);
+	std::pair<glm::vec2, glm::vec2>  get_charge_path_location_at_t(const double& param_t);
 	void paint_charge_path();
 	void paint_charge_oscillation(const int& dyn_index);
 	void update_geometry_matrices(bool set_modelmatrix, bool set_pantranslation, bool set_zoomtranslation, bool set_transparency, bool set_deflscale);
