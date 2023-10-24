@@ -11,6 +11,7 @@ charge_oscillation_solver::~charge_oscillation_solver()
 }
 
 void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_list_store& grid_nodes,
+	const elementtri_list_store& grid_trimesh,
 	charge_path_store& charge_path,
 	const double charge_oscillation_freq,
 	const double total_simulation_time,
@@ -28,9 +29,10 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 	double param_t = 0.0;
 	double angular_freq = 2.0 * m_pi * charge_oscillation_freq; // Angular charge oscillation frequency
 	int cycle_n = 1; // number of cycle for closed loop
-	double t1 = 0.0;
+	double t1 = 0.0; // variable to aid in loop cycle time skip
+	double time_t = 0.0; // time t
 
-	for (double time_t = 0.0; time_t <= total_simulation_time; time_t = time_t + time_interval)
+	for (time_t = 0.0; time_t <= total_simulation_time; time_t = time_t + time_interval)
 	{
 		double velocity_mag = 0.0; // Velocity magnitude
 		double acceleration_mag = 0.0; // Acceleration magnitude
@@ -79,6 +81,62 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 	this->time_step_count = static_cast<int>(charge_loc_at_t.size());
 
 	charge_path.add_charge_oscillation(charge_loc_at_t, charge_velcoty_at_t, charge_acceleration_at_t);
+
+	// Electric field solve
+	time_t = 0.0;
+	int step_i = 0;
+	const double light_speed_c = 300000000; // Light speed c
+	node_vector.clear_data(); // clear the node vector data
+	glm::vec2 ref_zero = glm::vec2(0); // Reference zero
+
+	for (step_i = 0; step_i < this->time_step_count; step_i++)
+	{
+		time_t = step_i * time_interval; // current time t
+
+		// Charge parameters
+		glm::vec2 loc_at_t = charge_path.ch_location_at_t[step_i]; // charge location at t
+		glm::vec2 v_at_t = charge_path.ch_velocity_at_t[step_i]; // charge velocity at t
+		glm::vec2 a_at_t = charge_path.ch_acceleration_at_t[step_i]; // charge acceleration at t
+
+		double v_mag = glm::length(v_at_t); // Magnitude of velocity
+
+		// Find the w-vector
+		glm::vec2 w_vector = loc_at_t - ref_zero;
+
+		// Loop through every individual grid nodes
+		for (const auto& nd_m : grid_nodes.nodeMap)
+		{
+			int node_id = nd_m.second.node_id; // Get the node id of the grid node
+			glm::vec2 grid_node_pt = nd_m.second.node_pt; // Get the node pt of the grid point
+
+			// Find the r-vector
+			glm::vec2 r_vector = grid_node_pt - ref_zero; 
+
+			// Find the r dash-vector
+			glm::vec2 r_dash_vector = r_vector - w_vector; 
+
+			// Normalize the r dash vector
+			glm::vec2 norm_r_dash_vector = glm::normalize(r_dash_vector);
+			double magnitude_r_dash = glm::length(r_dash_vector);
+
+			// Find the u vector (u = cr' - v)
+			glm::vec2 u_vector = (static_cast<float>(light_speed_c) * norm_r_dash_vector) - v_at_t;
+
+			// Find the E const = r' / (r' dot u)^3
+			double e_vec_const = magnitude_r_dash / std::pow( glm::dot(r_dash_vector, u_vector),3);
+
+
+
+
+		}
+
+
+		
+
+
+	}
+
+
 
 
 	is_analysis_complete = true;

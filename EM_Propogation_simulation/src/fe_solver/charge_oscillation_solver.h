@@ -4,6 +4,7 @@
 
 // FE Objects
 #include "../geometry_store/fe_objects/nodes_list_store.h"
+#include "../geometry_store/fe_objects/elementtri_list_store.h"
 #include "../geometry_store/fe_objects/charge_path_store.h"
 
 // Result Objects
@@ -40,6 +41,7 @@ public:
 	charge_oscillation_solver();
 	~charge_oscillation_solver();
 	void charge_oscillation_analysis_start(const nodes_list_store& grid_nodes,
+										   const elementtri_list_store& grid_trimesh,
 										   charge_path_store& charge_path,
 											const double charge_oscillation_freq,
 											const double total_simulation_time,

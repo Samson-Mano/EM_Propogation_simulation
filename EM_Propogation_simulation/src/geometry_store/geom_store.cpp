@@ -639,6 +639,7 @@ void geom_store::paint_postprocess()
 		charge_oscillation_solver ch_solver;
 
 		ch_solver.charge_oscillation_analysis_start(grid_nodes,
+			grid_trimesh,
 			charge_path,
 			sol_window->charge_oscillation_freq,
 			sol_window->total_simulation_time,
