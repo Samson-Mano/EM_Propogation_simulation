@@ -6,11 +6,8 @@ struct dynamic_line_store
 {
 	// store the individual point
 	int line_id = 0;
-	glm::vec2 line_startpt_loc = glm::vec2(0);
-	glm::vec2 line_endpt_loc = glm::vec2(0);
-
-	std::vector<glm::vec2> line_startpt_offset; // list of start points offset
-	std::vector<glm::vec2> line_endpt_offset; // list of end points offset
+	std::vector < glm::vec2> line_startpt_loc; // Dyanmic start pt
+	std::vector < glm::vec2> line_endpt_loc; // Dynamic end pt
 
 	std::vector<glm::vec3> line_startpt_color;
 	std::vector<glm::vec3> line_endpt_color;
@@ -28,8 +25,7 @@ public:
 	dynamic_line_list_store();
 	~dynamic_line_list_store();
 	void init(geom_parameters* geom_param_ptr);
-	void add_line(int& line_id, glm::vec2& line_startpt_loc, glm::vec2& line_endpt_loc,
-		std::vector<glm::vec2>& line_startpt_offset, std::vector<glm::vec2>& line_endpt_offset,
+	void add_line(int& line_id, std::vector<glm::vec2>& line_startpt_loc, std::vector<glm::vec2>& line_endpt_loc,
 		std::vector<glm::vec3>& line_startpt_color, std::vector<glm::vec3>& line_endpt_color);
 	void set_buffer();
 	void paint_lines(const int& dyn_index);

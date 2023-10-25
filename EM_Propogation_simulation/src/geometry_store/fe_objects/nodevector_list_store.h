@@ -7,7 +7,7 @@ struct vector_data
 	int vector_id = 0; // Vector id
 	glm::vec2 vector_loc = glm::vec2(0); // Vector location
 	std::vector<glm::vec2> vector_values; // Vector magnitude and direction (list)
-	std::vector<double> vector_relative_mag; // Relative magnitude
+	std::vector<double> vector_timestep_max_mag; // Relative magnitude
 };
 
 class nodevector_list_store
@@ -19,7 +19,7 @@ public:
 	nodevector_list_store();
 	~nodevector_list_store();
 	void init(geom_parameters* geom_param_ptr);
-	void add_vector(int& vector_id, glm::vec2& vector_loc, std::vector<glm::vec2>& vector_values, std::vector<double>& vector_max_mag);
+	void add_vector(int& vector_id, glm::vec2& vector_loc, std::vector<glm::vec2>& vector_values, std::vector<double>& vector_timestep_max_mag);
 	void delete_vector(int& vector_id);
 	void clear_data();
 	void set_buffer();

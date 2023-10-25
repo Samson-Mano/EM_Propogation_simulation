@@ -26,12 +26,17 @@ void nodevector_list_store::init(geom_parameters* geom_param_ptr)
 	vectorMap.clear();
 }
 
-void nodevector_list_store::add_vector(int& vector_id, glm::vec2& vector_loc, std::vector<glm::vec2>& vector_values, std::vector<double>& vector_max_mag)
+void nodevector_list_store::add_vector(int& vector_id, glm::vec2& vector_loc, std::vector<glm::vec2>& vector_values, std::vector<double>& vector_timestep_max_mag)
 {
+	// Create a temporary vector
+	vector_data temp_vector;
+	temp_vector.vector_id = vector_id;
+	temp_vector.vector_values = vector_values;
+	temp_vector.vector_timestep_max_mag = vector_timestep_max_mag;
 
-
-
-
+	// Insert to the nodes
+	vectorMap.insert({ vector_id, temp_vector });
+	vector_count++;
 }
 
 void nodevector_list_store::delete_vector(int& vector_id)
@@ -52,20 +57,28 @@ void nodevector_list_store::clear_data()
 
 void nodevector_list_store::set_buffer()
 {
+	// Clear all the lines
+	vector_lines.clear_lines();
+	vector_arrow_left.clear_lines();
+	vector_arrow_right.clear_lines();
 
+	//_____________________ Add the Dynamic lines
 
 }
 
 void nodevector_list_store::paint_vectors(const int& dyn_index)
 {
-
+	// Paint the vector
+	vector_lines.paint_lines(dyn_index);
+	vector_arrow_left.paint_lines(dyn_index);
+	vector_arrow_right.paint_lines(dyn_index);
 
 }
 
 void nodevector_list_store::update_geometry_matrices(bool set_modelmatrix, bool set_pantranslation, bool set_zoomtranslation, bool set_transparency, bool set_deflscale)
 {
 	// Update the geometry matrices 
-	vector_lines.update_opengl_uniforms(set_modelmatrix, set_pantranslation, set_zoomtranslation, set_transparency,set_deflscale);
+	vector_lines.update_opengl_uniforms(set_modelmatrix, set_pantranslation, set_zoomtranslation, set_transparency, set_deflscale);
 	vector_arrow_left.update_opengl_uniforms(set_modelmatrix, set_pantranslation, set_zoomtranslation, set_transparency, set_deflscale);
 	vector_arrow_right.update_opengl_uniforms(set_modelmatrix, set_pantranslation, set_zoomtranslation, set_transparency, set_deflscale);
 

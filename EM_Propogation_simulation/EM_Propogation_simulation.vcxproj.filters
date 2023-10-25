@@ -135,6 +135,9 @@
     <ClCompile Include="src\geometry_store\geometry_objects\dynamic_texture_list_store.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\geometry_store\geometry_objects\dynamic_vector_list_store.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\app_window.h">
@@ -266,6 +269,9 @@
     <ClInclude Include="src\geometry_store\geometry_objects\dynamic_texture_list_store.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\geometry_store\geometry_objects\dynamic_vector_list_store.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Font Include="resources\fonts\CanadaDBNormal.ttf" />
@@ -299,6 +305,8 @@
     <None Include="resources\shaders\tri_vert_shader.vert" />
     <None Include="resources\shaders\dyntexture_vert_shader.vert" />
     <None Include="resources\shaders\dyntexture_frag_shader.frag" />
+    <None Include="resources\shaders\dynvectorpoint_frag_shader.frag" />
+    <None Include="resources\shaders\dynvectorpoint_vert_shader.vert" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="src\tool_window\model_data.txt" />

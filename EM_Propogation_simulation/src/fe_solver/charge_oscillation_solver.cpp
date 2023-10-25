@@ -86,8 +86,22 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 	time_t = 0.0;
 	int step_i = 0;
 	const double light_speed_c = 300000000; // Light speed c
-	node_vector.clear_data(); // clear the node vector data
 	glm::vec2 ref_zero = glm::vec2(0); // Reference zero
+
+	std::unordered_map<int,vector_data> snap_shot_Electric_field;
+
+	// Create a Frame work for the vectors
+	for (const auto& nd_m : grid_nodes.nodeMap)
+	{
+		int nd_id = nd_m.first;
+		node_store nd = nd_m.second;
+
+		snap_shot_Electric_field[nd_id].vector_id = nd_id;
+		snap_shot_Electric_field[nd_id].vector_loc = nd.node_pt;
+	}
+
+	// Variable stor the maximum vector magnitude in this time step
+	std::vector<double> max_at_time_step;
 
 	for (step_i = 0; step_i < this->time_step_count; step_i++)
 	{
@@ -102,6 +116,10 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 
 		// Find the w-vector
 		glm::vec2 w_vector = loc_at_t - ref_zero;
+		double snapshot_max = 0.0;
+
+		// All nodes snap shot vector
+		std::unordered_map<int, glm::vec2> snap_shot_vector;
 
 		// Loop through every individual grid nodes
 		for (const auto& nd_m : grid_nodes.nodeMap)
@@ -125,17 +143,47 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 			// Find the E const = r' / (r' dot u)^3
 			double e_vec_const = magnitude_r_dash / std::pow( glm::dot(r_dash_vector, u_vector),3);
 
+			// E Vector 1
+			glm::vec2 e_vec1 = static_cast<float>(std::pow(light_speed_c, 2) - std::pow(v_mag, 2)) * u_vector;
 
+			// Cross product u x a
+			glm::vec3 u_cross_a = glm::cross(glm::vec3(u_vector,0),glm::vec3( a_at_t,0));
 
+			// E Vector 2
+			glm::vec3 e_vec2_dash = glm::cross(glm::vec3(r_dash_vector, 0), u_cross_a);
+			glm::vec2 e_vec2 = glm::vec2(e_vec2_dash.x, e_vec2_dash.y);
+
+			// E Vector
+			glm::vec2 e_vec = e_vec1 + e_vec2;
+			double e_vec_mag = glm::length(e_vec); // Magnitude of e vector
+
+			// Add the vector at time step
+			snap_shot_Electric_field[node_id].vector_values.push_back(e_vec);
+			//_____________________________________________________________________
+
+			// Find the maximum magnitude in this time step
+			if (snapshot_max < e_vec_mag)
+			{
+				snapshot_max = e_vec_mag;
+			}
 
 		}
 
-
-		
-
-
+		// Add the maximum at time step
+		max_at_time_step.push_back(snapshot_max);
 	}
 
+
+	// Create the vector (Copy the results)
+	node_vector.clear_data(); // clear the node vector data
+	for (const auto& nd_m : snap_shot_Electric_field)
+	{
+		int nd_id = nd_m.first;
+		vector_data nd_vector = nd_m.second;
+
+		// Add the node vector
+		node_vector.add_vector(nd_id, nd_vector.vector_loc, nd_vector.vector_values, max_at_time_step);
+	}
 
 
 

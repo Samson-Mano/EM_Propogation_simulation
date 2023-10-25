@@ -18,8 +18,8 @@ void dynamic_line_list_store::init(geom_parameters* geom_param_ptr)
 	// Create the point shader
 	std::filesystem::path shadersPath = geom_param_ptr->resourcePath;
 
-	dyn_line_shader.create_shader((shadersPath.string() + "/resources/shaders/point_vert_shader.vert").c_str(),
-		(shadersPath.string() + "/resources/shaders/point_frag_shader.frag").c_str());
+	dyn_line_shader.create_shader((shadersPath.string() + "/resources/shaders/dynpoint_vert_shader.vert").c_str(),
+		(shadersPath.string() + "/resources/shaders/dynpoint_frag_shader.frag").c_str());
 
 	// Delete all the labels
 	dyn_line_count = 0;
@@ -27,21 +27,16 @@ void dynamic_line_list_store::init(geom_parameters* geom_param_ptr)
 }
 
 void dynamic_line_list_store::add_line(int& line_id, 
-	glm::vec2& line_startpt_loc, glm::vec2& line_endpt_loc,
-	std::vector<glm::vec2>& line_startpt_offset, std::vector<glm::vec2>& line_endpt_offset,
+	std::vector<glm::vec2>& line_startpt_loc, std::vector<glm::vec2>& line_endpt_loc,
 	std::vector<glm::vec3>& line_startpt_color, std::vector<glm::vec3>& line_endpt_color)
 {
 	// Create a temporary points
 	dynamic_line_store dyn_temp_ln;
 	dyn_temp_ln.line_id = line_id;
 
-	// Line points
+	// Dynamic Line points
 	dyn_temp_ln.line_startpt_loc = line_startpt_loc;
 	dyn_temp_ln.line_endpt_loc = line_endpt_loc;
-
-	// Line offsets
-	dyn_temp_ln.line_startpt_offset = line_startpt_offset;
-	dyn_temp_ln.line_endpt_offset = line_endpt_offset;
 
 	// Line Color
 	dyn_temp_ln.line_startpt_color = line_startpt_color;
@@ -186,9 +181,9 @@ void dynamic_line_list_store::get_line_vertex_buffer(dynamic_line_store& ln, con
 	dyn_line_vertices[dyn_line_v_index + 3] = ln.line_startpt_offset[dyn_index].y;
 
 	// Point color
-	dyn_line_vertices[dyn_line_v_index + 4] = ln.line_startpt_color[dyn_index].x;
-	dyn_line_vertices[dyn_line_v_index + 5] = ln.line_startpt_color[dyn_index].y;
-	dyn_line_vertices[dyn_line_v_index + 6] = ln.line_startpt_color[dyn_index].z;
+	dyn_line_vertices[dyn_line_v_index + 2] = ln.line_startpt_color[dyn_index].x;
+	dyn_line_vertices[dyn_line_v_index + 3] = ln.line_startpt_color[dyn_index].y;
+	dyn_line_vertices[dyn_line_v_index + 4] = ln.line_startpt_color[dyn_index].z;
 
 	// Point offset bool
 	// Add the bool value (as an integer) to the array
