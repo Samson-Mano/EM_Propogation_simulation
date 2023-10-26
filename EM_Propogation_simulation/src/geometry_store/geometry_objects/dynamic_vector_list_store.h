@@ -6,10 +6,9 @@ struct dynamic_vector_store
 {
 	// store the individual point
 	int vector_id = 0;
-	std::vector < glm::vec2> vector_startpt_loc; // Vector start pt
-	std::vector < glm::vec2> vector_endpt_loc; // Vector end pt
-
-	std::vector<glm::vec3> vector_color; // Vector magnitude color
+	glm::vec2 vector_origin; // Vector start pt
+	std::vector < glm::vec2> vector_endpt_loc; // Dynamic Vector end pt
+	std::vector<glm::vec3> vector_color; // Dynamic Vector magnitude color
 };
 
 
@@ -23,7 +22,7 @@ public:
 	dynamic_vector_list_store();
 	~dynamic_vector_list_store();
 	void init(geom_parameters* geom_param_ptr);
-	void add_vector(int& vector_id, std::vector<glm::vec2>& vector_startpt_loc, std::vector<glm::vec2>& vector_endpt_loc,
+	void add_vector(int& vector_id, glm::vec2 vector_origin, std::vector<glm::vec2>& vector_endpt_loc,
 		std::vector<glm::vec3>& vector_color);
 	void set_buffer();
 	void paint_vectors(const int& dyn_index);
@@ -34,7 +33,7 @@ private:
 	gBuffers dyn_vector_buffer;
 	Shader dyn_vector_shader;
 
-	void get_vector_vertex_buffer(dynamic_vector_store& ln, const int& dyn_index,
+	void get_vector_vertex_buffer(dynamic_vector_store& vec, const int& dyn_index,
 		float* dyn_vector_vertices, unsigned int& dyn_vector_v_index);
 
 	void get_vector_index_buffer(unsigned int* dyn_vector_vertex_indices, unsigned int& dyn_vector_i_index);

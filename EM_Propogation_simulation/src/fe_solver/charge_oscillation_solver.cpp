@@ -141,7 +141,12 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 			glm::vec2 u_vector = (static_cast<float>(light_speed_c) * norm_r_dash_vector) - v_at_t;
 
 			// Find the E const = r' / (r' dot u)^3
-			double e_vec_const = magnitude_r_dash / std::pow( glm::dot(r_dash_vector, u_vector),3);
+			double e_vec_const = 0.0f;
+			
+			if (magnitude_r_dash != 0.0)
+			{
+				e_vec_const = magnitude_r_dash / std::pow(glm::dot(r_dash_vector, u_vector), 3);
+			}
 
 			// E Vector 1
 			glm::vec2 e_vec1 = static_cast<float>(std::pow(light_speed_c, 2) - std::pow(v_mag, 2)) * u_vector;
@@ -184,8 +189,6 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 		// Add the node vector
 		node_vector.add_vector(nd_id, nd_vector.vector_loc, nd_vector.vector_values, max_at_time_step);
 	}
-
-
 
 	is_analysis_complete = true;
 

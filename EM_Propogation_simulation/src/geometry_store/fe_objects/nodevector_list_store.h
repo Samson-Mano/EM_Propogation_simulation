@@ -1,6 +1,6 @@
 #pragma once
 #include "nodes_list_store.h"
-#include "../geometry_objects/dynamic_line_list_store.h"
+#include "../geometry_objects/dynamic_vector_list_store.h"
 
 struct vector_data
 {
@@ -8,6 +8,7 @@ struct vector_data
 	glm::vec2 vector_loc = glm::vec2(0); // Vector location
 	std::vector<glm::vec2> vector_values; // Vector magnitude and direction (list)
 	std::vector<double> vector_timestep_max_mag; // Relative magnitude
+	std::vector<glm::vec3> vector_colors; // Vector colors
 };
 
 class nodevector_list_store
@@ -28,9 +29,7 @@ public:
 
 private:
 	geom_parameters* geom_param_ptr = nullptr;
-	dynamic_line_list_store vector_lines;
-	dynamic_line_list_store vector_arrow_left;
-	dynamic_line_list_store vector_arrow_right;
+	dynamic_vector_list_store vector_lines;
 
 };
 

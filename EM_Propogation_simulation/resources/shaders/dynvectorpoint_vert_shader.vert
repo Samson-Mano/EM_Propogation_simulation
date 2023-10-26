@@ -10,8 +10,9 @@ uniform float transparency = 1.0f;
 uniform float geom_scale;
 
 layout(location = 0) in vec2 vector_orign;
-layout
-layout(location = 1) in vec3 vertexColor;
+layout(location = 1) in vec2 pt_position;
+layout(location = 2) in vec3 vertexColor;
+layout(location = 3) in float pt_type;
 
 out vec4 v_Color;
 
@@ -26,30 +27,106 @@ void main()
 	vec4 finalPosition;
 	vec3 final_vertexColor;
 
-	if(is_offset == 0.0f)
+	if(pt_type == 0.0f)
 	{
-		// apply Translation to the final position 
-		finalPosition = scaledModelMatrix * vec4(node_position,0.0f,1.0f) * panTranslation;
+		// pt_type 0 is origin point
+		// apply Transformation to the vector origin position 
+		finalPosition = scaledModelMatrix * vec4(vector_orign,0.0f,1.0f) * panTranslation;
 
 		// Vertex color
-		final_vertexColor = vertexColor;
+		final_vertexColor =  = vec3((0.5f*(1.0f-normalized_deflscale)+(vertexColor.x*normalized_deflscale)),
+								 (0.0f*(1.0f-normalized_deflscale)+(vertexColor.y*normalized_deflscale)),
+								 (1.0f*(1.0f-normalized_deflscale)+(vertexColor.z*normalized_deflscale)));
 	}
-	else
+	else if(pt_type == 1.0f)
 	{
+		// pt_type 1 is the vector end point
 		// Scale based on model
 		float node_circe_radii = 0.005f;
 		float defl_ratio = deflscale * (node_circe_radii/ geom_scale);
 
-		// Scale the deflection point
-		vec2 defl_position = vec2(node_position.x + (node_defl.x * defl_ratio), node_position.y - (node_defl.y * defl_ratio));
+		// Find the vector value from the vector origin
+		vec2 vector_value = pt_position - vector_orign;
 
-		// apply Translation to the node position
-		finalPosition = scaledModelMatrix * vec4(defl_position,0.0f,1.0f) * panTranslation;
+		// Scale the vector end point
+		vec2 vector_end_position = vec2(vector_orign.x + (vector_value.x * defl_ratio), vector_orign.y - (vector_value.y * defl_ratio));
+
+		// apply Transformation to the vector end position
+		finalPosition = scaledModelMatrix * vec4(vector_end_position,0.0f,1.0f) * panTranslation;
 
 		// Update the color based on cycle time
 		final_vertexColor = vec3((0.5f*(1.0f-normalized_deflscale)+(vertexColor.x*normalized_deflscale)),
 								 (0.0f*(1.0f-normalized_deflscale)+(vertexColor.y*normalized_deflscale)),
 								 (1.0f*(1.0f-normalized_deflscale)+(vertexColor.z*normalized_deflscale)));
+	}
+	else if(pt_type == 2.0f)
+	{
+		// pt_type 2 is the arrow head pt 1
+		float node_circe_radii = 0.005f;
+		float defl_ratio = deflscale * (node_circe_radii/ geom_scale);
+		float arrow_size = 0.1f * defl_ratio;
+		
+		// Find the vector value from the vector origin
+		vec2 vector_value = pt_position - vector_orign;
+
+		// Scale the vector end point
+		vec2 vector_end_position = vec2(vector_orign.x + (vector_value.x * defl_ratio), vector_orign.y - (vector_value.y * defl_ratio));
+
+		// Find the vector arrow direction
+		vec2 arrowDirection = normalize(vector_end_position - vector_origin);
+
+		// Arrow point along the line without rotation
+		vec2 leftPoint = vector_end_position + (arrow_size * normalize(vec2(-arrowDirection.y, arrowDirection.x)));
+
+		// Values for rotation
+		float angle = radians(30.0); // 30 degrees in radians
+		mat2 rotationMatrix = mat2(cos(angle), -sin(angle), sin(angle), cos(angle));
+
+		vec2 rotatedLeftPoint = vector_end_position + (rotationMatrix * (leftPoint - vector_end_position));
+
+		// apply Transformation to the vector end position
+		finalPosition = scaledModelMatrix * vec4(rotatedLeftPoint,0.0f,1.0f) * panTranslation;
+
+		// Update the color based on cycle time
+		final_vertexColor = vec3((0.5f*(1.0f-normalized_deflscale)+(vertexColor.x*normalized_deflscale)),
+								 (0.0f*(1.0f-normalized_deflscale)+(vertexColor.y*normalized_deflscale)),
+								 (1.0f*(1.0f-normalized_deflscale)+(vertexColor.z*normalized_deflscale)));
+
+	}
+	else if(pt_type == 3.0f)
+	{
+		// pt_type 3 is the arrow head pt 2
+		float node_circe_radii = 0.005f;
+		float defl_ratio = deflscale * (node_circe_radii/ geom_scale);
+		float arrow_size = 0.1f * defl_ratio;
+		
+		// Find the vector value from the vector origin
+		vec2 vector_value = pt_position - vector_orign;
+
+		// Scale the vector end point
+		vec2 vector_end_position = vec2(vector_orign.x + (vector_value.x * defl_ratio), vector_orign.y - (vector_value.y * defl_ratio));
+
+		// Find the vector arrow direction
+		vec2 arrowDirection = normalize(vector_end_position - vector_origin);
+
+		// Arrow point along the line without rotation
+		vec2 rightPoint  = vector_end_position + (arrow_size * normalize(vec2(arrowDirection.y, -arrowDirection.x)));
+
+		// Values for rotation
+		float angle = radians(30.0); // 30 degrees in radians
+		mat2 rotationMatrix = mat2(cos(angle), -sin(angle), sin(angle), cos(angle));
+
+		vec2 rotatedRightPoint = vector_end_position + (rotationMatrix * (rightPoint - vector_end_position));
+
+		// apply Transformation to the vector end position
+		finalPosition = scaledModelMatrix * vec4(rotatedRightPoint,0.0f,1.0f) * panTranslation;
+
+		// Update the color based on cycle time
+		final_vertexColor = vec3((0.5f*(1.0f-normalized_deflscale)+(vertexColor.x*normalized_deflscale)),
+								 (0.0f*(1.0f-normalized_deflscale)+(vertexColor.y*normalized_deflscale)),
+								 (1.0f*(1.0f-normalized_deflscale)+(vertexColor.z*normalized_deflscale)));
+
+	
 	}
 
 	v_Color = vec4(final_vertexColor,transparency);

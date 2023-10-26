@@ -82,7 +82,9 @@ void geom_store::update_model_matrix()
 	grid_nodes.update_geometry_matrices(true, false, false, false, false);
 	grid_trimesh.update_geometry_matrices(true, false, false, false, false);
 	charge_path.update_geometry_matrices(true, false, false, false, false);
-	//model_ptmass.update_geometry_matrices(true, false, false, false, false);
+
+	// Result
+	node_vector.update_geometry_matrices(true, false, false, false, false);
 	//model_inlcond.update_geometry_matrices(true, false, false, false, false);
 
 	//// Update the modal analysis result matrix
@@ -113,7 +115,9 @@ void geom_store::update_model_zoomfit()
 	grid_nodes.update_geometry_matrices(false, true, true, false, false);
 	grid_trimesh.update_geometry_matrices(false, true, true, false, false);
 	charge_path.update_geometry_matrices(false, true, true, false, false);
-	//model_ptmass.update_geometry_matrices(false, true, true, false, false);
+
+	// Result
+	node_vector.update_geometry_matrices(false, true, true, false, false);
 	//model_inlcond.update_geometry_matrices(false, true, true, false, false);
 
 	//// Update the modal analysis result matrix
@@ -144,7 +148,9 @@ void geom_store::update_model_pan(glm::vec2& transl)
 	grid_nodes.update_geometry_matrices(false, true, false, false, false);
 	grid_trimesh.update_geometry_matrices(false, true, false, false, false);
 	charge_path.update_geometry_matrices(false, true, false, false, false);
-	//model_ptmass.update_geometry_matrices(false, true, false, false, false);
+
+	// Result
+	node_vector.update_geometry_matrices(false, true, false, false, false);
 	//model_inlcond.update_geometry_matrices(false, true, false, false, false);
 
 	//// Update the modal analysis result matrix
@@ -172,7 +178,9 @@ void geom_store::update_model_zoom(double& z_scale)
 	grid_nodes.update_geometry_matrices(false, false, true, false, false);
 	grid_trimesh.update_geometry_matrices(false, false, true, false, false);
 	charge_path.update_geometry_matrices(false, false, true, false, false);
-	//model_ptmass.update_geometry_matrices(false, false, true, false, false);
+
+	// Result
+	node_vector.update_geometry_matrices(false, false, true, false, false);
 	//model_inlcond.update_geometry_matrices(false, false, true, false, false);
 
 	//// Update the modal analysis result matrix
@@ -208,6 +216,9 @@ void geom_store::update_model_transperency(bool is_transparent)
 	grid_nodes.update_geometry_matrices(false, false, false, true, false);
 	grid_trimesh.update_geometry_matrices(false, false, false, true, false);
 	charge_path.update_geometry_matrices(false, false, false, true, false);
+	
+	// Result
+	node_vector.update_geometry_matrices(false, false, false, true, false);
 	//model_ptmass.update_geometry_matrices(false, false, false, true, false);
 	//model_inlcond.update_geometry_matrices(false, false, false, true, false);
 
@@ -235,6 +246,9 @@ void geom_store::create_geometry()
 	this->grid_trimesh.init(&geom_param);
 	this->grid_nodes.init(&geom_param);
 	this->charge_path.init(&geom_param);
+
+	// Result initialization
+	this->node_vector.init(&geom_param);
 
 	// Initialize the boundary pts
 	int node_id = 0;
@@ -590,15 +604,15 @@ void geom_store::paint_postprocess()
 		geom_param.defl_scale = sol_window->deformation_scale_max;
 
 		charge_path.update_geometry_matrices(false, false, false, true, true);
-		// pulse_result_nodes.update_geometry_matrices(false, false, false, false, true);
+		node_vector.update_geometry_matrices(false, false, false, false, true);
 
 		// ______________________________________________________________________________________
 
 		// Paint the charge path
 		charge_path.paint_charge_oscillation(sol_window->time_step);
 
-		// Paint the pulse nodes
-		// pulse_result_nodes.paint_pulse_nodes(sol_pulse_window->time_step);
+		// Paint the Electric field vector
+		node_vector.paint_vectors(sol_window->time_step);
 	}
 
 
@@ -679,6 +693,7 @@ void geom_store::paint_postprocess()
 			charge_path.update_geometry_matrices(false, false, false, true, true);
 
 			charge_path.set_path_buffer();
+			node_vector.set_buffer();
 			//pulse_result_nodes.set_buffer();
 
 			// Charge analysis is complete
