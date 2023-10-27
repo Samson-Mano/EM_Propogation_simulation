@@ -533,18 +533,6 @@ void geom_store::paint_model()
 
 	}
 
-	if (op_window->is_show_gridnodenumber == true)
-	{
-		// Paint the grid node ID
-		grid_nodes.paint_label_node_ids();
-	}
-
-	if (op_window->is_show_gridnodecoord == true)
-	{
-		// Paint the grid point
-		grid_nodes.paint_label_node_coords();
-	}
-
 	if (inl_window->execute_apply_path == true)
 	{
 		// Execute the application of new path
@@ -604,7 +592,7 @@ void geom_store::paint_postprocess()
 		geom_param.defl_scale = sol_window->deformation_scale_max;
 
 		charge_path.update_geometry_matrices(false, false, false, true, true);
-		node_vector.update_geometry_matrices(false, false, false, false, true);
+		node_vector.update_geometry_matrices(false, false, false, true, true);
 
 		// ______________________________________________________________________________________
 
@@ -691,6 +679,7 @@ void geom_store::paint_postprocess()
 
 			// Reset the buffers for pulse result nodes and lines
 			charge_path.update_geometry_matrices(false, false, false, true, true);
+			node_vector.update_geometry_matrices(false, false, false, true, true);
 
 			charge_path.set_path_buffer();
 			node_vector.set_buffer();

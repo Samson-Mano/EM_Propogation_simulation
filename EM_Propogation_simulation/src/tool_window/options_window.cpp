@@ -14,9 +14,6 @@ void options_window::init()
 {
     // Initialize the options
      is_show_gridnode = true;
-     is_show_gridnodenumber = false;
-     is_show_gridnodecoord = false;
-
      is_show_gridtris = true;
      is_show_gridtris_shrunk = false;
      is_show_gridboundary = true;
@@ -34,10 +31,6 @@ void options_window::render_window()
 
     // Add 5 checkboxes
     ImGui::Checkbox("Show Grid Node", &is_show_gridnode);
-    ImGui::Checkbox("Show Grid Node ID", &is_show_gridnodenumber);
-    ImGui::Checkbox("Show Grid Node Coordinates", &is_show_gridnodecoord);
-
-
     ImGui::Checkbox("Show Grid Mesh", &is_show_gridtris);
     ImGui::Checkbox("Show Grid Mesh Triangle shrunk", &is_show_gridtris_shrunk);
     ImGui::Checkbox("Show Grid Boundary", &is_show_gridboundary);

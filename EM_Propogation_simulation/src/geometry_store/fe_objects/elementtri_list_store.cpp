@@ -36,11 +36,11 @@ void elementtri_list_store::add_elementtriangle(int& tri_id, node_store* nd1, no
 	temp_tri.nd3 = nd3;
 
 	// Check whether the node_id is already there
-	if (elementtriMap.find(tri_id) != elementtriMap.end())
-	{
-		// Element ID already exist (do not add)
-		return;
-	}
+	//if (elementtriMap.find(tri_id) != elementtriMap.end())
+	//{
+	//	// Element ID already exist (do not add)
+	//	return;
+	//}
 
 	// Insert to the lines
 	elementtriMap.insert({ tri_id, temp_tri });

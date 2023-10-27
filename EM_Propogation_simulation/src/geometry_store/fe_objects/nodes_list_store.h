@@ -26,15 +26,10 @@ public:
 	void add_node(int& node_id, glm::vec2& node_pt);
 	void set_buffer();
 	void paint_model_nodes();
-	void paint_label_node_ids();
-	void paint_label_node_coords();
 	int is_node_hit(glm::vec2& loc);
 	void update_geometry_matrices(bool set_modelmatrix, bool set_pantranslation, bool set_zoomtranslation, bool set_transparency, bool set_deflscale);
 
 private:
 	geom_parameters* geom_param_ptr = nullptr;
-	label_list_store node_id_labels;
-	label_list_store node_coord_labels;
-	// label_list_store node_displ_labels;
 	point_list_store node_points;
 };

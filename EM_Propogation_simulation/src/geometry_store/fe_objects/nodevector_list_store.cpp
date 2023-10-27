@@ -23,26 +23,40 @@ void nodevector_list_store::init(geom_parameters* geom_param_ptr)
 	vectorMap.clear();
 }
 
-void nodevector_list_store::add_vector(int& vector_id, glm::vec2& vector_loc, std::vector<glm::vec2>& vector_values, std::vector<double>& vector_timestep_max_mag)
+void nodevector_list_store::add_vector(int& vector_id, glm::vec2& vector_loc,
+	std::vector<glm::vec2>& vector_values, std::vector<double>& vector_timestep_max_mag, std::vector<double>& vector_timestep_min_mag)
 {
 	// Create a temporary vector
 	vector_data temp_vector;
 	temp_vector.vector_id = vector_id;
+	temp_vector.vector_loc = vector_loc;
 	temp_vector.vector_values = vector_values;
-	temp_vector.vector_timestep_max_mag = vector_timestep_max_mag;
+	// temp_vector.vector_timestep_max_mag = vector_timestep_max_mag;
+	// temp_vector.vector_timestep_min_mag = vector_timestep_min_mag;
+
 
 	// Create the vector color list
 	// Vector color
 	std::vector<glm::vec3> vector_colors;
+	std::vector<double> vec_ratio;
+
+	// Add Vector values scaled to 1;
+	std::vector<glm::vec2> vector_values_scaled;
 
 	int i = 0;
 	for (auto& vec_value : vector_values)
 	{
 		// Get the vector magnitude
-		double vec_mag_ratio = glm::length(vec_value) / vector_timestep_max_mag[i];
+		double vec_mag_ratio = (glm::length(vec_value) - vector_timestep_min_mag[i]) / (vector_timestep_max_mag[i] - vector_timestep_min_mag[i]);
+
+		// std::cout << vec_mag_ratio << std::endl;
+		vec_ratio.push_back(vec_mag_ratio);
 
 		// get the vector color
 		glm::vec3 vec_color = geom_parameters::getContourColor(static_cast<float>(1.0f - vec_mag_ratio));
+
+		// Scale the vector valued
+		vector_values_scaled.push_back(vector_loc + static_cast<float>(vec_mag_ratio) * glm::normalize( vec_value - vector_loc));
 
 		// Add to the vector color values
 		vector_colors.push_back(vec_color);
@@ -51,6 +65,8 @@ void nodevector_list_store::add_vector(int& vector_id, glm::vec2& vector_loc, st
 	}
 
 	// add to the struct
+	temp_vector.vec_ratio = vec_ratio;
+	temp_vector.vector_values_scaled = vector_values_scaled;
 	temp_vector.vector_colors = vector_colors;
 
 	// Insert to the nodes
@@ -82,7 +98,9 @@ void nodevector_list_store::set_buffer()
 	{
 		vector_data vec = vec_m.second;
 
-		vector_lines.add_vector(vec.vector_id,vec.vector_loc, vec.vector_values, vec.vector_colors);
+		// Scale the vector values befor adding
+
+		vector_lines.add_vector(vec.vector_id,vec.vector_loc, vec.vector_values_scaled, vec.vector_colors);
 	}
 
 	// Set the buffer (Only the index buffer is set because its a dynamic paint)

@@ -15,7 +15,7 @@ struct elementtri_store
 class elementtri_list_store
 {
 public:
-	const int tri_level = 0; // 0 - 1 triangle, 1 - 4 triangle, 2 - 16 triangle
+	const int tri_level = 1; // 0 - 1 triangle, 1 - 4 triangle, 2 - 16 triangle
 	unsigned int elementtri_count = 0;
 	std::unordered_map<int, elementtri_store> elementtriMap; // Create an unordered_map to store Triangles with ID as key
 

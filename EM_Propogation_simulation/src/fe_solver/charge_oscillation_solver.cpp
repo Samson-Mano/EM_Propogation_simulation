@@ -85,7 +85,7 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 	// Electric field solve
 	time_t = 0.0;
 	int step_i = 0;
-	const double light_speed_c = 300000000; // Light speed c
+	const double light_speed_c = 300000; // Light speed c (KM/s)
 	glm::vec2 ref_zero = glm::vec2(0); // Reference zero
 
 	std::unordered_map<int,vector_data> snap_shot_Electric_field;
@@ -100,8 +100,9 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 		snap_shot_Electric_field[nd_id].vector_loc = nd.node_pt;
 	}
 
-	// Variable stor the maximum vector magnitude in this time step
+	// Variable stor the maximum and minimum vector magnitude in this time step
 	std::vector<double> max_at_time_step;
+	std::vector<double> min_at_time_step;
 
 	for (step_i = 0; step_i < this->time_step_count; step_i++)
 	{
@@ -117,6 +118,7 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 		// Find the w-vector
 		glm::vec2 w_vector = loc_at_t - ref_zero;
 		double snapshot_max = 0.0;
+		double snapshot_min = DBL_MAX;
 
 		// All nodes snap shot vector
 		std::unordered_map<int, glm::vec2> snap_shot_vector;
@@ -172,10 +174,19 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 				snapshot_max = e_vec_mag;
 			}
 
+			// Find the minimum magnitude in this time step
+			if (snapshot_min > e_vec_mag)
+			{
+				snapshot_min = e_vec_mag;
+			}
+
 		}
 
 		// Add the maximum at time step
 		max_at_time_step.push_back(snapshot_max);
+
+		// Add the minimum at time step
+		min_at_time_step.push_back(snapshot_min);
 	}
 
 
@@ -187,7 +198,7 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 		vector_data nd_vector = nd_m.second;
 
 		// Add the node vector
-		node_vector.add_vector(nd_id, nd_vector.vector_loc, nd_vector.vector_values, max_at_time_step);
+		node_vector.add_vector(nd_id, nd_vector.vector_loc, nd_vector.vector_values, max_at_time_step, min_at_time_step);
 	}
 
 	is_analysis_complete = true;

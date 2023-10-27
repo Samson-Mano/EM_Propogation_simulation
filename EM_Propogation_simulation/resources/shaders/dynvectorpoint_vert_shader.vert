@@ -9,7 +9,7 @@ uniform float deflscale; // Deflection scale value = normalized_deflscale (varie
 uniform float transparency = 1.0f;
 uniform float geom_scale;
 
-layout(location = 0) in vec2 vector_orign;
+layout(location = 0) in vec2 vector_origin;
 layout(location = 1) in vec2 pt_position;
 layout(location = 2) in vec3 vertexColor;
 layout(location = 3) in float pt_type;
@@ -31,12 +31,12 @@ void main()
 	{
 		// pt_type 0 is origin point
 		// apply Transformation to the vector origin position 
-		finalPosition = scaledModelMatrix * vec4(vector_orign,0.0f,1.0f) * panTranslation;
+		finalPosition = scaledModelMatrix * vec4(vector_origin,0.0f,1.0f) * panTranslation;
 
 		// Vertex color
-		final_vertexColor =  = vec3((0.5f*(1.0f-normalized_deflscale)+(vertexColor.x*normalized_deflscale)),
-								 (0.0f*(1.0f-normalized_deflscale)+(vertexColor.y*normalized_deflscale)),
-								 (1.0f*(1.0f-normalized_deflscale)+(vertexColor.z*normalized_deflscale)));
+		final_vertexColor = vec3((0.5f*(1.0f-normalized_deflscale)+(vertexColor.x*normalized_deflscale)),
+								(0.0f*(1.0f-normalized_deflscale)+(vertexColor.y*normalized_deflscale)),
+								(1.0f*(1.0f-normalized_deflscale)+(vertexColor.z*normalized_deflscale)));
 	}
 	else if(pt_type == 1.0f)
 	{
@@ -46,10 +46,10 @@ void main()
 		float defl_ratio = deflscale * (node_circe_radii/ geom_scale);
 
 		// Find the vector value from the vector origin
-		vec2 vector_value = pt_position - vector_orign;
+		vec2 vector_value = pt_position - vector_origin;
 
 		// Scale the vector end point
-		vec2 vector_end_position = vec2(vector_orign.x + (vector_value.x * defl_ratio), vector_orign.y - (vector_value.y * defl_ratio));
+		vec2 vector_end_position = vec2(vector_origin.x + (vector_value.x * defl_ratio), vector_origin.y - (vector_value.y * defl_ratio));
 
 		// apply Transformation to the vector end position
 		finalPosition = scaledModelMatrix * vec4(vector_end_position,0.0f,1.0f) * panTranslation;
@@ -64,22 +64,22 @@ void main()
 		// pt_type 2 is the arrow head pt 1
 		float node_circe_radii = 0.005f;
 		float defl_ratio = deflscale * (node_circe_radii/ geom_scale);
-		float arrow_size = 0.1f * defl_ratio;
+		float arrow_size = 0.2f * defl_ratio;
 		
 		// Find the vector value from the vector origin
-		vec2 vector_value = pt_position - vector_orign;
+		vec2 vector_value = pt_position - vector_origin;
 
 		// Scale the vector end point
-		vec2 vector_end_position = vec2(vector_orign.x + (vector_value.x * defl_ratio), vector_orign.y - (vector_value.y * defl_ratio));
+		vec2 vector_end_position = vec2(vector_origin.x + (vector_value.x * defl_ratio), vector_origin.y - (vector_value.y * defl_ratio));
 
 		// Find the vector arrow direction
 		vec2 arrowDirection = normalize(vector_end_position - vector_origin);
 
 		// Arrow point along the line without rotation
-		vec2 leftPoint = vector_end_position + (arrow_size * normalize(vec2(-arrowDirection.y, arrowDirection.x)));
+		vec2 leftPoint = vector_end_position + (arrow_size * normalize(vec2(arrowDirection.y, -arrowDirection.x)));
 
 		// Values for rotation
-		float angle = radians(30.0); // 30 degrees in radians
+		float angle = radians(105.0); // 30 degrees in radians
 		mat2 rotationMatrix = mat2(cos(angle), -sin(angle), sin(angle), cos(angle));
 
 		vec2 rotatedLeftPoint = vector_end_position + (rotationMatrix * (leftPoint - vector_end_position));
@@ -98,13 +98,13 @@ void main()
 		// pt_type 3 is the arrow head pt 2
 		float node_circe_radii = 0.005f;
 		float defl_ratio = deflscale * (node_circe_radii/ geom_scale);
-		float arrow_size = 0.1f * defl_ratio;
+		float arrow_size = 0.2f * defl_ratio;
 		
 		// Find the vector value from the vector origin
-		vec2 vector_value = pt_position - vector_orign;
+		vec2 vector_value = pt_position - vector_origin;
 
 		// Scale the vector end point
-		vec2 vector_end_position = vec2(vector_orign.x + (vector_value.x * defl_ratio), vector_orign.y - (vector_value.y * defl_ratio));
+		vec2 vector_end_position = vec2(vector_origin.x + (vector_value.x * defl_ratio), vector_origin.y - (vector_value.y * defl_ratio));
 
 		// Find the vector arrow direction
 		vec2 arrowDirection = normalize(vector_end_position - vector_origin);
@@ -113,7 +113,7 @@ void main()
 		vec2 rightPoint  = vector_end_position + (arrow_size * normalize(vec2(arrowDirection.y, -arrowDirection.x)));
 
 		// Values for rotation
-		float angle = radians(30.0); // 30 degrees in radians
+		float angle = radians(75.0); // 30 degrees in radians
 		mat2 rotationMatrix = mat2(cos(angle), -sin(angle), sin(angle), cos(angle));
 
 		vec2 rotatedRightPoint = vector_end_position + (rotationMatrix * (rightPoint - vector_end_position));

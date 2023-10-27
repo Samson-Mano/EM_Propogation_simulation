@@ -31,12 +31,12 @@ void elementline_list_store::add_elementline(int& line_id, node_store* startNode
 	temp_line.startNode = startNode;
 	temp_line.endNode = endNode;
 
-	// Check whether the node_id is already there
-	if (elementlineMap.find(line_id) != elementlineMap.end())
-	{
-		// Element ID already exist (do not add)
-		return;
-	}
+	//// Check whether the node_id is already there
+	//if (elementlineMap.find(line_id) != elementlineMap.end())
+	//{
+	//	// Element ID already exist (do not add)
+	//	return;
+	//}
 
 	// Insert to the lines
 	elementlineMap.insert({ line_id, temp_line });
