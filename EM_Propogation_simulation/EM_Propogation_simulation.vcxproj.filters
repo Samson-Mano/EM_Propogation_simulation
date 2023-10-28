@@ -123,7 +123,7 @@
     <ClCompile Include="src\geometry_store\fe_objects\charge_path_store.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\geometry_store\fe_objects\nodevector_list_store.cpp">
+    <ClCompile Include="src\geometry_store\result_objects\nodevector_list_store.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\fe_solver\charge_oscillation_solver.cpp">
@@ -133,6 +133,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\geometry_store\geometry_objects\dynamic_vector_list_store.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\geometry_store\result_objects\nodevector_list_store.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -254,7 +257,7 @@
     <ClInclude Include="src\geometry_store\fe_objects\charge_path_store.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\geometry_store\fe_objects\nodevector_list_store.h">
+    <ClInclude Include="src\geometry_store\result_objects\nodevector_list_store.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\fe_solver\charge_oscillation_solver.h">
@@ -264,6 +267,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\geometry_store\geometry_objects\dynamic_vector_list_store.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\geometry_store\result_objects\nodevector_list_store.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

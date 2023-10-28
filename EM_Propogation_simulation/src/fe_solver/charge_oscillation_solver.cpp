@@ -91,7 +91,7 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 	std::unordered_map<int,vector_data> snap_shot_Electric_field;
 
 	// Create a Frame work for the vectors
-	for (const auto& nd_m : grid_nodes.nodeMap)
+	for (const auto& nd_m : grid_trimesh.all_mesh_nodes)
 	{
 		int nd_id = nd_m.first;
 		node_store nd = nd_m.second;
@@ -124,7 +124,7 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 		std::unordered_map<int, glm::vec2> snap_shot_vector;
 
 		// Loop through every individual grid nodes
-		for (const auto& nd_m : grid_nodes.nodeMap)
+		for (const auto& nd_m : grid_trimesh.all_mesh_nodes)
 		{
 			int node_id = nd_m.second.node_id; // Get the node id of the grid node
 			glm::vec2 grid_node_pt = nd_m.second.node_pt; // Get the node pt of the grid point

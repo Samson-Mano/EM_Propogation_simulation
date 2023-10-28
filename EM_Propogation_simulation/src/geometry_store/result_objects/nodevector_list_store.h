@@ -1,5 +1,5 @@
 #pragma once
-#include "nodes_list_store.h"
+#include "../fe_objects/nodes_list_store.h"
 #include "../geometry_objects/dynamic_vector_list_store.h"
 
 struct vector_data

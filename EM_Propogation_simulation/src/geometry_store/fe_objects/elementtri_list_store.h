@@ -11,13 +11,13 @@ struct elementtri_store
 	node_store* nd3 = nullptr; // node 2
 };
 
-
 class elementtri_list_store
 {
 public:
 	const int tri_level = 1; // 0 - 1 triangle, 1 - 4 triangle, 2 - 16 triangle
 	unsigned int elementtri_count = 0;
 	std::unordered_map<int, elementtri_store> elementtriMap; // Create an unordered_map to store Triangles with ID as key
+	std::unordered_map<int, node_store> all_mesh_nodes; // Store the all mesh nodes
 
 	elementtri_list_store();
 	~elementtri_list_store();

@@ -24,6 +24,7 @@ void elementtri_list_store::init(geom_parameters* geom_param_ptr)
 	// Clear the triangles
 	elementtri_count = 0;
 	elementtriMap.clear();
+	all_mesh_nodes.clear();
 }
 
 void elementtri_list_store::add_elementtriangle(int& tri_id, node_store* nd1, node_store* nd2, node_store* nd3)
@@ -329,11 +330,20 @@ void elementtri_list_store::addtriangle_boundarypts(const glm::vec2& nd_pt1, con
 
 	if (pointExists == false)
 	{
+		// Add to point store 
 		element_boundarypts.add_point(point_count,
 			boundary_point1.point_loc,
 			boundary_point1.point_offset,
 			boundary_point1.point_color,
 			boundary_point1.is_offset);
+
+		// Add to nodes
+		node_store temp_node;
+		temp_node.node_id = point_count;
+		temp_node.node_pt = boundary_point1.point_loc;
+		temp_node.node_color = boundary_point1.point_color;
+
+		all_mesh_nodes.insert({ point_count, temp_node });
 
 		customPointStoreSort(element_boundarypts.pointMap);
 
@@ -347,11 +357,20 @@ void elementtri_list_store::addtriangle_boundarypts(const glm::vec2& nd_pt1, con
 
 	if (pointExists == false)
 	{
+		// Add to point store 
 		element_boundarypts.add_point(point_count,
 			boundary_point2.point_loc,
 			boundary_point2.point_offset,
 			boundary_point2.point_color,
 			boundary_point2.is_offset);
+
+		// Add to nodes
+		node_store temp_node;
+		temp_node.node_id = point_count;
+		temp_node.node_pt = boundary_point2.point_loc;
+		temp_node.node_color = boundary_point2.point_color;
+
+		all_mesh_nodes.insert({ point_count, temp_node });
 
 		customPointStoreSort(element_boundarypts.pointMap);
 
@@ -365,11 +384,20 @@ void elementtri_list_store::addtriangle_boundarypts(const glm::vec2& nd_pt1, con
 
 	if (pointExists == false)
 	{
+		// Add to point store 
 		element_boundarypts.add_point(point_count,
 			boundary_point3.point_loc,
 			boundary_point3.point_offset,
 			boundary_point3.point_color,
 			boundary_point3.is_offset);
+
+		// Add to nodes
+		node_store temp_node;
+		temp_node.node_id = point_count;
+		temp_node.node_pt = boundary_point3.point_loc;
+		temp_node.node_color = boundary_point3.point_color;
+
+		all_mesh_nodes.insert({ point_count, temp_node });
 
 		customPointStoreSort(element_boundarypts.pointMap);
 

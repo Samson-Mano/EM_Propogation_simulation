@@ -127,7 +127,6 @@
     <ClCompile Include="src\geometry_store\fe_objects\elementline_list_store.cpp" />
     <ClCompile Include="src\geometry_store\fe_objects\elementtri_list_store.cpp" />
     <ClCompile Include="src\geometry_store\fe_objects\nodes_list_store.cpp" />
-    <ClCompile Include="src\geometry_store\fe_objects\nodevector_list_store.cpp" />
     <ClCompile Include="src\geometry_store\geometry_buffers\font_atlas.cpp" />
     <ClCompile Include="src\geometry_store\geometry_buffers\gBuffers.cpp" />
     <ClCompile Include="src\geometry_store\geometry_buffers\IndexBuffer.cpp" />
@@ -136,6 +135,7 @@
     <ClCompile Include="src\geometry_store\geometry_buffers\VertexArray.cpp" />
     <ClCompile Include="src\geometry_store\geometry_buffers\VertexBuffer.cpp" />
     <ClCompile Include="src\geometry_store\geometry_buffers\VertexBufferLayout.cpp" />
+    <ClCompile Include="src\geometry_store\geometry_objects\dynamictricontour_list_store.cpp" />
     <ClCompile Include="src\geometry_store\geometry_objects\dynamic_point_list_store.cpp" />
     <ClCompile Include="src\geometry_store\geometry_objects\dynamic_texture_list_store.cpp" />
     <ClCompile Include="src\geometry_store\geometry_objects\dynamic_vector_list_store.cpp" />
@@ -145,6 +145,8 @@
     <ClCompile Include="src\geometry_store\geometry_objects\tri_list_store.cpp" />
     <ClCompile Include="src\geometry_store\geom_parameters.cpp" />
     <ClCompile Include="src\geometry_store\geom_store.cpp" />
+    <ClCompile Include="src\geometry_store\result_objects\nodevector_list_store.cpp" />
+    <ClCompile Include="src\geometry_store\result_objects\tricontour_list_store.cpp" />
     <ClCompile Include="src\ImGui\imgui.cpp" />
     <ClCompile Include="src\ImGui\imgui_draw.cpp" />
     <ClCompile Include="src\ImGui\imgui_impl_glfw.cpp" />
@@ -168,7 +170,6 @@
     <ClInclude Include="src\geometry_store\fe_objects\elementline_list_store.h" />
     <ClInclude Include="src\geometry_store\fe_objects\elementtri_list_store.h" />
     <ClInclude Include="src\geometry_store\fe_objects\nodes_list_store.h" />
-    <ClInclude Include="src\geometry_store\fe_objects\nodevector_list_store.h" />
     <ClInclude Include="src\geometry_store\geometry_buffers\font_atlas.h" />
     <ClInclude Include="src\geometry_store\geometry_buffers\gBuffers.h" />
     <ClInclude Include="src\geometry_store\geometry_buffers\IndexBuffer.h" />
@@ -177,6 +178,7 @@
     <ClInclude Include="src\geometry_store\geometry_buffers\VertexArray.h" />
     <ClInclude Include="src\geometry_store\geometry_buffers\VertexBuffer.h" />
     <ClInclude Include="src\geometry_store\geometry_buffers\VertexBufferLayout.h" />
+    <ClInclude Include="src\geometry_store\geometry_objects\dynamictricontour_list_store.h" />
     <ClInclude Include="src\geometry_store\geometry_objects\dynamic_point_list_store.h" />
     <ClInclude Include="src\geometry_store\geometry_objects\dynamic_texture_list_store.h" />
     <ClInclude Include="src\geometry_store\geometry_objects\dynamic_vector_list_store.h" />
@@ -186,6 +188,8 @@
     <ClInclude Include="src\geometry_store\geometry_objects\tri_list_store.h" />
     <ClInclude Include="src\geometry_store\geom_parameters.h" />
     <ClInclude Include="src\geometry_store\geom_store.h" />
+    <ClInclude Include="src\geometry_store\result_objects\nodevector_list_store.h" />
+    <ClInclude Include="src\geometry_store\result_objects\tricontour_list_store.h" />
     <ClInclude Include="src\ImGui\imconfig.h" />
     <ClInclude Include="src\ImGui\imgui.h" />
     <ClInclude Include="src\ImGui\imgui_impl_glfw.h" />

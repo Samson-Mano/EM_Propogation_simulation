@@ -8,7 +8,7 @@
 #include "../geometry_store/fe_objects/charge_path_store.h"
 
 // Result Objects
-#include "../geometry_store/fe_objects/nodevector_list_store.h"
+#include "../geometry_store/result_objects/nodevector_list_store.h"
 
 #pragma warning(push)
 #pragma warning (disable : 26451)

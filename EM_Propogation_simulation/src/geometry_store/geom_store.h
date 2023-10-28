@@ -18,7 +18,7 @@
 #include "fe_objects/charge_path_store.h"
 
 // Result Objects
-#include "fe_objects/nodevector_list_store.h"
+#include "result_objects/nodevector_list_store.h"
 
 // Solver
 #include "../fe_solver/charge_oscillation_solver.h"
