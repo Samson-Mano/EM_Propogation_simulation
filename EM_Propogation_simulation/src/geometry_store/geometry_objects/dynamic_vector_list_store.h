@@ -6,7 +6,7 @@ struct dynamic_vector_store
 {
 	// store the individual point
 	int vector_id = 0;
-	glm::vec2 vector_origin; // Vector start pt
+	glm::vec2 vector_origin = glm::vec2(0); // Vector start pt
 	std::vector < glm::vec2> vector_endpt_loc; // Dynamic Vector end pt
 	std::vector<glm::vec3> vector_color; // Dynamic Vector magnitude color
 };
