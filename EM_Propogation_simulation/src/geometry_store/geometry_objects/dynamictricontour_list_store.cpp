@@ -12,10 +12,18 @@ dynamictricontour_list_store::~dynamictricontour_list_store()
 
 void dynamictricontour_list_store::init(geom_parameters* geom_param_ptr)
 {
+
+
 }
 
-void dynamictricontour_list_store::add_dyntricontour(int& tri_id, glm::vec2 tri_coord1, glm::vec2 tri_coord2, glm::vec2 tri_coord3, std::vector<glm::vec2>& tri_displ1, std::vector<glm::vec2>& tri_displ2, std::vector<glm::vec2>& tri_displ3, std::vector<glm::vec3>& tri_pt1_color, std::vector<glm::vec3>& tri_pt2_color, std::vector<glm::vec3>& tri_pt3_color, std::vector<double> contour_level_list)
+void dynamictricontour_list_store::add_dyntricontour(int& tri_id, glm::vec2 tri_coord1, glm::vec2 tri_coord2, glm::vec2 tri_coord3, 
+	std::vector<double>& tri_displ1, std::vector<double>& tri_displ2, std::vector<double>& tri_displ3,
+	std::vector<glm::vec3>& tri_pt1_color, std::vector<glm::vec3>& tri_pt2_color, std::vector<glm::vec3>& tri_pt3_color,
+	std::vector<double> contour_level_list)
 {
+
+
+
 }
 
 void dynamictricontour_list_store::set_buffer()
