@@ -23,12 +23,66 @@ void tricontour_list_store::init(geom_parameters* geom_param_ptr)
 	tricontourMap.clear();
 }
 
-void tricontour_list_store::add_tricontour(int& tri_id, node_store* nd1, node_store* nd2, node_store* nd3, 
-	std::vector<double>& nd1_values, std::vector<double>& nd2_values, std::vector<double>& nd3_values, 
+void tricontour_list_store::add_tricontour(int& tri_id, node_store* nd1, node_store* nd2, node_store* nd3,
+	std::vector<double>& nd1_values, std::vector<double>& nd2_values, std::vector<double>& nd3_values,
 	std::vector<double>& contour_timestep_max_mag, std::vector<double>& contour_timestep_min_mag)
 {
+	// ratio with maximum and minimum = (nd_values - min)/ (max - min)
+	std::vector<double> nd1_mag_ratio;
+	std::vector<double> nd2_mag_ratio;
+	std::vector<double> nd3_mag_ratio;
 
+	// Nodal colors at each time step
+	std::vector<glm::vec3> nd1_colors;
+	std::vector<glm::vec3> nd2_colors;
+	std::vector<glm::vec3> nd3_colors;
 
+	// Time step count
+	int t_step_count = static_cast<int>(contour_timestep_max_mag.size());
+
+	for (int i = 0; i < t_step_count; i++)
+	{
+		double temp_nd1_mag = (nd1_values[i] - contour_timestep_min_mag[i]) / (contour_timestep_max_mag[i] - contour_timestep_min_mag[i]);
+		double temp_nd2_mag = (nd2_values[i] - contour_timestep_min_mag[i]) / (contour_timestep_max_mag[i] - contour_timestep_min_mag[i]);
+		double temp_nd3_mag = (nd3_values[i] - contour_timestep_min_mag[i]) / (contour_timestep_max_mag[i] - contour_timestep_min_mag[i]);
+
+		// Add to the mag_ratio list
+		nd1_mag_ratio.push_back(temp_nd1_mag);
+		nd2_mag_ratio.push_back(temp_nd2_mag);
+		nd3_mag_ratio.push_back(temp_nd3_mag);
+
+		// Add to the color list
+		nd1_colors.push_back(geom_parameters::getContourColor(1.0f - temp_nd1_mag));
+		nd2_colors.push_back(geom_parameters::getContourColor(1.0f - temp_nd2_mag));
+		nd3_colors.push_back(geom_parameters::getContourColor(1.0f - temp_nd3_mag));
+	}
+
+	tricontour_data temp_tricontour;
+	temp_tricontour.tri_id = tri_id;
+	temp_tricontour.nd1 = nd1;
+	temp_tricontour.nd2 = nd2;
+	temp_tricontour.nd3 = nd3;
+
+	// Add the node values data
+	temp_tricontour.nd1_values = nd1_values;
+	temp_tricontour.nd2_values = nd2_values;
+	temp_tricontour.nd3_values = nd3_values;
+
+	// Add to the tri_contour mag data
+	temp_tricontour.nd1_mag_ratio = nd1_mag_ratio;
+	temp_tricontour.nd2_mag_ratio = nd2_mag_ratio;
+	temp_tricontour.nd3_mag_ratio = nd3_mag_ratio;
+
+	// Add to the tri_contour color data
+	temp_tricontour.nd1_colors = nd1_colors;
+	temp_tricontour.nd2_colors = nd2_colors;
+	temp_tricontour.nd3_colors = nd3_colors;
+
+	//_____________________________________________________________________
+
+	// Insert to the tricontourMap
+	tricontourMap.insert({ tri_id, temp_tricontour });
+	tricontour_count++;
 }
 
 void tricontour_list_store::clear_data()
@@ -42,7 +96,7 @@ void tricontour_list_store::clear_data()
 }
 
 void tricontour_list_store::set_buffer()
-{	
+{
 	// Clear all the contours
 	tri_contours.clear_dyntricontours();
 
@@ -57,14 +111,14 @@ void tricontour_list_store::set_buffer()
 		glm::vec2 tri_pt3 = dyntri.nd3->node_pt; // Pt3
 
 
-
+		// Add to the contour list
 		tri_contours.add_dyntricontour(dyntri.tri_id, tri_pt1, tri_pt2, tri_pt3,
-			);
+			dyntri.nd1_mag_ratio, dyntri.nd2_mag_ratio, dyntri.nd3_mag_ratio,
+			dyntri.nd1_colors, dyntri.nd2_colors, dyntri.nd3_colors);
 	}
 
 	// Set the buffer (Only the index buffer is set because its a dynamic paint)
 	tri_contours.set_buffer();
-
 }
 
 void tricontour_list_store::paint_tricontour(const int& dyn_index)

@@ -69,7 +69,7 @@ void nodevector_list_store::add_vector(int& vector_id, glm::vec2& vector_loc,
 	temp_vector.vector_values_scaled = vector_values_scaled;
 	temp_vector.vector_colors = vector_colors;
 
-	// Insert to the nodes
+	// Insert to the vectorMap
 	vectorMap.insert({ vector_id, temp_vector });
 	vector_count++;
 }

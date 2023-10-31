@@ -9,6 +9,7 @@
 
 // Result Objects
 #include "../geometry_store/result_objects/nodevector_list_store.h"
+#include "../geometry_store/result_objects/tricontour_list_store.h"
 
 #pragma warning(push)
 #pragma warning (disable : 26451)
@@ -47,6 +48,7 @@ public:
 											const double total_simulation_time,
 											const double time_interval,
 											nodevector_list_store& node_vector,
+											tricontour_list_store& node_contour,
 											bool& is_analysis_complete);
 
 

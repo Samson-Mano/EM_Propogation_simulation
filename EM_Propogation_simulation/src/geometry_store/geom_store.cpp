@@ -85,15 +85,8 @@ void geom_store::update_model_matrix()
 
 	// Result
 	node_vector.update_geometry_matrices(true, false, false, false, false);
-	//model_inlcond.update_geometry_matrices(true, false, false, false, false);
+	node_contour.update_geometry_matrices(true, false, false, false, false);
 
-	//// Update the modal analysis result matrix
-	//modal_result_lineelements.update_geometry_matrices(true, false, false, false, false);
-	//modal_result_nodes.update_geometry_matrices(true, false, false, false, false);
-
-	//// Update the pulse analysis result matrix
-	//pulse_result_lineelements.update_geometry_matrices(true, false, false, false, false);
-	//pulse_result_nodes.update_geometry_matrices(true, false, false, false, false);
 }
 
 void geom_store::update_model_zoomfit()
@@ -118,15 +111,8 @@ void geom_store::update_model_zoomfit()
 
 	// Result
 	node_vector.update_geometry_matrices(false, true, true, false, false);
-	//model_inlcond.update_geometry_matrices(false, true, true, false, false);
+	node_contour.update_geometry_matrices(false, true, true, false, false);
 
-	//// Update the modal analysis result matrix
-	//modal_result_lineelements.update_geometry_matrices(false, true, true, false, false);
-	//modal_result_nodes.update_geometry_matrices(false, true, true, false, false);
-
-	//// Update the pulse analysis result matrix
-	//pulse_result_lineelements.update_geometry_matrices(false, true, true, false, false);
-	//pulse_result_nodes.update_geometry_matrices(false, true, true, false, false);
 }
 
 void geom_store::update_model_pan(glm::vec2& transl)
@@ -151,15 +137,8 @@ void geom_store::update_model_pan(glm::vec2& transl)
 
 	// Result
 	node_vector.update_geometry_matrices(false, true, false, false, false);
-	//model_inlcond.update_geometry_matrices(false, true, false, false, false);
+	node_contour.update_geometry_matrices(false, true, false, false, false);
 
-	//// Update the modal analysis result matrix
-	//modal_result_lineelements.update_geometry_matrices(false, true, false, false, false);
-	//modal_result_nodes.update_geometry_matrices(false, true, false, false, false);
-
-	//// Update the pulse analysis result matrix
-	//pulse_result_lineelements.update_geometry_matrices(false, true, false, false, false);
-	//pulse_result_nodes.update_geometry_matrices(false, true, false, false, false);
 }
 
 void geom_store::update_model_zoom(double& z_scale)
@@ -181,15 +160,8 @@ void geom_store::update_model_zoom(double& z_scale)
 
 	// Result
 	node_vector.update_geometry_matrices(false, false, true, false, false);
-	//model_inlcond.update_geometry_matrices(false, false, true, false, false);
+	node_contour.update_geometry_matrices(false, false, true, false, false);
 
-	//// Update the modal analysis result matrix
-	//modal_result_lineelements.update_geometry_matrices(false, false, true, false, false);
-	//modal_result_nodes.update_geometry_matrices(false, false, true, false, false);
-
-	//// Update the pulse analysis result matrix
-	//pulse_result_lineelements.update_geometry_matrices(false, false, true, false, false);
-	//pulse_result_nodes.update_geometry_matrices(false, false, true, false, false);
 }
 
 void geom_store::update_model_transperency(bool is_transparent)
@@ -216,12 +188,11 @@ void geom_store::update_model_transperency(bool is_transparent)
 	grid_nodes.update_geometry_matrices(false, false, false, true, false);
 	grid_trimesh.update_geometry_matrices(false, false, false, true, false);
 	charge_path.update_geometry_matrices(false, false, false, true, false);
-	
+
 	// Result
 	node_vector.update_geometry_matrices(false, false, false, true, false);
-	//model_ptmass.update_geometry_matrices(false, false, false, true, false);
-	//model_inlcond.update_geometry_matrices(false, false, false, true, false);
-
+	node_contour.update_geometry_matrices(false, false, false, true, false);
+	
 }
 
 
@@ -249,6 +220,8 @@ void geom_store::create_geometry()
 
 	// Result initialization
 	this->node_vector.init(&geom_param);
+	this->node_contour.init(&geom_param);
+
 
 	// Initialize the boundary pts
 	int node_id = 0;
@@ -593,6 +566,7 @@ void geom_store::paint_postprocess()
 
 		charge_path.update_geometry_matrices(false, false, false, true, true);
 		node_vector.update_geometry_matrices(false, false, false, true, true);
+		node_contour.update_geometry_matrices(false, false, false, true, true);
 
 		// ______________________________________________________________________________________
 
@@ -601,6 +575,9 @@ void geom_store::paint_postprocess()
 
 		// Paint the Electric field vector
 		node_vector.paint_vectors(sol_window->time_step);
+
+		// Paint the Electric potential
+		node_contour.paint_tricontour(sol_window->time_step);
 	}
 
 
@@ -647,27 +624,8 @@ void geom_store::paint_postprocess()
 			sol_window->total_simulation_time,
 			sol_window->time_interval,
 			node_vector,
+			node_contour,
 			is_analysis_complete);
-
-
-		//pulse_analysis_solver pulse_solver;
-		//pulse_solver.pulse_analysis_start(model_nodes,
-		//	model_lineelements,
-		//	model_constarints,
-		//	model_loads,
-		//	model_ptmass,
-		//	model_inlcond,
-		//	mat_window->material_list,
-		//	sol_modal_window->is_include_consistent_mass_matrix,
-		//	md_solver,
-		//	modal_results,
-		//	sol_pulse_window->total_simulation_time,
-		//	sol_pulse_window->time_interval,
-		//	sol_pulse_window->damping_ratio,
-		//	pulse_response_result,
-		//	pulse_result_nodes,
-		//	pulse_result_lineelements,
-		//	is_pulse_analysis_complete);
 
 		// Check whether the modal analysis is complete or not
 		if (is_analysis_complete == true)
@@ -680,10 +638,11 @@ void geom_store::paint_postprocess()
 			// Reset the buffers for pulse result nodes and lines
 			charge_path.update_geometry_matrices(false, false, false, true, true);
 			node_vector.update_geometry_matrices(false, false, false, true, true);
+			node_contour.update_geometry_matrices(false, false, false, true, true);
 
 			charge_path.set_path_buffer();
 			node_vector.set_buffer();
-			//pulse_result_nodes.set_buffer();
+			node_contour.set_buffer();
 
 			// Charge analysis is complete
 			update_model_transperency(true);

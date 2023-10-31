@@ -19,6 +19,7 @@
 
 // Result Objects
 #include "result_objects/nodevector_list_store.h"
+#include "result_objects/tricontour_list_store.h"
 
 // Solver
 #include "../fe_solver/charge_oscillation_solver.h"
@@ -72,6 +73,7 @@ private:
 
 	// Result mesh
 	nodevector_list_store node_vector;
+	tricontour_list_store node_contour;
 
 	// View options ptr and Material window ptr
 	options_window* op_window = nullptr;

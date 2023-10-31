@@ -29,7 +29,6 @@ struct  tricontour_data
 class tricontour_list_store
 {
 public:
-	const int contour_level_count = 10; // Number of contour levels
 	int tricontour_count = 0;
 	std::unordered_map<int, tricontour_data> tricontourMap;
 

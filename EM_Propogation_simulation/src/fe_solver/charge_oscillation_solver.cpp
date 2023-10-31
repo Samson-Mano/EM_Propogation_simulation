@@ -17,6 +17,7 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 	const double total_simulation_time,
 	const double time_interval,
 	nodevector_list_store& node_vector,
+	tricontour_list_store& node_contour,
 	bool& is_analysis_complete)
 {
 	is_analysis_complete = false;
@@ -200,6 +201,11 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 		// Add the node vector
 		node_vector.add_vector(nd_id, nd_vector.vector_loc, nd_vector.vector_values, max_at_time_step, min_at_time_step);
 	}
+
+	// Create the potential contour (Copy the results)
+	node_contour.clear_data(); // clear the node contour data
+
+
 
 	is_analysis_complete = true;
 

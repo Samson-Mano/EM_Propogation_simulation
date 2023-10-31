@@ -192,6 +192,12 @@ void app_window::app_render()
 		{
 			geom.update_WindowDimension(window_width, window_height);
 			mouse_Handler.zoom_to_fit();
+
+			if (sol_window.is_show_window == true)
+			{
+				// To control the transperency of model (if analysis is complete)
+				sol_window.execute_open = true;
+			}
 		}
 		isWindowSizeChanging = false;
 

@@ -25,6 +25,7 @@ struct dynamictricontour_store
 class dynamictricontour_list_store
 {
 public:
+	const int contour_level_count = 10; // Number of contour levels
 	geom_parameters* geom_param_ptr = nullptr;
 	unsigned int dyn_tri_count = 0;
 	std::vector<dynamictricontour_store> dyn_triMap;
@@ -35,8 +36,7 @@ public:
 	void init(geom_parameters* geom_param_ptr);
 	void add_dyntricontour(int& tri_id, glm::vec2 tri_coord1, glm::vec2 tri_coord2, glm::vec2 tri_coord3, 
 		std::vector<double>& tri_displ1, std::vector<double>& tri_displ2, std::vector<double>& tri_displ3,
-		std::vector<glm::vec3>& tri_pt1_color, std::vector<glm::vec3>& tri_pt2_color, std::vector<glm::vec3>& tri_pt3_color,
-		std::vector<double> contour_level_list);
+		std::vector<glm::vec3>& tri_pt1_color, std::vector<glm::vec3>& tri_pt2_color, std::vector<glm::vec3>& tri_pt3_color);
 	void set_buffer();
 	void paint_dyntricontour(const int& dyn_index);
 	void update_buffer(const int& dyn_index);
