@@ -87,9 +87,10 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 	time_t = 0.0;
 	int step_i = 0;
 	const double light_speed_c = 300000; // Light speed c (KM/s)
-	glm::vec2 ref_zero = glm::vec2(0); // Reference zero
+	glm::vec2 ref_zero = glm::vec2(-100000,-100000); // Reference zero
 
-	std::unordered_map<int,vector_data> snap_shot_Electric_field;
+	std::unordered_map<int,vector_data> snap_shot_Electric_field; // Electric field
+	std::unordered_map<int, tricontour_data> snap_shot_Electric_potential; // Electric potential
 
 	// Create a Frame work for the vectors
 	for (const auto& nd_m : grid_trimesh.all_mesh_nodes)
@@ -97,13 +98,32 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 		int nd_id = nd_m.first;
 		node_store nd = nd_m.second;
 
+		// Set the vector id & vector point
 		snap_shot_Electric_field[nd_id].vector_id = nd_id;
 		snap_shot_Electric_field[nd_id].vector_loc = nd.node_pt;
 	}
 
-	// Variable stor the maximum and minimum vector magnitude in this time step
-	std::vector<double> max_at_time_step;
-	std::vector<double> min_at_time_step;
+	// Create a Frame work for the contours
+	for (const auto& tri_m : grid_trimesh.elementtriMap)
+	{
+		int tri_id = tri_m.first;
+		elementtri_store tri = tri_m.second;
+
+		// Set the triangle id & triangle 3 points
+		snap_shot_Electric_potential[tri_id].tri_id = tri_id;
+		snap_shot_Electric_potential[tri_id].nd1 = tri.nd1;
+		snap_shot_Electric_potential[tri_id].nd2 = tri.nd2;
+		snap_shot_Electric_potential[tri_id].nd3 = tri.nd3;
+	}
+
+
+	// Variable store the maximum and minimum vector magnitude in this time step
+	std::vector<double> fieldmax_at_time_step;
+	std::vector<double> fieldmin_at_time_step;
+
+	// Variable store the maximum and minimum potential in this time step
+	std::vector<double> potentialmax_at_time_step;
+	std::vector<double> potentialmin_at_time_step;
 
 	for (step_i = 0; step_i < this->time_step_count; step_i++)
 	{
@@ -118,8 +138,10 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 
 		// Find the w-vector
 		glm::vec2 w_vector = loc_at_t - ref_zero;
-		double snapshot_max = 0.0;
-		double snapshot_min = DBL_MAX;
+
+		// Field max
+		double snapshot_field_max = 0.0;
+		double snapshot_field_min = DBL_MAX;
 
 		// All nodes snap shot vector
 		std::unordered_map<int, glm::vec2> snap_shot_vector;
@@ -169,25 +191,122 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 			snap_shot_Electric_field[node_id].vector_values.push_back(e_vec);
 			//_____________________________________________________________________
 
-			// Find the maximum magnitude in this time step
-			if (snapshot_max < e_vec_mag)
+			// Find the maximum field magnitude in this time step
+			if (snapshot_field_max < e_vec_mag)
 			{
-				snapshot_max = e_vec_mag;
+				snapshot_field_max = e_vec_mag;
 			}
 
-			// Find the minimum magnitude in this time step
-			if (snapshot_min > e_vec_mag)
+			// Find the minimum field magnitude in this time step
+			if (snapshot_field_min > e_vec_mag)
 			{
-				snapshot_min = e_vec_mag;
+				snapshot_field_min = e_vec_mag;
 			}
 
 		}
 
-		// Add the maximum at time step
-		max_at_time_step.push_back(snapshot_max);
+		// Add the field maximum at time step
+		fieldmax_at_time_step.push_back(snapshot_field_max);
 
-		// Add the minimum at time step
-		min_at_time_step.push_back(snapshot_min);
+		// Add the field minimum at time step
+		fieldmin_at_time_step.push_back(snapshot_field_min);
+
+		// Potential max
+		double snapshot_potential_max = DBL_MIN;
+		double snapshot_potential_min = DBL_MAX;
+
+
+		// Loop through every individual mesh triangles
+		for (const auto& tri_m : grid_trimesh.elementtriMap)
+		{
+			int tri_id = tri_m.first; // Get the node id of the grid node
+			elementtri_store tri = tri_m.second; 
+
+			// Get the triangle pt (3 points)
+			glm::vec2 tri_pt1 = tri.nd1->node_pt; // Get the triangle pt 1
+			glm::vec2 tri_pt2 = tri.nd2->node_pt; // Get the triangle pt 2
+			glm::vec2 tri_pt3 = tri.nd3->node_pt; // Get the triangle pt 3
+
+			// Find the r-vectors 1, 2, 3 (3 triangle points)
+			glm::vec2 r_vector1 = tri_pt1 - ref_zero;
+			glm::vec2 r_vector2 = tri_pt2 - ref_zero;
+			glm::vec2 r_vector3 = tri_pt3 - ref_zero;
+
+			// Find the r dash-vectors 1, 2, 3 (3 triangle points)
+			glm::vec2 r_dash_vector1 = r_vector1 - w_vector;
+			glm::vec2 r_dash_vector2 = r_vector2 - w_vector;
+			glm::vec2 r_dash_vector3 = r_vector3 - w_vector;
+
+			// Normalize the r dash vectors 1,2, 3 (3 r dash vector)
+			double magnitude_r_dash1 = glm::length(r_dash_vector1);
+			double magnitude_r_dash2 = glm::length(r_dash_vector2);
+			double magnitude_r_dash3 = glm::length(r_dash_vector3);
+
+			//__________________________________________________________________
+			double scalar_potential_pt1, scalar_potential_pt2, scalar_potential_pt3;
+			double r1_dot_v, r2_dot_v, r3_dot_v;
+
+			// Dynamic scalar potential 1
+			if (magnitude_r_dash1 < 1E-8)
+			{
+				r1_dot_v = glm::dot(r_dash_vector1, v_at_t);
+				scalar_potential_pt1 = light_speed_c / ((magnitude_r_dash1 * light_speed_c) - r1_dot_v);
+			}
+			else
+			{
+				scalar_potential_pt1 = 0.0;
+			}
+
+			// Dynamic scalar potential 2
+			if (magnitude_r_dash2 < 1E-8)
+			{
+				r2_dot_v = glm::dot(r_dash_vector2, v_at_t);
+				scalar_potential_pt2 = light_speed_c / ((magnitude_r_dash2 * light_speed_c) - r2_dot_v);
+			}
+			else
+			{
+				scalar_potential_pt2 = 0.0;
+			}
+
+			// Dynamic scalar potential 3
+			if (magnitude_r_dash3 < 1E-8)
+			{
+				r3_dot_v = glm::dot(r_dash_vector3, v_at_t);
+				scalar_potential_pt3 = light_speed_c / ((magnitude_r_dash3 * light_speed_c) - r3_dot_v);
+			}
+			else
+			{
+				scalar_potential_pt3 = 0.0;
+			}
+
+			//___________________________________________________________________
+			snap_shot_Electric_potential[tri_id].nd1_values.push_back(scalar_potential_pt1); // Add the scalar potential tri pt 1
+			snap_shot_Electric_potential[tri_id].nd2_values.push_back(scalar_potential_pt2); // Add the scalar potential tri pt 2
+			snap_shot_Electric_potential[tri_id].nd3_values.push_back(scalar_potential_pt3); // Add the scalar potential tri pt 3
+
+			//_____________________________________________________________________
+
+			// Find the maximum potential magnitude in this time step
+			double scalar_potential_max = std::max(scalar_potential_pt1, std::max(scalar_potential_pt2, scalar_potential_pt3));
+			if (snapshot_potential_max < scalar_potential_max)
+			{
+				snapshot_potential_max = scalar_potential_max;
+			}
+
+			// Find the minimum field magnitude in this time step
+			double scalar_potential_min = std::min(scalar_potential_pt1, std::min(scalar_potential_pt2, scalar_potential_pt3));
+			if (snapshot_potential_min > scalar_potential_min)
+			{
+				snapshot_potential_min = scalar_potential_min;
+			}
+		}
+
+		// Add the potential maximum at time step
+		potentialmin_at_time_step.push_back(snapshot_potential_min);
+
+		// Add the potential minimum at time step
+		potentialmax_at_time_step.push_back(snapshot_potential_max);
+
 	}
 
 
@@ -199,12 +318,21 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 		vector_data nd_vector = nd_m.second;
 
 		// Add the node vector
-		node_vector.add_vector(nd_id, nd_vector.vector_loc, nd_vector.vector_values, max_at_time_step, min_at_time_step);
+		node_vector.add_vector(nd_id, nd_vector.vector_loc, nd_vector.vector_values, fieldmax_at_time_step, fieldmin_at_time_step);
 	}
 
 	// Create the potential contour (Copy the results)
 	node_contour.clear_data(); // clear the node contour data
+	for (const auto& tri_m : snap_shot_Electric_potential)
+	{
+		int tri_id = tri_m.first;
+		tricontour_data tri_data = tri_m.second;
 
+		// Add the triangle contour
+		node_contour.add_tricontour(tri_id, tri_data.nd1, tri_data.nd2, tri_data.nd3,
+			tri_data.nd1_values, tri_data.nd2_values, tri_data.nd3_values,
+			potentialmax_at_time_step, potentialmin_at_time_step);
+	}
 
 
 	is_analysis_complete = true;

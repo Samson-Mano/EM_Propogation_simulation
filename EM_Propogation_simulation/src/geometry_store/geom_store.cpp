@@ -574,10 +574,16 @@ void geom_store::paint_postprocess()
 		charge_path.paint_charge_oscillation(sol_window->time_step);
 
 		// Paint the Electric field vector
-		node_vector.paint_vectors(sol_window->time_step);
-
+		if (sol_window->show_vector_plot == true)
+		{
+			node_vector.paint_vectors(sol_window->time_step);
+		}
+		
 		// Paint the Electric potential
-		node_contour.paint_tricontour(sol_window->time_step);
+		if (sol_window->show_contour_plot == true)
+		{
+			node_contour.paint_tricontour(sol_window->time_step);
+		}
 	}
 
 
