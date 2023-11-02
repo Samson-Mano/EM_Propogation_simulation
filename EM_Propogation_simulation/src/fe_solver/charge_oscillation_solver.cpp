@@ -86,10 +86,10 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 	// Electric field solve
 	time_t = 0.0;
 	int step_i = 0;
-	const double light_speed_c = 300000; // Light speed c (KM/s)
-	glm::vec2 ref_zero = glm::vec2(-100000,-100000); // Reference zero
+	const double light_speed_c = 300; // Light speed c (KM/s)
+	glm::vec2 ref_zero = glm::vec2(-100000, -100000); // Reference zero
 
-	std::unordered_map<int,vector_data> snap_shot_Electric_field; // Electric field
+	std::unordered_map<int, vector_data> snap_shot_Electric_field; // Electric field
 	std::unordered_map<int, tricontour_data> snap_shot_Electric_potential; // Electric potential
 
 	// Create a Frame work for the vectors
@@ -134,7 +134,7 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 		glm::vec2 v_at_t = charge_path.ch_velocity_at_t[step_i]; // charge velocity at t
 		glm::vec2 a_at_t = charge_path.ch_acceleration_at_t[step_i]; // charge acceleration at t
 
-		double v_mag = glm::length(v_at_t); // Magnitude of velocity
+		double v_mag_at_t = glm::length(v_at_t); // Magnitude of velocity
 
 		// Find the w-vector
 		glm::vec2 w_vector = loc_at_t - ref_zero;
@@ -144,7 +144,7 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 		double snapshot_field_min = DBL_MAX;
 
 		// All nodes snap shot vector
-		std::unordered_map<int, glm::vec2> snap_shot_vector;
+		// std::unordered_map<int, glm::vec2> snap_shot_vector;
 
 		// Loop through every individual grid nodes
 		for (const auto& nd_m : grid_trimesh.all_mesh_nodes)
@@ -152,39 +152,10 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 			int node_id = nd_m.second.node_id; // Get the node id of the grid node
 			glm::vec2 grid_node_pt = nd_m.second.node_pt; // Get the node pt of the grid point
 
-			// Find the r-vector
-			glm::vec2 r_vector = grid_node_pt - ref_zero; 
-
-			// Find the r dash-vector
-			glm::vec2 r_dash_vector = r_vector - w_vector; 
-
-			// Normalize the r dash vector
-			glm::vec2 norm_r_dash_vector = glm::normalize(r_dash_vector);
-			double magnitude_r_dash = glm::length(r_dash_vector);
-
-			// Find the u vector (u = cr' - v)
-			glm::vec2 u_vector = (static_cast<float>(light_speed_c) * norm_r_dash_vector) - v_at_t;
-
-			// Find the E const = r' / (r' dot u)^3
-			double e_vec_const = 0.0f;
-			
-			if (magnitude_r_dash != 0.0)
-			{
-				e_vec_const = magnitude_r_dash / std::pow(glm::dot(r_dash_vector, u_vector), 3);
-			}
-
-			// E Vector 1
-			glm::vec2 e_vec1 = static_cast<float>(std::pow(light_speed_c, 2) - std::pow(v_mag, 2)) * u_vector;
-
-			// Cross product u x a
-			glm::vec3 u_cross_a = glm::cross(glm::vec3(u_vector,0),glm::vec3( a_at_t,0));
-
-			// E Vector 2
-			glm::vec3 e_vec2_dash = glm::cross(glm::vec3(r_dash_vector, 0), u_cross_a);
-			glm::vec2 e_vec2 = glm::vec2(e_vec2_dash.x, e_vec2_dash.y);
-
 			// E Vector
-			glm::vec2 e_vec = e_vec1 + e_vec2;
+			// glm::vec2 e_vec = lienard_wiechert_field(grid_node_pt, v_at_t, a_at_t, v_mag_at_t, light_speed_c, w_vector, ref_zero);
+			glm::vec2 e_vec = larmour_field(grid_node_pt, v_at_t, a_at_t, v_mag_at_t, light_speed_c, w_vector, ref_zero);
+
 			double e_vec_mag = glm::length(e_vec); // Magnitude of e vector
 
 			// Add the vector at time step
@@ -220,7 +191,7 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 		for (const auto& tri_m : grid_trimesh.elementtriMap)
 		{
 			int tri_id = tri_m.first; // Get the node id of the grid node
-			elementtri_store tri = tri_m.second; 
+			elementtri_store tri = tri_m.second;
 
 			// Get the triangle pt (3 points)
 			glm::vec2 tri_pt1 = tri.nd1->node_pt; // Get the triangle pt 1
@@ -339,4 +310,83 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 
 }
 
+glm::vec2 charge_oscillation_solver::lienard_wiechert_field(const glm::vec2& grid_node_pt,
+	const glm::vec2& v_at_t, const glm::vec2& a_at_t, const double& v_mag_at_t,
+	const double& light_speed_c, const glm::vec2& w_vector, const glm::vec2& ref_zero)
+{
+	// Lienard Wiechert Field
+	// Find the r-vector
+	glm::vec2 r_vector = grid_node_pt - ref_zero;
 
+	// Find the r dash-vector
+	glm::vec2 r_dash_vector = r_vector - w_vector;
+
+	// Normalize the r dash vector
+	glm::vec2 norm_r_dash_vector = glm::normalize(r_dash_vector);
+	double magnitude_r_dash = glm::length(r_dash_vector);
+
+	// Find the u vector (u = cr' - v)
+	glm::vec2 u_vector = (static_cast<float>(light_speed_c) * norm_r_dash_vector) - v_at_t;
+
+	// Find the E const = r' / (r' dot u)^3
+	double e_vec_const = 0.0f;
+
+	if (magnitude_r_dash != 0.0)
+	{
+		e_vec_const = magnitude_r_dash / std::pow(glm::dot(r_dash_vector, u_vector), 3);
+	}
+
+	// E Vector 1
+	glm::vec2 e_vec1 = static_cast<float>(std::pow(light_speed_c, 2) - std::pow(v_mag_at_t, 2)) * u_vector;
+
+	// Cross product u x a
+	glm::vec3 u_cross_a = glm::cross(glm::vec3(u_vector, 0), glm::vec3(a_at_t, 0));
+
+	// E Vector 2
+	glm::vec3 e_vec2_dash = glm::cross(glm::vec3(r_dash_vector, 0), u_cross_a);
+	glm::vec2 e_vec2 = glm::vec2(e_vec2_dash.x, e_vec2_dash.y);
+
+	// Constant 1
+	float k1 = 1.0;
+
+	return k1*(e_vec1 + e_vec2);
+}
+
+
+glm::vec2 charge_oscillation_solver::larmour_field(const glm::vec2& grid_node_pt,
+	const glm::vec2& v_at_t, const glm::vec2& a_at_t, const double& v_mag_at_t,
+	const double& light_speed_c, const glm::vec2& w_vector, const glm::vec2& ref_zero)
+{
+	// Larmour Field
+	// Find the r-vector
+	glm::vec2 r_vector = grid_node_pt - ref_zero;
+
+	// Find the r dash-vector
+	glm::vec2 r_dash_vector = r_vector - w_vector;
+
+	// Normalize the r dash vector
+	glm::vec2 norm_r_dash_vector = glm::normalize(r_dash_vector);
+	double magnitude_r_dash = glm::length(r_dash_vector);
+
+	if (magnitude_r_dash == 0)
+	{
+		// To avoid 0/0
+		return glm::vec2(0);
+	}
+
+	// Cross 1 (r x a)
+	glm::vec3 r_cross_a = glm::cross(glm::vec3(norm_r_dash_vector, 0), glm::vec3(a_at_t, 0));
+
+	// Cross 2 a_perp = r x (r x a)
+	glm::vec3 a_perp_dash = glm::cross(glm::vec3(norm_r_dash_vector, 0), r_cross_a);
+	glm::vec2 a_perp = glm::vec2(a_perp_dash.x, a_perp_dash.y);
+
+	// Constant 1
+	float k1 = 1.0;
+
+	// Constant 2
+	float k2 = 1.0; // static_cast<float>(1.0 / (magnitude_r_dash * std::pow(light_speed_c, 2.0)));
+
+
+	return (k1 * k2 * ( a_perp - norm_r_dash_vector));
+}

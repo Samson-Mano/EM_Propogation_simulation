@@ -53,5 +53,19 @@ public:
 
 
 private:
+	glm::vec2 lienard_wiechert_field(const glm::vec2& grid_node_pt,
+		const glm::vec2& v_at_t,
+		const glm::vec2& a_at_t,
+		const double& v_mag_at_t,
+		const double& light_speed_c,
+		const glm::vec2& w_vector,
+		const glm::vec2& ref_zero);
 
+	glm::vec2 larmour_field(const glm::vec2& grid_node_pt,
+		const glm::vec2& v_at_t,
+		const glm::vec2& a_at_t,
+		const double& v_mag_at_t,
+		const double& light_speed_c,
+		const glm::vec2& w_vector,
+		const glm::vec2& ref_zero);
 };
