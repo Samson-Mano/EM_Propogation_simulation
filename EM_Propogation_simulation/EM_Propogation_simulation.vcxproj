@@ -136,6 +136,7 @@
     <ClCompile Include="src\geometry_store\geometry_buffers\VertexBuffer.cpp" />
     <ClCompile Include="src\geometry_store\geometry_buffers\VertexBufferLayout.cpp" />
     <ClCompile Include="src\geometry_store\geometry_objects\dynamictricontour_list_store.cpp" />
+    <ClCompile Include="src\geometry_store\geometry_objects\dynamic_line_list_store.cpp" />
     <ClCompile Include="src\geometry_store\geometry_objects\dynamic_point_list_store.cpp" />
     <ClCompile Include="src\geometry_store\geometry_objects\dynamic_texture_list_store.cpp" />
     <ClCompile Include="src\geometry_store\geometry_objects\dynamic_vector_list_store.cpp" />
@@ -179,6 +180,7 @@
     <ClInclude Include="src\geometry_store\geometry_buffers\VertexBuffer.h" />
     <ClInclude Include="src\geometry_store\geometry_buffers\VertexBufferLayout.h" />
     <ClInclude Include="src\geometry_store\geometry_objects\dynamictricontour_list_store.h" />
+    <ClInclude Include="src\geometry_store\geometry_objects\dynamic_line_list_store.h" />
     <ClInclude Include="src\geometry_store\geometry_objects\dynamic_point_list_store.h" />
     <ClInclude Include="src\geometry_store\geometry_objects\dynamic_texture_list_store.h" />
     <ClInclude Include="src\geometry_store\geometry_objects\dynamic_vector_list_store.h" />
@@ -229,6 +231,8 @@
     <None Include="resources\shaders\constraint_vert_shader.vert" />
     <None Include="resources\shaders\dyncontourpoint_frag_shader.frag" />
     <None Include="resources\shaders\dyncontourpoint_vert_shader.vert" />
+    <None Include="resources\shaders\dynline_frag_shader.frag" />
+    <None Include="resources\shaders\dynline_vert_shader.vert" />
     <None Include="resources\shaders\dynvectorpoint_frag_shader.frag" />
     <None Include="resources\shaders\dynvectorpoint_vert_shader.vert" />
     <None Include="resources\shaders\dyntexture_frag_shader.frag" />

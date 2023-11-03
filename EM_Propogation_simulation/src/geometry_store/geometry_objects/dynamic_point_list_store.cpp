@@ -21,7 +21,7 @@ void dynamic_point_list_store::init(geom_parameters* geom_param_ptr)
 	dyn_point_shader.create_shader((shadersPath.string() + "/resources/shaders/point_vert_shader.vert").c_str(),
 		(shadersPath.string() + "/resources/shaders/point_frag_shader.frag").c_str());
 
-	// Delete all the labels
+	// Delete all the points
 	dyn_point_count = 0;
 	dyn_pointMap.clear();
 }

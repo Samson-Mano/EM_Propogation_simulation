@@ -144,6 +144,9 @@
     <ClCompile Include="src\geometry_store\result_objects\tricontour_list_store.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\geometry_store\geometry_objects\dynamic_line_list_store.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\app_window.h">
@@ -284,6 +287,9 @@
     <ClInclude Include="src\geometry_store\result_objects\tricontour_list_store.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\geometry_store\geometry_objects\dynamic_line_list_store.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Font Include="resources\fonts\CanadaDBNormal.ttf" />
@@ -321,6 +327,8 @@
     <None Include="resources\shaders\dynvectorpoint_vert_shader.vert" />
     <None Include="resources\shaders\dyncontourpoint_frag_shader.frag" />
     <None Include="resources\shaders\dyncontourpoint_vert_shader.vert" />
+    <None Include="resources\shaders\dynline_frag_shader.frag" />
+    <None Include="resources\shaders\dynline_vert_shader.vert" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="src\tool_window\model_data.txt" />

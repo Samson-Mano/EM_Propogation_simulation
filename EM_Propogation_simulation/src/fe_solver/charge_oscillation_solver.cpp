@@ -388,5 +388,5 @@ glm::vec2 charge_oscillation_solver::larmour_field(const glm::vec2& grid_node_pt
 	float k2 = 1.0; // static_cast<float>(1.0 / (magnitude_r_dash * std::pow(light_speed_c, 2.0)));
 
 
-	return (k1 * k2 * ( a_perp - norm_r_dash_vector));
+	return (k1 * k2 * ( a_perp + norm_r_dash_vector));
 }
