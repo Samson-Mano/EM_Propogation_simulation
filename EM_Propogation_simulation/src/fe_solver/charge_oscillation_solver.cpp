@@ -68,8 +68,8 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 		glm::vec2 dir_vector = charge_path.get_charge_path_location_at_t(param_t).second;
 
 		// velocity and acceleration vector
-		glm::vec2 velo_at_t = dir_vector * static_cast<float>(velocity_mag);
-		glm::vec2 accl_at_t = dir_vector * static_cast<float>(acceleration_mag);
+		glm::vec2 velo_at_t = dir_vector * static_cast<float>(std::abs(velocity_mag));
+		glm::vec2 accl_at_t = dir_vector * static_cast<float>(-1.0 * std::abs(acceleration_mag));
 
 		// Add to the list
 		charge_loc_at_t.push_back(loc_at_t); // Charge location
@@ -86,7 +86,7 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 	// Electric field solve
 	time_t = 0.0;
 	int step_i = 0;
-	const double light_speed_c = 300; // Light speed c (KM/s)
+	const double light_speed_c = 300000; // Light speed c (KM/s)
 	glm::vec2 ref_zero = glm::vec2(-100000, -100000); // Reference zero
 
 	std::unordered_map<int, vector_data> snap_shot_Electric_field; // Electric field
@@ -153,8 +153,8 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 			glm::vec2 grid_node_pt = nd_m.second.node_pt; // Get the node pt of the grid point
 
 			// E Vector
-			// glm::vec2 e_vec = lienard_wiechert_field(grid_node_pt, v_at_t, a_at_t, v_mag_at_t, light_speed_c, w_vector, ref_zero);
-			glm::vec2 e_vec = larmour_field(grid_node_pt, v_at_t, a_at_t, v_mag_at_t, light_speed_c, w_vector, ref_zero);
+			glm::vec2 e_vec = lienard_wiechert_field(grid_node_pt, v_at_t, a_at_t, v_mag_at_t, light_speed_c, w_vector, ref_zero);
+			// glm::vec2 e_vec = larmour_field(grid_node_pt, v_at_t, a_at_t, v_mag_at_t, light_speed_c, w_vector, ref_zero);
 
 			double e_vec_mag = glm::length(e_vec); // Magnitude of e vector
 
@@ -385,8 +385,10 @@ glm::vec2 charge_oscillation_solver::larmour_field(const glm::vec2& grid_node_pt
 	float k1 = 1.0;
 
 	// Constant 2
-	float k2 = 1.0; // static_cast<float>(1.0 / (magnitude_r_dash * std::pow(light_speed_c, 2.0)));
+	float k2 = static_cast<float>(1.0 / (magnitude_r_dash * std::pow(light_speed_c, 2.0)));
 
+	// E parallel
+	glm::vec2 e_par = static_cast<float>(1.0 / std::pow(magnitude_r_dash, 2)) * norm_r_dash_vector;
 
-	return (k1 * k2 * ( a_perp + norm_r_dash_vector));
+	return (k1 * k2 * (e_par + a_perp));
 }

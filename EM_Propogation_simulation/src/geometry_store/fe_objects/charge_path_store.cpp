@@ -261,7 +261,22 @@ std::pair<glm::vec2, glm::vec2>  charge_path_store::get_charge_path_location_at_
 	glm::vec2 location_at_t = glm::vec2(pt_at_t_x, pt_at_t_y); // Location
 
 	// Find the direction vector from two point
-	glm::vec2 direction_vector = chargePathMap[pt_index2].path_pts - chargePathMap[pt_index1].path_pts;
+	const double dt_at_t = 0.0001;
+	double pt_at_t_x_dt1 = (chargePathMap[pt_index1].path_pts.x * (1 - (segment_t_ratio - dt_at_t))) + 
+		(chargePathMap[pt_index2].path_pts.x * (segment_t_ratio - dt_at_t));
+	double pt_at_t_y_dt1 = (chargePathMap[pt_index1].path_pts.y * (1 - (segment_t_ratio - dt_at_t))) +
+		(chargePathMap[pt_index2].path_pts.y * (segment_t_ratio - dt_at_t));
+
+	glm::vec2 location_at_t_dt1 = glm::vec2(pt_at_t_x_dt1, pt_at_t_y_dt1); // Location dt1
+
+	double pt_at_t_x_dt2 = (chargePathMap[pt_index1].path_pts.x * (1 - (segment_t_ratio + dt_at_t))) +
+		(chargePathMap[pt_index2].path_pts.x * (segment_t_ratio + dt_at_t));
+	double pt_at_t_y_dt2 = (chargePathMap[pt_index1].path_pts.y * (1 - (segment_t_ratio + dt_at_t))) +
+		(chargePathMap[pt_index2].path_pts.y * (segment_t_ratio + dt_at_t));
+
+	glm::vec2 location_at_t_dt2 = glm::vec2(pt_at_t_x_dt2, pt_at_t_y_dt2); // Location dt2
+
+	glm::vec2 direction_vector = location_at_t_dt2 - location_at_t_dt1;
 
 	// Normalized the direction vector 
 	glm::vec2 normalized_direction_vector = glm::normalize(direction_vector);
