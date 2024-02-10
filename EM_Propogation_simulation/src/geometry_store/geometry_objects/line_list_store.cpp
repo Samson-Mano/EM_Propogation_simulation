@@ -48,9 +48,6 @@ void line_list_store::add_line(int& line_id, glm::vec2& line_startpt_loc, glm::v
 
 	temp_ln.is_offset = is_offset;
 
-	// Reserve space for the new element
-	lineMap.reserve(lineMap.size() + 1);
-
 	// Add to the list
 	lineMap.push_back(temp_ln);
 

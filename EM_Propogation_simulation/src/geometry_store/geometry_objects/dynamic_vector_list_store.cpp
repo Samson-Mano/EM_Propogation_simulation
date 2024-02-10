@@ -39,9 +39,6 @@ void dynamic_vector_list_store::add_vector(int& vector_id, glm::vec2 vector_orig
 	// Vector Color
 	dyn_temp_vec.vector_color = vector_color;
 
-	// Reserve space for the new element
-	dyn_vectorMap.reserve(dyn_vectorMap.size() + 1);
-
 	// Add to the list
 	dyn_vectorMap.push_back(dyn_temp_vec);
 
@@ -190,14 +187,17 @@ void dynamic_vector_list_store::get_vector_vertex_buffer(dynamic_vector_store& v
 	// Iterate
 	dyn_vector_v_index = dyn_vector_v_index + 8;
 
+	glm::vec2 vec_end_pt = glm::vec2(vec.vector_origin.x + vec.vector_endpt_loc[dyn_index].x,
+		vec.vector_origin.y - vec.vector_endpt_loc[dyn_index].y);
+
 	// Vector End Point
 	// Vector Origin
 	dyn_vector_vertices[dyn_vector_v_index + 0] = vec.vector_origin.x;
 	dyn_vector_vertices[dyn_vector_v_index + 1] = vec.vector_origin.y;
 
 	// Vector end point
-	dyn_vector_vertices[dyn_vector_v_index + 2] = vec.vector_endpt_loc[dyn_index].x;
-	dyn_vector_vertices[dyn_vector_v_index + 3] = vec.vector_endpt_loc[dyn_index].y;
+	dyn_vector_vertices[dyn_vector_v_index + 2] = vec_end_pt.x;
+	dyn_vector_vertices[dyn_vector_v_index + 3] = vec_end_pt.y;
 
 	// Point color
 	dyn_vector_vertices[dyn_vector_v_index + 4] = vec.vector_color[dyn_index].x;
@@ -218,8 +218,8 @@ void dynamic_vector_list_store::get_vector_vertex_buffer(dynamic_vector_store& v
 	dyn_vector_vertices[dyn_vector_v_index + 1] = vec.vector_origin.y;
 
 	// Vector end point
-	dyn_vector_vertices[dyn_vector_v_index + 2] = vec.vector_endpt_loc[dyn_index].x;
-	dyn_vector_vertices[dyn_vector_v_index + 3] = vec.vector_endpt_loc[dyn_index].y;
+	dyn_vector_vertices[dyn_vector_v_index + 2] = vec_end_pt.x;
+	dyn_vector_vertices[dyn_vector_v_index + 3] = vec_end_pt.y;
 
 	// Point color
 	dyn_vector_vertices[dyn_vector_v_index + 4] = vec.vector_color[dyn_index].x;
@@ -238,8 +238,8 @@ void dynamic_vector_list_store::get_vector_vertex_buffer(dynamic_vector_store& v
 	dyn_vector_vertices[dyn_vector_v_index + 1] = vec.vector_origin.y;
 
 	// Vector end point
-	dyn_vector_vertices[dyn_vector_v_index + 2] = vec.vector_endpt_loc[dyn_index].x;
-	dyn_vector_vertices[dyn_vector_v_index + 3] = vec.vector_endpt_loc[dyn_index].y;
+	dyn_vector_vertices[dyn_vector_v_index + 2] = vec_end_pt.x;
+	dyn_vector_vertices[dyn_vector_v_index + 3] = vec_end_pt.y;
 
 	// Point color
 	dyn_vector_vertices[dyn_vector_v_index + 4] = vec.vector_color[dyn_index].x;
@@ -260,8 +260,8 @@ void dynamic_vector_list_store::get_vector_vertex_buffer(dynamic_vector_store& v
 	dyn_vector_vertices[dyn_vector_v_index + 1] = vec.vector_origin.y;
 
 	// Vector end point
-	dyn_vector_vertices[dyn_vector_v_index + 2] = vec.vector_endpt_loc[dyn_index].x;
-	dyn_vector_vertices[dyn_vector_v_index + 3] = vec.vector_endpt_loc[dyn_index].y;
+	dyn_vector_vertices[dyn_vector_v_index + 2] = vec_end_pt.x;
+	dyn_vector_vertices[dyn_vector_v_index + 3] = vec_end_pt.y;
 
 	// Point color
 	dyn_vector_vertices[dyn_vector_v_index + 4] = vec.vector_color[dyn_index].x;
@@ -280,8 +280,8 @@ void dynamic_vector_list_store::get_vector_vertex_buffer(dynamic_vector_store& v
 	dyn_vector_vertices[dyn_vector_v_index + 1] = vec.vector_origin.y;
 
 	// Vector end point
-	dyn_vector_vertices[dyn_vector_v_index + 2] = vec.vector_endpt_loc[dyn_index].x;
-	dyn_vector_vertices[dyn_vector_v_index + 3] = vec.vector_endpt_loc[dyn_index].y;
+	dyn_vector_vertices[dyn_vector_v_index + 2] = vec_end_pt.x;
+	dyn_vector_vertices[dyn_vector_v_index + 3] = vec_end_pt.y;
 
 	// Point color
 	dyn_vector_vertices[dyn_vector_v_index + 4] = vec.vector_color[dyn_index].x;

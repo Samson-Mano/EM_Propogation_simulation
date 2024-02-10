@@ -49,9 +49,6 @@ void tri_list_store::add_tri(int& tri_id, const glm::vec2& tript1_loc, const glm
 
 	temp_tri.is_offset = is_offset;
 
-	// Reserve space for the new element
-	triMap.reserve(triMap.size() + 1);
-
 	// Add to the list
 	triMap.push_back(temp_tri);
 

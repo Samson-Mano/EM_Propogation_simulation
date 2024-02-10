@@ -56,7 +56,7 @@ void nodevector_list_store::add_vector(int& vector_id, glm::vec2& vector_loc,
 		glm::vec3 vec_color = geom_parameters::getContourColor(static_cast<float>(1.0f - vec_mag_ratio));
 
 		// Scale the vector valued
-		vector_values_scaled.push_back(vector_loc + static_cast<float>(vec_mag_ratio) * glm::normalize( vec_value - vector_loc));
+		vector_values_scaled.push_back(static_cast<float>(vec_mag_ratio) * glm::normalize(vec_value));
 
 		// Add to the vector color values
 		vector_colors.push_back(vec_color);

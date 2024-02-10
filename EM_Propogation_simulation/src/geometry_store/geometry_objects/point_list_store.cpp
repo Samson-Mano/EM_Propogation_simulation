@@ -36,9 +36,6 @@ void point_list_store::add_point(int& point_id, glm::vec2& point_loc, glm::vec2&
 	temp_pt.point_color = point_color;
 	temp_pt.is_offset = is_offset;
 
-	// Reserve space for the new element
-	pointMap.reserve(pointMap.size() + 1);
-
 	// Add to the list
 	pointMap.push_back(temp_pt);
 

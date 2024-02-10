@@ -47,9 +47,6 @@ void dynamic_texture_list_store::add_texture(int& dyn_texture_id, std::vector<gl
 	}
 
 	//___________________________________________________________________
-	// Reserve space for the new element
-	dyn_textureMap.reserve(dyn_textureMap.size() + 1);
-
 	// Add to the list
 	dyn_textureMap.push_back(dyn_temp_tx);
 

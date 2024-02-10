@@ -36,9 +36,6 @@ void dynamic_line_list_store::add_line(int& line_id, std::vector<glm::vec2>& lin
 	dyn_temp_ln.line_color = line_color; // Dynamic line color
 
 	//___________________________________________________________________
-	// Reserve space for the new element
-	dyn_lineMap.reserve(dyn_lineMap.size() + 1);
-
 	// Add to the line list
 	dyn_lineMap.push_back(dyn_temp_ln);
 
