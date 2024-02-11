@@ -23,7 +23,7 @@ void nodevector_list_store::init(geom_parameters* geom_param_ptr)
 	vectorMap.clear();
 }
 
-void nodevector_list_store::add_vector(int& vector_id, glm::vec2& vector_loc,
+void nodevector_list_store::add_vector(int& vector_id, std::vector<glm::vec2>& vector_loc,
 	std::vector<glm::vec2>& vector_values, std::vector<double>& vector_timestep_max_mag, std::vector<double>& vector_timestep_min_mag)
 {
 	// Create a temporary vector
@@ -34,10 +34,8 @@ void nodevector_list_store::add_vector(int& vector_id, glm::vec2& vector_loc,
 	// temp_vector.vector_timestep_max_mag = vector_timestep_max_mag;
 	// temp_vector.vector_timestep_min_mag = vector_timestep_min_mag;
 
-
-	// Create the vector color list
-	// Vector color
-	std::vector<glm::vec3> vector_colors;
+	
+	// Vector ratio
 	std::vector<double> vec_ratio;
 
 	// Add Vector values scaled to 1;
@@ -52,14 +50,8 @@ void nodevector_list_store::add_vector(int& vector_id, glm::vec2& vector_loc,
 		// std::cout << vec_mag_ratio << std::endl;
 		vec_ratio.push_back(vec_mag_ratio);
 
-		// get the vector color
-		glm::vec3 vec_color = geom_parameters::getContourColor(static_cast<float>(1.0f - vec_mag_ratio));
-
 		// Scale the vector valued
 		vector_values_scaled.push_back(static_cast<float>(vec_mag_ratio) * glm::normalize(vec_value));
-
-		// Add to the vector color values
-		vector_colors.push_back(vec_color);
 
 		i++;
 	}
@@ -67,7 +59,6 @@ void nodevector_list_store::add_vector(int& vector_id, glm::vec2& vector_loc,
 	// add to the struct
 	temp_vector.vec_ratio = vec_ratio;
 	temp_vector.vector_values_scaled = vector_values_scaled;
-	temp_vector.vector_colors = vector_colors;
 
 	// Insert to the vectorMap
 	vectorMap.insert({ vector_id, temp_vector });
@@ -100,7 +91,7 @@ void nodevector_list_store::set_buffer()
 
 		// Scale the vector values befor adding
 
-		vector_lines.add_vector(vec.vector_id,vec.vector_loc, vec.vector_values_scaled, vec.vector_colors);
+		vector_lines.add_vector(vec.vector_id,vec.vector_loc, vec.vector_values_scaled, vec.vec_ratio);
 	}
 
 	// Set the buffer (Only the index buffer is set because its a dynamic paint)

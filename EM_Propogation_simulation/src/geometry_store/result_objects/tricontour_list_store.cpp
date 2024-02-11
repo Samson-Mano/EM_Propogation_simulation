@@ -32,11 +32,6 @@ void tricontour_list_store::add_tricontour(int& tri_id, node_store* nd1, node_st
 	std::vector<double> nd2_mag_ratio;
 	std::vector<double> nd3_mag_ratio;
 
-	// Nodal colors at each time step
-	std::vector<glm::vec3> nd1_colors;
-	std::vector<glm::vec3> nd2_colors;
-	std::vector<glm::vec3> nd3_colors;
-
 	// Time step count
 	int t_step_count = static_cast<int>(contour_timestep_max_mag.size());
 
@@ -51,10 +46,6 @@ void tricontour_list_store::add_tricontour(int& tri_id, node_store* nd1, node_st
 		nd2_mag_ratio.push_back(temp_nd2_mag);
 		nd3_mag_ratio.push_back(temp_nd3_mag);
 
-		// Add to the color list
-		nd1_colors.push_back(geom_parameters::getContourColor(1.0f - temp_nd1_mag));
-		nd2_colors.push_back(geom_parameters::getContourColor(1.0f - temp_nd2_mag));
-		nd3_colors.push_back(geom_parameters::getContourColor(1.0f - temp_nd3_mag));
 	}
 
 	tricontour_data temp_tricontour;
@@ -72,11 +63,6 @@ void tricontour_list_store::add_tricontour(int& tri_id, node_store* nd1, node_st
 	temp_tricontour.nd1_mag_ratio = nd1_mag_ratio;
 	temp_tricontour.nd2_mag_ratio = nd2_mag_ratio;
 	temp_tricontour.nd3_mag_ratio = nd3_mag_ratio;
-
-	// Add to the tri_contour color data
-	temp_tricontour.nd1_colors = nd1_colors;
-	temp_tricontour.nd2_colors = nd2_colors;
-	temp_tricontour.nd3_colors = nd3_colors;
 
 	//_____________________________________________________________________
 
@@ -113,8 +99,7 @@ void tricontour_list_store::set_buffer()
 
 		// Add to the contour list
 		tri_contours.add_dyntricontour(dyntri.tri_id, tri_pt1, tri_pt2, tri_pt3,
-			dyntri.nd1_mag_ratio, dyntri.nd2_mag_ratio, dyntri.nd3_mag_ratio,
-			dyntri.nd1_colors, dyntri.nd2_colors, dyntri.nd3_colors);
+			dyntri.nd1_mag_ratio, dyntri.nd2_mag_ratio, dyntri.nd3_mag_ratio);
 	}
 
 	// Set the buffer (Only the index buffer is set because its a dynamic paint)

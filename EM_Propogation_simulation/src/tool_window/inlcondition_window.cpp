@@ -23,6 +23,7 @@ void inlcondition_window::render_window()
 
 	ImGui::Begin("Intial condition");
 
+	/*
 	// Import the pulse curve
 	if (ImGui::Button("Import curve dxf file"))
 	{
@@ -120,6 +121,13 @@ void inlcondition_window::render_window()
 		// curve_imported = false;
 		is_show_window = false;
 	}
+	*/
+
+
+	ImGui::RadioButton("Linear oscillation", &selected_model_option, 0);
+	ImGui::RadioButton("Circular oscillation type - I", &selected_model_option, 1);
+	// ImGui::RadioButton("Circular oscillation type - II", &selected_model_option, 2);
+	ImGui::RadioButton("Elliptical osillation", &selected_model_option, 3);
 
 
 	ImGui::End();

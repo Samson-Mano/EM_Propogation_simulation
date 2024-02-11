@@ -6,8 +6,9 @@ struct dynamic_vector_store
 {
 	// store the individual point
 	int vector_id = 0;
-	glm::vec2 vector_origin = glm::vec2(0); // Vector start pt
-	std::vector < glm::vec2> vector_endpt_loc; // Dynamic Vector end pt
+	std::vector<glm::vec2> vector_origin; // Dynamic Vector Origin
+	std::vector < glm::vec2> vector_dir; // Dynamic Vector Direction
+	std::vector<double> vector_mag; // Dynamic Vector magnitude
 	std::vector<glm::vec3> vector_color; // Dynamic Vector magnitude color
 };
 
@@ -22,8 +23,8 @@ public:
 	dynamic_vector_list_store();
 	~dynamic_vector_list_store();
 	void init(geom_parameters* geom_param_ptr);
-	void add_vector(int& vector_id, glm::vec2 vector_origin, std::vector<glm::vec2>& vector_endpt_loc,
-		std::vector<glm::vec3>& vector_color);
+	void add_vector(int& vector_id, std::vector<glm::vec2>& vector_origin, std::vector<glm::vec2>& vector_dir,
+		std::vector<double>& vector_mag);
 	void set_buffer();
 	void paint_vectors(const int& dyn_index);
 	void update_buffer(const int& dyn_index);

@@ -19,10 +19,6 @@ struct  tricontour_data
 	std::vector<double> nd2_mag_ratio;
 	std::vector<double> nd3_mag_ratio;
 
-	// Nodal colors at each time step
-	std::vector<glm::vec3> nd1_colors;
-	std::vector<glm::vec3> nd2_colors;
-	std::vector<glm::vec3> nd3_colors;
 };
 
 

@@ -25,6 +25,8 @@ public:
 	int selected_curvepath_option = 0; // type of curve path
 	int path_scale_factor = 100;
 	// double oscillation_freq = 1.0; // Oscillation frequency
+	int selected_model_option = 0; // Option to control the model
+
 
 	inlcondition_window();
 	~inlcondition_window();

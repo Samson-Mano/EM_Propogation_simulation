@@ -7,6 +7,7 @@
 #include "../geometry_objects/point_list_store.h"
 #include "../geometry_objects/line_list_store.h"
 #include "../geometry_objects/dynamic_texture_list_store.h"
+#include "../geometry_objects//dynamic_vector_list_store.h"
 #include "../geometry_objects/dynamic_line_list_store.h"
 
 struct charge_path_points
@@ -49,6 +50,6 @@ private:
 	point_list_store path_points;
 	line_list_store path_lines;
 	dynamic_texture_list_store path_tracks;
-	dynamic_line_list_store path_accls;
-
+	dynamic_vector_list_store path_accls;
+	dynamic_vector_list_store path_velos;
 };

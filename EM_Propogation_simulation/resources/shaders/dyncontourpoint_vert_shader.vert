@@ -4,38 +4,26 @@ uniform mat4 modelMatrix;
 uniform mat4 panTranslation;
 uniform float zoomscale;
 
-uniform float normalized_deflscale; // Sine cycle from animation (-1 to 1)
-uniform float deflscale; // Deflection scale value = normalized_deflscale (varies 0 to 1) * max deformation
-uniform float transparency = 1.0f;
-uniform float geom_scale;
+uniform float transparency = 0.7f;
 
-layout(location = 0) in vec2 tri_pt;
-layout(location = 1) in vec3 tri_pt_color;
+layout(location = 0) in vec2 node_position;
+layout(location = 1) in float defl_length; // Deflection length Normalized to 1.0
 
-out vec4 v_Color;
+out float v_defl_length;
+out float v_transparency;
 
 void main()
 {
 	// apply zoom scaling and Rotation to model matrix
 	mat4 scalingMatrix = mat4(1.0)*zoomscale;
 	scalingMatrix[3][3] = 1.0f;
-	mat4 scaledModelMatrix = scalingMatrix * modelMatrix;
+	mat4 scaledModelMatrix =  scalingMatrix * modelMatrix;
 	
-	// Declare variable to store final node center
-	vec4 finalPosition;
-	vec3 final_vertexColor;
+	// apply Translation to the node position
+	gl_Position = scaledModelMatrix * vec4(node_position,0.0f,1.0f) * panTranslation;
 
-	// apply Transformation to the triangle point position 
-	finalPosition = scaledModelMatrix * vec4(tri_pt,0.0f,1.0f) * panTranslation;
+	// Color
+	v_defl_length = defl_length;
+	v_transparency = transparency;
 
-	// Vertex color
-	final_vertexColor = vec3((0.5f*(1.0f-normalized_deflscale)+(tri_pt_color.x*normalized_deflscale)),
-							 (0.0f*(1.0f-normalized_deflscale)+(tri_pt_color.y*normalized_deflscale)),
-							 (1.0f*(1.0f-normalized_deflscale)+(tri_pt_color.z*normalized_deflscale)));
-	
-
-	v_Color = vec4(final_vertexColor,transparency);
-
-	// Final position passed to fragment shader
-	gl_Position = finalPosition;
 }

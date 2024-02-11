@@ -26,7 +26,8 @@ void dynamic_vector_list_store::init(geom_parameters* geom_param_ptr)
 	dyn_vectorMap.clear();
 }
 
-void dynamic_vector_list_store::add_vector(int& vector_id, glm::vec2 vector_origin, std::vector<glm::vec2>& vector_endpt_loc, std::vector<glm::vec3>& vector_color)
+void dynamic_vector_list_store::add_vector(int& vector_id, std::vector<glm::vec2>& vector_origin, std::vector<glm::vec2>& vector_dir,
+	std::vector<double>& vector_mag)
 {
 	// Create a temporary points
 	dynamic_vector_store dyn_temp_vec;
@@ -34,10 +35,17 @@ void dynamic_vector_list_store::add_vector(int& vector_id, glm::vec2 vector_orig
 
 	// Dynamic Vector points
 	dyn_temp_vec.vector_origin = vector_origin;
-	dyn_temp_vec.vector_endpt_loc = vector_endpt_loc;
+	dyn_temp_vec.vector_dir = vector_dir;
+
+	// Vector magnitude
+	dyn_temp_vec.vector_mag = vector_mag;
 
 	// Vector Color
-	dyn_temp_vec.vector_color = vector_color;
+	for (auto& mag : vector_mag)
+	{
+		dyn_temp_vec.vector_color.push_back(geom_parameters::getContourColor(1.0 - mag));
+	}
+	 
 
 	// Add to the list
 	dyn_vectorMap.push_back(dyn_temp_vec);
@@ -169,12 +177,12 @@ void dynamic_vector_list_store::get_vector_vertex_buffer(dynamic_vector_store& v
 	// Get the node buffer for the shader
 	// Vector Origin Point
 	// Vector Origin
-	dyn_vector_vertices[dyn_vector_v_index + 0] = vec.vector_origin.x;
-	dyn_vector_vertices[dyn_vector_v_index + 1] = vec.vector_origin.y;
+	dyn_vector_vertices[dyn_vector_v_index + 0] = vec.vector_origin[dyn_index].x;
+	dyn_vector_vertices[dyn_vector_v_index + 1] = vec.vector_origin[dyn_index].y;
 
 	// Vector end point
-	dyn_vector_vertices[dyn_vector_v_index + 2] = vec.vector_origin.x;
-	dyn_vector_vertices[dyn_vector_v_index + 3] = vec.vector_origin.y;
+	dyn_vector_vertices[dyn_vector_v_index + 2] = vec.vector_origin[dyn_index].x;
+	dyn_vector_vertices[dyn_vector_v_index + 3] = vec.vector_origin[dyn_index].y;
 
 	// Point color
 	dyn_vector_vertices[dyn_vector_v_index + 4] = vec.vector_color[dyn_index].x;
@@ -187,13 +195,13 @@ void dynamic_vector_list_store::get_vector_vertex_buffer(dynamic_vector_store& v
 	// Iterate
 	dyn_vector_v_index = dyn_vector_v_index + 8;
 
-	glm::vec2 vec_end_pt = glm::vec2(vec.vector_origin.x + vec.vector_endpt_loc[dyn_index].x,
-		vec.vector_origin.y - vec.vector_endpt_loc[dyn_index].y);
+	glm::vec2 vec_end_pt = glm::vec2(vec.vector_origin[dyn_index].x + (vec.vector_mag[dyn_index] *vec.vector_dir[dyn_index].x),
+		vec.vector_origin[dyn_index].y - (vec.vector_mag[dyn_index] * vec.vector_dir[dyn_index].y));
 
 	// Vector End Point
 	// Vector Origin
-	dyn_vector_vertices[dyn_vector_v_index + 0] = vec.vector_origin.x;
-	dyn_vector_vertices[dyn_vector_v_index + 1] = vec.vector_origin.y;
+	dyn_vector_vertices[dyn_vector_v_index + 0] = vec.vector_origin[dyn_index].x;
+	dyn_vector_vertices[dyn_vector_v_index + 1] = vec.vector_origin[dyn_index].y;
 
 	// Vector end point
 	dyn_vector_vertices[dyn_vector_v_index + 2] = vec_end_pt.x;
@@ -214,8 +222,8 @@ void dynamic_vector_list_store::get_vector_vertex_buffer(dynamic_vector_store& v
 	// Arrow head line 1
 	// Vector End Point
 	// Vector Origin
-	dyn_vector_vertices[dyn_vector_v_index + 0] = vec.vector_origin.x;
-	dyn_vector_vertices[dyn_vector_v_index + 1] = vec.vector_origin.y;
+	dyn_vector_vertices[dyn_vector_v_index + 0] = vec.vector_origin[dyn_index].x;
+	dyn_vector_vertices[dyn_vector_v_index + 1] = vec.vector_origin[dyn_index].y;
 
 	// Vector end point
 	dyn_vector_vertices[dyn_vector_v_index + 2] = vec_end_pt.x;
@@ -234,8 +242,8 @@ void dynamic_vector_list_store::get_vector_vertex_buffer(dynamic_vector_store& v
 
 	// Vector End Point
 	// Vector Origin
-	dyn_vector_vertices[dyn_vector_v_index + 0] = vec.vector_origin.x;
-	dyn_vector_vertices[dyn_vector_v_index + 1] = vec.vector_origin.y;
+	dyn_vector_vertices[dyn_vector_v_index + 0] = vec.vector_origin[dyn_index].x;
+	dyn_vector_vertices[dyn_vector_v_index + 1] = vec.vector_origin[dyn_index].y;
 
 	// Vector end point
 	dyn_vector_vertices[dyn_vector_v_index + 2] = vec_end_pt.x;
@@ -256,8 +264,8 @@ void dynamic_vector_list_store::get_vector_vertex_buffer(dynamic_vector_store& v
 	// Arrow head line 2
 	// Vector End Point
 	// Vector Origin
-	dyn_vector_vertices[dyn_vector_v_index + 0] = vec.vector_origin.x;
-	dyn_vector_vertices[dyn_vector_v_index + 1] = vec.vector_origin.y;
+	dyn_vector_vertices[dyn_vector_v_index + 0] = vec.vector_origin[dyn_index].x;
+	dyn_vector_vertices[dyn_vector_v_index + 1] = vec.vector_origin[dyn_index].y;
 
 	// Vector end point
 	dyn_vector_vertices[dyn_vector_v_index + 2] = vec_end_pt.x;
@@ -276,8 +284,8 @@ void dynamic_vector_list_store::get_vector_vertex_buffer(dynamic_vector_store& v
 
 	// Vector End Point
 	// Vector Origin
-	dyn_vector_vertices[dyn_vector_v_index + 0] = vec.vector_origin.x;
-	dyn_vector_vertices[dyn_vector_v_index + 1] = vec.vector_origin.y;
+	dyn_vector_vertices[dyn_vector_v_index + 0] = vec.vector_origin[dyn_index].x;
+	dyn_vector_vertices[dyn_vector_v_index + 1] = vec.vector_origin[dyn_index].y;
 
 	// Vector end point
 	dyn_vector_vertices[dyn_vector_v_index + 2] = vec_end_pt.x;

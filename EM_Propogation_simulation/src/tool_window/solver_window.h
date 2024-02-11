@@ -31,7 +31,7 @@ public:
 	// Animation control
 	bool animate_play = true;
 	bool animate_pause = false;
-	double deformation_scale_max = 10.0;
+	double deformation_scale_max = 20.0;
 	double animation_speed = 1.0;
 
 	// Time step control

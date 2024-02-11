@@ -346,7 +346,7 @@ void geom_store::create_geometry()
 	std::ostringstream scaled_dxf_input; // Create an ostringstream object for scaled input
 
 	scaled_dxf_input << 0 << ", " << 0.0 << ", " << 100.0 << "\n";
-	scaled_dxf_input << 0 << ", " << 0.0 << ", " << -100.0 << "\n";
+	scaled_dxf_input << 1 << ", " << 0.0 << ", " << -100.0 << "\n";
 
 
 	std::string currve_pt;

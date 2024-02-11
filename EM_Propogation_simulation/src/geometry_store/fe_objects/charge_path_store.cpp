@@ -20,6 +20,7 @@ void charge_path_store::init(geom_parameters* geom_param_ptr)
 	path_lines.init(geom_param_ptr);
 	path_tracks.init(geom_param_ptr);
 	path_accls.init(geom_param_ptr);
+	path_velos.init(geom_param_ptr);
 
 	// Clear the charge path points
 	is_pathset = false;
@@ -43,7 +44,8 @@ void charge_path_store::add_path(std::vector<std::string> curve_paths, int path_
 	chargePathMap.clear();
 	path_points.clear_points();
 	path_lines.clear_lines();
-	path_accls.clear_lines();
+	path_accls.clear_vectors();
+	path_velos.clear_vectors();
 
 	glm::vec3 temp_color = geom_param_ptr->geom_colors.charge_path_color;
 
@@ -135,6 +137,8 @@ void charge_path_store::add_charge_oscillation(std::vector<glm::vec2>& charge_pa
 {
 	// Charge oscillation path
 	path_tracks.clear_textures();
+	path_accls.clear_vectors();
+	path_velos.clear_vectors();
 
 	// Add the values points, velocity & acceleration
 	ch_location_at_t = charge_path_pts;
@@ -157,10 +161,20 @@ void charge_path_store::add_charge_oscillation(std::vector<glm::vec2>& charge_pa
 		}
 	}
 
+	double max_velo = 0.0;
+	for (auto& vec_m : charge_velocity)
+	{
+		if (max_velo < std::abs(glm::length(vec_m)))
+		{
+			// Maximum velocity
+			max_velo = std::abs(glm::length(vec_m));
+		}
+	}
+
 
 	std::vector<glm::vec2> accl_start_pt;
 	std::vector<glm::vec2> accl_end_pt;
-	std::vector<glm::vec3> accl_colors_list;
+	std::vector<double> accl_mag;
 
 	id = 0;
 	for (auto& vec_m : charge_acceleration)
@@ -172,24 +186,50 @@ void charge_path_store::add_charge_oscillation(std::vector<glm::vec2>& charge_pa
 		double defl_ratio = geom_param_ptr->defl_scale * (0.005f / geom_param_ptr->geom_scale);
 
 		double mag_ratio = glm::length(vec_m) / max_accl;
-		accl_end_pt.push_back(charge_path_pts[id] + static_cast<float>(1000 * mag_ratio) * glm::normalize(vec_m));
+
+		accl_end_pt.push_back(vec_m / static_cast<float>(max_accl));
 
 		// Color list
-		accl_colors_list.push_back(geom_parameters::getContourColor(1.0 - mag_ratio));
+		accl_mag.push_back( 1.0f);
 
 		id++;
 	}
 
 	id = 0;
-	//for (auto& vec_m : charge_acceleration)
-	//{
-		// Scale the vector values befor adding
-	path_accls.add_line(id, accl_start_pt, accl_end_pt, accl_colors_list);
 
-	//	id++;
-	//}
+	// Path acceleration
+	path_accls.add_vector(id, accl_start_pt, accl_end_pt, accl_mag);
 
-	// Set the buffer (Only the index buffer is set because its a dynamic paint)
+
+	std::vector<glm::vec2> velo_start_pt;
+	std::vector<glm::vec2> velo_end_pt;
+	std::vector<double> velo_mag;
+
+	id = 0;
+	for (auto& vec_m : charge_velocity)
+	{
+		// Add the start point
+		velo_start_pt.push_back(charge_path_pts[id]);
+
+		// Add the end point
+		double defl_ratio = geom_param_ptr->defl_scale * (0.005f / geom_param_ptr->geom_scale);
+
+		double mag_ratio = glm::length(vec_m) / max_velo;
+
+		velo_end_pt.push_back(vec_m / static_cast<float>(max_velo));
+
+		// Color list
+		velo_mag.push_back(-1.0f);
+
+		id++;
+	}
+
+	id = 0;
+
+	// Path velocity
+	path_velos.add_vector(id, velo_start_pt, velo_end_pt, velo_mag);
+
+
 
 
 }
@@ -200,6 +240,7 @@ void charge_path_store::set_buffer()
 	// Set the buffers for the Model
 	path_points.set_buffer();
 	path_lines.set_buffer();
+	path_velos.set_buffer();
 }
 
 void charge_path_store::set_path_buffer()
@@ -207,6 +248,7 @@ void charge_path_store::set_path_buffer()
 	// Set the path buffer
 	path_tracks.set_buffer();
 	path_accls.set_buffer();
+	path_velos.set_buffer();
 }
 
 std::pair<glm::vec2, glm::vec2>  charge_path_store::get_charge_path_location_at_t(const double& param_t)
@@ -297,7 +339,8 @@ void charge_path_store::paint_charge_oscillation(const int& dyn_index)
 {
 	// Paint the charge oscillation
 	path_tracks.paint_textures(dyn_index);
-	path_accls.paint_lines(dyn_index);
+	path_accls.paint_vectors(dyn_index);
+	path_velos.paint_vectors(dyn_index);
 }
 
 void charge_path_store::update_geometry_matrices(bool set_modelmatrix, bool set_pantranslation, bool set_zoomtranslation, bool set_transparency, bool set_deflscale)
@@ -307,4 +350,5 @@ void charge_path_store::update_geometry_matrices(bool set_modelmatrix, bool set_
 	path_lines.update_opengl_uniforms(set_modelmatrix, set_pantranslation, set_zoomtranslation, set_transparency, set_deflscale);
 	path_tracks.update_opengl_uniforms(set_modelmatrix, set_pantranslation, set_zoomtranslation, false, set_deflscale);
 	path_accls.update_opengl_uniforms(set_modelmatrix, set_pantranslation, set_zoomtranslation, false, set_deflscale);
+	path_velos.update_opengl_uniforms(set_modelmatrix, set_pantranslation, set_zoomtranslation, false, set_deflscale);
 }

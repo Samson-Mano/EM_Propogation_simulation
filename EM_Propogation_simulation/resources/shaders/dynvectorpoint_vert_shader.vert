@@ -64,7 +64,7 @@ void main()
 		// pt_type 2 is the arrow head pt 1
 		float node_circe_radii = 0.005f;
 		float defl_ratio = deflscale * (node_circe_radii/ geom_scale);
-		float arrow_size = 0.2f * defl_ratio;
+		float arrow_size = 0.05f * defl_ratio;
 		
 		// Find the vector value from the vector origin
 		vec2 vector_value = pt_position - vector_origin;
@@ -98,7 +98,7 @@ void main()
 		// pt_type 3 is the arrow head pt 2
 		float node_circe_radii = 0.005f;
 		float defl_ratio = deflscale * (node_circe_radii/ geom_scale);
-		float arrow_size = 0.2f * defl_ratio;
+		float arrow_size = 0.05f * defl_ratio;
 		
 		// Find the vector value from the vector origin
 		vec2 vector_value = pt_position - vector_origin;

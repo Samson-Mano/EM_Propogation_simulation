@@ -27,8 +27,7 @@ void dynamictricontour_list_store::init(geom_parameters* geom_param_ptr)
 }
 
 void dynamictricontour_list_store::add_dyntricontour(int& tri_id, glm::vec2 tri_coord1, glm::vec2 tri_coord2, glm::vec2 tri_coord3, 
-	std::vector<double>& tri_displ1, std::vector<double>& tri_displ2, std::vector<double>& tri_displ3,
-	std::vector<glm::vec3>& tri_pt1_color, std::vector<glm::vec3>& tri_pt2_color, std::vector<glm::vec3>& tri_pt3_color)
+	std::vector<double>& tri_displ1, std::vector<double>& tri_displ2, std::vector<double>& tri_displ3)
 {
 	// Create a temporary contours
 	dynamictricontour_store dyn_temp_contour;
@@ -43,14 +42,6 @@ void dynamictricontour_list_store::add_dyntricontour(int& tri_id, glm::vec2 tri_
 	dyn_temp_contour.tri_displ1 = tri_displ1; // Dynamic Displacement list of pt1
 	dyn_temp_contour.tri_displ2 = tri_displ2;// Dynamic Displacement list of pt2
 	dyn_temp_contour.tri_displ3 = tri_displ3;// Dynamic Displacement list of pt3
-
-	// Color
-	dyn_temp_contour.tri_pt1_color = tri_pt1_color; // Dynamic Color list of pt1
-	dyn_temp_contour.tri_pt2_color = tri_pt2_color; // Dynamic Color list of pt2
-	dyn_temp_contour.tri_pt3_color = tri_pt3_color; // Dynamic Color list of pt3
-
-	// Reserve space for the new element
-	dyn_triMap.reserve(dyn_triMap.size() + 1);
 
 	// Add to the list
 	dyn_triMap.push_back(dyn_temp_contour);
@@ -77,10 +68,10 @@ void dynamictricontour_list_store::set_buffer()
 	//Set the layout of the dynamic triangle contour
 	VertexBufferLayout contour_pt_layout;
 	contour_pt_layout.AddFloat(2); // Triangle point
-	contour_pt_layout.AddFloat(3); // Triangle color
+	contour_pt_layout.AddFloat(1); // Triangle normalized displ
 
-	// Define the triangle contour vertices of the model for a point (2 position, 3 color) 
-	const unsigned int dyn_contour_vertex_count = 5 * 3 * dyn_tri_count;
+	// Define the triangle contour vertices of the model for a point (2 position, 1 defl) 
+	const unsigned int dyn_contour_vertex_count = 3 * 3 * dyn_tri_count;
 	unsigned int dyn_contour_vertex_size = dyn_contour_vertex_count * sizeof(float); // Size of the vector_vertex
 
 	// Create a dynamic buffer to allocate space for the points
@@ -110,8 +101,8 @@ void dynamictricontour_list_store::paint_dyntricontour(const int& dyn_index)
 
 void dynamictricontour_list_store::update_buffer(const int& dyn_index)
 {
-	//  Define the contour vertices of the model for a point (2 position, 3 color) 
-	const unsigned int dyn_contour_vertex_count = 5 * 3 * dyn_tri_count;
+	//  Define the contour vertices of the model for a point (2 position, 1 defl) 
+	const unsigned int dyn_contour_vertex_count = 3 * 3 * dyn_tri_count;
 	float* dyn_contour_vertices = new float[dyn_contour_vertex_count];
 
 	unsigned int dyn_contour_v_index = 0;
@@ -185,39 +176,33 @@ void dynamictricontour_list_store::get_contour_vertex_buffer(dynamictricontour_s
 	dyn_contour_vertices[dyn_contour_v_index + 0] = dyntri.tri_coord1.x;
 	dyn_contour_vertices[dyn_contour_v_index + 1] = dyntri.tri_coord1.y;
 
-	// Point color
-	dyn_contour_vertices[dyn_contour_v_index + 2] = dyntri.tri_pt1_color[dyn_index].x;
-	dyn_contour_vertices[dyn_contour_v_index + 3] = dyntri.tri_pt1_color[dyn_index].y;
-	dyn_contour_vertices[dyn_contour_v_index + 4] = dyntri.tri_pt1_color[dyn_index].z;
+	// Point normalized displ
+	dyn_contour_vertices[dyn_contour_v_index + 2] = dyntri.tri_displ1[dyn_index];
 
 	// Iterate
-	dyn_contour_v_index = dyn_contour_v_index + 5;
+	dyn_contour_v_index = dyn_contour_v_index + 3;
 
 	// Point 2
 	// Point location
 	dyn_contour_vertices[dyn_contour_v_index + 0] = dyntri.tri_coord2.x;
 	dyn_contour_vertices[dyn_contour_v_index + 1] = dyntri.tri_coord2.y;
 
-	// Point color
-	dyn_contour_vertices[dyn_contour_v_index + 2] = dyntri.tri_pt2_color[dyn_index].x;
-	dyn_contour_vertices[dyn_contour_v_index + 3] = dyntri.tri_pt2_color[dyn_index].y;
-	dyn_contour_vertices[dyn_contour_v_index + 4] = dyntri.tri_pt2_color[dyn_index].z;
+	// Point normalized displ
+	dyn_contour_vertices[dyn_contour_v_index + 2] = dyntri.tri_displ2[dyn_index];
 
 	// Iterate
-	dyn_contour_v_index = dyn_contour_v_index + 5;
+	dyn_contour_v_index = dyn_contour_v_index + 3;
 
 	// Point 3
 	// Point location
 	dyn_contour_vertices[dyn_contour_v_index + 0] = dyntri.tri_coord3.x;
 	dyn_contour_vertices[dyn_contour_v_index + 1] = dyntri.tri_coord3.y;
 
-	// Point color
-	dyn_contour_vertices[dyn_contour_v_index + 2] = dyntri.tri_pt3_color[dyn_index].x;
-	dyn_contour_vertices[dyn_contour_v_index + 3] = dyntri.tri_pt3_color[dyn_index].y;
-	dyn_contour_vertices[dyn_contour_v_index + 4] = dyntri.tri_pt3_color[dyn_index].z;
+	// Point normailized displ
+	dyn_contour_vertices[dyn_contour_v_index + 2] = dyntri.tri_displ3[dyn_index];
 
 	// Iterate
-	dyn_contour_v_index = dyn_contour_v_index + 5;
+	dyn_contour_v_index = dyn_contour_v_index + 3;
 }
 
 void dynamictricontour_list_store::get_contour_index_buffer(unsigned int* dyn_contour_vertex_indices, unsigned int& dyn_contour_i_index)

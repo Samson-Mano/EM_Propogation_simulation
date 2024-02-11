@@ -68,4 +68,9 @@ private:
 		const double& light_speed_c,
 		const glm::vec2& w_vector,
 		const glm::vec2& ref_zero);
+
+
+	int get_delayed_index(const glm::vec2& node_pt, const int& step_i, 
+		const double& time_interval, const double& light_speed_c);
+
 };

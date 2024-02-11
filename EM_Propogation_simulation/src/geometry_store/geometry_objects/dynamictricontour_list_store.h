@@ -11,14 +11,9 @@ struct dynamictricontour_store
 	glm::vec2 tri_coord3 = glm::vec2(0); // Dynamic triangle pt3
 
 	// Displacement
-	std::vector<double> tri_displ1; // Dynamic Displacement list of pt1
-	std::vector<double> tri_displ2;// Dynamic Displacement list of pt2
-	std::vector<double> tri_displ3;// Dynamic Displacement list of pt3
-
-	// Color
-	std::vector<glm::vec3> tri_pt1_color; // Dynamic Color list of pt1
-	std::vector<glm::vec3> tri_pt2_color; // Dynamic Color list of pt2
-	std::vector<glm::vec3> tri_pt3_color; // Dynamic Color list of pt3
+	std::vector<double> tri_displ1; // Normalized Dynamic Displacement list of pt1
+	std::vector<double> tri_displ2;// Normalized Dynamic Displacement list of pt2
+	std::vector<double> tri_displ3;// Normalized Dynamic Displacement list of pt3
 };
 
 
@@ -35,8 +30,7 @@ public:
 	~dynamictricontour_list_store();
 	void init(geom_parameters* geom_param_ptr);
 	void add_dyntricontour(int& tri_id, glm::vec2 tri_coord1, glm::vec2 tri_coord2, glm::vec2 tri_coord3, 
-		std::vector<double>& tri_displ1, std::vector<double>& tri_displ2, std::vector<double>& tri_displ3,
-		std::vector<glm::vec3>& tri_pt1_color, std::vector<glm::vec3>& tri_pt2_color, std::vector<glm::vec3>& tri_pt3_color);
+		std::vector<double>& tri_displ1, std::vector<double>& tri_displ2, std::vector<double>& tri_displ3);
 	void set_buffer();
 	void paint_dyntricontour(const int& dyn_index);
 	void update_buffer(const int& dyn_index);

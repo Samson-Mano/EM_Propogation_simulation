@@ -27,7 +27,6 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 	std::vector<glm::vec2> charge_velcoty_at_t; // Velocity at time t
 	std::vector<glm::vec2> charge_acceleration_at_t; // Acceleration at time t
 
-	double param_t = 0.0;
 	double angular_freq = 2.0 * m_pi * charge_oscillation_freq; // Angular charge oscillation frequency
 	int cycle_n = 1; // number of cycle for closed loop
 	double t1 = 0.0; // variable to aid in loop cycle time skip
@@ -35,41 +34,25 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 
 	for (time_t = 0.0; time_t <= total_simulation_time; time_t = time_t + time_interval)
 	{
+		double displ_mag = 0.0; // Displacement magnitude
 		double velocity_mag = 0.0; // Velocity magnitude
 		double acceleration_mag = 0.0; // Acceleration magnitude
 
-		if (charge_path.path_type == 0)
-		{
-			// Check to cycle the loop
-			if ((cycle_n * m_pi) < (angular_freq * time_t))
-			{
-				t1 = time_t;
-				cycle_n++;
-			}
-			param_t = 0.5 * (1.0 - std::cos(angular_freq * (time_t - t1)));
+		// Displacement
+		displ_mag = std::sin(angular_freq * time_t);
 
-			// Velocity
-			velocity_mag = 0.5 * angular_freq * std::sin(angular_freq * (time_t - t1));
-			// Acceleration
-			acceleration_mag = 0.5 * angular_freq * angular_freq * std::cos(angular_freq * (time_t - t1));
-		}
-		else
-		{
-			param_t = 0.5 * (1.0 - std::cos(angular_freq * time_t));
+		// Velocity
+		velocity_mag = angular_freq * std::cos(angular_freq * time_t);
 
-			// Velocity
-			velocity_mag = 0.5 * angular_freq * std::sin(angular_freq * time_t);
-			// Acceleration
-			acceleration_mag = 0.5 * angular_freq * angular_freq * std::cos(angular_freq * time_t);
-		}
+		// Acceleration
+		acceleration_mag = -1.0 * angular_freq * angular_freq * std::sin(angular_freq * time_t);
 
 		// get the charge location
-		glm::vec2 loc_at_t = charge_path.get_charge_path_location_at_t(param_t).first;
-		glm::vec2 dir_vector = charge_path.get_charge_path_location_at_t(param_t).second;
-
+		glm::vec2 loc_at_t = glm::vec2(0.0, 100 * static_cast<float>(displ_mag)); // charge_path.get_charge_path_location_at_t(param_t).first;
+		
 		// velocity and acceleration vector
-		glm::vec2 velo_at_t = dir_vector * static_cast<float>(std::abs(velocity_mag));
-		glm::vec2 accl_at_t = dir_vector * static_cast<float>(-1.0 * std::abs(acceleration_mag));
+		glm::vec2 velo_at_t = glm::vec2(0.0,-1.0* static_cast<float>(velocity_mag));
+		glm::vec2 accl_at_t = glm::vec2(0.0, static_cast<float>(acceleration_mag));
 
 		// Add to the list
 		charge_loc_at_t.push_back(loc_at_t); // Charge location
@@ -86,7 +69,7 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 	// Electric field solve
 	time_t = 0.0;
 	int step_i = 0;
-	const double light_speed_c = 300000; // Light speed c (KM/s)
+	const double light_speed_c = 300; // Light speed c (KM/s)
 	glm::vec2 ref_zero = glm::vec2(-100000, -100000); // Reference zero
 
 	std::unordered_map<int, vector_data> snap_shot_Electric_field; // Electric field
@@ -100,7 +83,7 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 
 		// Set the vector id & vector point
 		snap_shot_Electric_field[nd_id].vector_id = nd_id;
-		snap_shot_Electric_field[nd_id].vector_loc = nd.node_pt;
+		snap_shot_Electric_field[nd_id].vector_loc.resize(this->time_step_count, nd.node_pt);
 	}
 
 	// Create a Frame work for the contours
@@ -125,23 +108,15 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 	std::vector<double> potentialmax_at_time_step;
 	std::vector<double> potentialmin_at_time_step;
 
+
 	for (step_i = 0; step_i < this->time_step_count; step_i++)
 	{
 		time_t = step_i * time_interval; // current time t
 
-		// Charge parameters
-		glm::vec2 loc_at_t = charge_path.ch_location_at_t[step_i]; // charge location at t
-		glm::vec2 v_at_t = charge_path.ch_velocity_at_t[step_i]; // charge velocity at t
-		glm::vec2 a_at_t = charge_path.ch_acceleration_at_t[step_i]; // charge acceleration at t
-
-		double v_mag_at_t = glm::length(v_at_t); // Magnitude of velocity
-
-		// Find the w-vector
-		glm::vec2 w_vector = loc_at_t - ref_zero;
-
 		// Field max
 		double snapshot_field_max = 0.0;
 		double snapshot_field_min = DBL_MAX;
+		int delayed_index = 0;
 
 		// All nodes snap shot vector
 		// std::unordered_map<int, glm::vec2> snap_shot_vector;
@@ -152,9 +127,22 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 			int node_id = nd_m.second.node_id; // Get the node id of the grid node
 			glm::vec2 grid_node_pt = nd_m.second.node_pt; // Get the node pt of the grid point
 
+			// Find the index of acceleration at delayed time
+			delayed_index = get_delayed_index(grid_node_pt,step_i,time_interval,light_speed_c);
+
+			// Charge parameters
+			glm::vec2 loc_at_t = charge_path.ch_location_at_t[delayed_index]; // charge location at t
+			glm::vec2 v_at_t = charge_path.ch_velocity_at_t[delayed_index]; // charge velocity at t
+			glm::vec2 a_at_t = charge_path.ch_acceleration_at_t[delayed_index]; // charge acceleration at t
+
+			double v_mag_at_t = glm::length(v_at_t); // Magnitude of velocity
+
+			// Find the w-vector
+			glm::vec2 w_vector = loc_at_t - ref_zero;
+
 			// E Vector
-			glm::vec2 e_vec = lienard_wiechert_field(grid_node_pt, v_at_t, a_at_t, v_mag_at_t, light_speed_c, w_vector, ref_zero);
-			// glm::vec2 e_vec = larmour_field(grid_node_pt, v_at_t, a_at_t, v_mag_at_t, light_speed_c, w_vector, ref_zero);
+			// glm::vec2 e_vec = lienard_wiechert_field(grid_node_pt, v_at_t, a_at_t, v_mag_at_t, light_speed_c, w_vector, ref_zero);
+			glm::vec2 e_vec = larmour_field(grid_node_pt, v_at_t, a_at_t, v_mag_at_t, light_speed_c, w_vector, ref_zero);
 
 			double e_vec_mag = glm::length(e_vec); // Magnitude of e vector
 
@@ -198,57 +186,49 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 			glm::vec2 tri_pt2 = tri.nd2->node_pt; // Get the triangle pt 2
 			glm::vec2 tri_pt3 = tri.nd3->node_pt; // Get the triangle pt 3
 
-			// Find the r-vectors 1, 2, 3 (3 triangle points)
-			glm::vec2 r_vector1 = tri_pt1 - ref_zero;
-			glm::vec2 r_vector2 = tri_pt2 - ref_zero;
-			glm::vec2 r_vector3 = tri_pt3 - ref_zero;
-
 			// Find the r dash-vectors 1, 2, 3 (3 triangle points)
-			glm::vec2 r_dash_vector1 = r_vector1 - w_vector;
-			glm::vec2 r_dash_vector2 = r_vector2 - w_vector;
-			glm::vec2 r_dash_vector3 = r_vector3 - w_vector;
+			// Find the index of acceleration at delayed time
+			int delayed_index1 = get_delayed_index(tri_pt1, step_i, time_interval, light_speed_c);
+			int delayed_index2 = get_delayed_index(tri_pt2, step_i, time_interval, light_speed_c);
+			int delayed_index3 = get_delayed_index(tri_pt3, step_i, time_interval, light_speed_c);
 
-			// Normalize the r dash vectors 1,2, 3 (3 r dash vector)
-			double magnitude_r_dash1 = glm::length(r_dash_vector1);
-			double magnitude_r_dash2 = glm::length(r_dash_vector2);
-			double magnitude_r_dash3 = glm::length(r_dash_vector3);
+			// Charge parameters
+			// location
+			glm::vec2 loc_at_t1 = charge_path.ch_location_at_t[delayed_index1]; // charge location at t
+			glm::vec2 loc_at_t2 = charge_path.ch_location_at_t[delayed_index2]; // charge location at t
+			glm::vec2 loc_at_t3 = charge_path.ch_location_at_t[delayed_index3]; // charge location at t
+
+			// velocity
+			glm::vec2 v_at_t1 = charge_path.ch_velocity_at_t[delayed_index1]; // charge velocity at t
+			glm::vec2 v_at_t2 = charge_path.ch_velocity_at_t[delayed_index2]; // charge velocity at t
+			glm::vec2 v_at_t3 = charge_path.ch_velocity_at_t[delayed_index3]; // charge velocity at t
+
+			// acceleration
+			glm::vec2 a_at_t1 = charge_path.ch_acceleration_at_t[delayed_index1]; // charge acceleration at t
+			glm::vec2 a_at_t2 = charge_path.ch_acceleration_at_t[delayed_index2]; // charge acceleration at t
+			glm::vec2 a_at_t3 = charge_path.ch_acceleration_at_t[delayed_index3]; // charge acceleration at t
+
+			double v_mag_at_t1 = glm::length(v_at_t1); // Magnitude of velocity at node 1
+			double v_mag_at_t2 = glm::length(v_at_t2); // Magnitude of velocity at node 2
+			double v_mag_at_t3 = glm::length(v_at_t3); // Magnitude of velocity at node 3
+
+			// Find the w-vector
+			glm::vec2 w_vector1 = loc_at_t1 - ref_zero;
+			glm::vec2 w_vector2 = loc_at_t2 - ref_zero;
+			glm::vec2 w_vector3 = loc_at_t3 - ref_zero;
+
+			// E Vector
+			glm::vec2 e_vec1 = larmour_field(tri_pt1, v_at_t1, a_at_t1, v_mag_at_t1, light_speed_c, w_vector1, ref_zero);
+			glm::vec2 e_vec2 = larmour_field(tri_pt2, v_at_t2, a_at_t2, v_mag_at_t2, light_speed_c, w_vector2, ref_zero);
+			glm::vec2 e_vec3 = larmour_field(tri_pt3, v_at_t3, a_at_t3, v_mag_at_t3, light_speed_c, w_vector3, ref_zero);
 
 			//__________________________________________________________________
 			double scalar_potential_pt1, scalar_potential_pt2, scalar_potential_pt3;
-			double r1_dot_v, r2_dot_v, r3_dot_v;
+		
+			scalar_potential_pt1 = glm::length(e_vec1);
+			scalar_potential_pt2 = glm::length(e_vec2);
+			scalar_potential_pt3 = glm::length(e_vec3);
 
-			// Dynamic scalar potential 1
-			if (magnitude_r_dash1 < 1E-8)
-			{
-				r1_dot_v = glm::dot(r_dash_vector1, v_at_t);
-				scalar_potential_pt1 = light_speed_c / ((magnitude_r_dash1 * light_speed_c) - r1_dot_v);
-			}
-			else
-			{
-				scalar_potential_pt1 = 0.0;
-			}
-
-			// Dynamic scalar potential 2
-			if (magnitude_r_dash2 < 1E-8)
-			{
-				r2_dot_v = glm::dot(r_dash_vector2, v_at_t);
-				scalar_potential_pt2 = light_speed_c / ((magnitude_r_dash2 * light_speed_c) - r2_dot_v);
-			}
-			else
-			{
-				scalar_potential_pt2 = 0.0;
-			}
-
-			// Dynamic scalar potential 3
-			if (magnitude_r_dash3 < 1E-8)
-			{
-				r3_dot_v = glm::dot(r_dash_vector3, v_at_t);
-				scalar_potential_pt3 = light_speed_c / ((magnitude_r_dash3 * light_speed_c) - r3_dot_v);
-			}
-			else
-			{
-				scalar_potential_pt3 = 0.0;
-			}
 
 			//___________________________________________________________________
 			snap_shot_Electric_potential[tri_id].nd1_values.push_back(scalar_potential_pt1); // Add the scalar potential tri pt 1
@@ -343,13 +323,13 @@ glm::vec2 charge_oscillation_solver::lienard_wiechert_field(const glm::vec2& gri
 	glm::vec3 u_cross_a = glm::cross(glm::vec3(u_vector, 0), glm::vec3(a_at_t, 0));
 
 	// E Vector 2
-	glm::vec3 e_vec2_dash = glm::cross(glm::vec3(r_dash_vector, 0), u_cross_a);
+	glm::vec3 e_vec2_dash = glm::cross(glm::vec3(norm_r_dash_vector, 0), u_cross_a);
 	glm::vec2 e_vec2 = glm::vec2(e_vec2_dash.x, e_vec2_dash.y);
 
 	// Constant 1
 	float k1 = 1.0;
 
-	return k1*(e_vec1 + e_vec2);
+	return k1 * (e_vec1 + e_vec2);
 }
 
 
@@ -385,10 +365,27 @@ glm::vec2 charge_oscillation_solver::larmour_field(const glm::vec2& grid_node_pt
 	float k1 = 1.0;
 
 	// Constant 2
-	float k2 = static_cast<float>(1.0 / (magnitude_r_dash * std::pow(light_speed_c, 2.0)));
+	float k2 = static_cast<float>(1.0 / (magnitude_r_dash *std::pow(light_speed_c, 2.0)));
 
-	// E parallel
-	glm::vec2 e_par = static_cast<float>(1.0 / std::pow(magnitude_r_dash, 2)) * norm_r_dash_vector;
 
-	return (k1 * k2 * (e_par + a_perp));
+	return k1 * k2 * (a_perp);
+}
+
+
+int charge_oscillation_solver::get_delayed_index(const glm::vec2& node_pt, const int& step_i,
+	const double& time_interval, const double& light_speed_c)
+{
+	// Delayed time
+	double location_from_origin = glm::length(node_pt); // Location from length
+
+	double delayed_time = (step_i * time_interval) - (location_from_origin / light_speed_c);
+
+	if (delayed_time < 0)
+	{
+		delayed_time = 0;
+	}
+
+	// Find the index of acceleration at delayed time
+	return static_cast<int>(std::round(delayed_time / time_interval));
+
 }
