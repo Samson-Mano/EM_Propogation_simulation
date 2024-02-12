@@ -47,12 +47,22 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 		// Acceleration
 		acceleration_mag = -1.0 * angular_freq * angular_freq * std::sin(angular_freq * time_t);
 
+
 		// get the charge location
-		glm::vec2 loc_at_t = glm::vec2(0.0, 100 * static_cast<float>(displ_mag)); // charge_path.get_charge_path_location_at_t(param_t).first;
+		glm::vec2 loc_at_t = glm::vec2(0); // charge_path.get_charge_path_location_at_t(param_t).first;
 		
 		// velocity and acceleration vector
-		glm::vec2 velo_at_t = glm::vec2(0.0,-1.0* static_cast<float>(velocity_mag));
-		glm::vec2 accl_at_t = glm::vec2(0.0, static_cast<float>(acceleration_mag));
+		glm::vec2 velo_at_t = glm::vec2(0);
+		glm::vec2 accl_at_t = glm::vec2(0);
+
+		get_charge_location_data(charge_path.curve_type,
+			displ_mag,
+			velocity_mag,
+			acceleration_mag,
+			loc_at_t,
+			velo_at_t,
+			accl_at_t);
+
 
 		// Add to the list
 		charge_loc_at_t.push_back(loc_at_t); // Charge location
@@ -369,6 +379,44 @@ glm::vec2 charge_oscillation_solver::larmour_field(const glm::vec2& grid_node_pt
 
 
 	return k1 * k2 * (a_perp);
+}
+
+
+void charge_oscillation_solver::get_charge_location_data(const int& curve_type,
+	const double& displ_mag,
+	const double& velocity_mag,
+	const double& acceleration_mag, glm::vec2& loc_at_t,
+	glm::vec2& velo_at_t,
+	glm::vec2& accl_at_t)
+{
+	// Return charge location, velocity and acceleartion at time
+
+	if (curve_type == 0)
+	{
+		// Linear curve
+		// get the param_t by converting -1 to 1 data to 0 to 1 data
+		double param_t = (displ_mag * 0.5) + 0.5;
+
+		loc_at_t = glm::vec2(0.0, (-100.0 * (1.0 - param_t)) + (100.0 * param_t));
+		velo_at_t = glm::vec2(0.0, -200.0 * velocity_mag);
+		accl_at_t = glm::vec2(0.0, 200.0 * acceleration_mag);
+	}
+	else if (curve_type == 1)
+	{
+		// Circular curve
+		double param_t = (displ_mag * 0.5) + 0.5;
+
+		loc_at_t = glm::vec2(100.0 * std::cos(param_t * 4.0 * m_pi),
+							 100.0 * std::sin(param_t * 4.0 * m_pi));
+
+		velo_at_t = glm::vec2(-100.0 * std::sin(param_t * 4.0 * m_pi) * velocity_mag, 
+							 100.0 * std::cos(param_t * 4.0 * m_pi) * velocity_mag);
+		accl_at_t = glm::vec2(-100.0 * std::cos(param_t * 4.0 * m_pi) * acceleration_mag, 
+							   -100.0 * std::sin(param_t * 4.0 * m_pi) * acceleration_mag);
+	}
+
+
+
 }
 
 

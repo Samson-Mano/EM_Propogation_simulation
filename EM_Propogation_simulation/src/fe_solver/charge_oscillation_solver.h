@@ -69,6 +69,13 @@ private:
 		const glm::vec2& w_vector,
 		const glm::vec2& ref_zero);
 
+	void get_charge_location_data(const int& curve_type, 
+		const double& displ_mag, 
+		const double& velocity_mag,
+		const double& acceleration_mag, glm::vec2& loc_at_t,
+		glm::vec2& velo_at_t,
+		glm::vec2& accl_at_t);
+
 
 	int get_delayed_index(const glm::vec2& node_pt, const int& step_i, 
 		const double& time_interval, const double& light_speed_c);

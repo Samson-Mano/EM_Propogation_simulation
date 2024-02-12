@@ -21,7 +21,7 @@ class charge_path_store
 public:
 	unsigned int path_point_count = 0;
 	std::vector<charge_path_points> chargePathMap; // Create an unordered_map to store nodes with ID as key
-	int path_type = -1; // Path type is closed path or open path
+	int curve_type = 0; // 0 - linear, 1 - circular 2 - etc.
 	// double charge_oscillation_freq = 0;
 	std::vector<double> cummulative_segment_length; // Individual path cummulative length
 	std::vector<double> segment_length; // Individual path length
@@ -36,7 +36,7 @@ public:
 	charge_path_store();
 	~charge_path_store();
 	void init(geom_parameters* geom_param_ptr);
-	void add_path(std::vector<std::string> curve_paths,int path_type);
+	void add_path(std::vector<glm::vec2>& curve_paths, const int& curve_type, const int& path_type);
 	void add_charge_oscillation(std::vector<glm::vec2>& charge_path_pts, std::vector<glm::vec2>& charge_velocity, std::vector<glm::vec2>& charge_acceleration);
 	void set_buffer();
 	void set_path_buffer();

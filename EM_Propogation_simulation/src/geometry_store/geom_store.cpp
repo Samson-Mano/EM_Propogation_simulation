@@ -192,7 +192,7 @@ void geom_store::update_model_transperency(bool is_transparent)
 	// Result
 	node_vector.update_geometry_matrices(false, false, false, true, false);
 	node_contour.update_geometry_matrices(false, false, false, true, false);
-	
+
 }
 
 
@@ -343,26 +343,8 @@ void geom_store::create_geometry()
 	}
 
 	// Create a simple initial oscillation path
-	std::ostringstream scaled_dxf_input; // Create an ostringstream object for scaled input
-
-	scaled_dxf_input << 0 << ", " << 0.0 << ", " << 100.0 << "\n";
-	scaled_dxf_input << 1 << ", " << 0.0 << ", " << -100.0 << "\n";
-
-
-	std::string currve_pt;
-	std::vector<std::string> curve_paths;
-	std::string input_str = scaled_dxf_input.str();
-	std::istringstream iss_temp(input_str);
-
-	while (std::getline(iss_temp, currve_pt))
-	{
-		curve_paths.push_back(currve_pt);
-	}
-
-	inl_window->curve_imported = true;
-
 	// Add the path
-	this->charge_path.add_path(curve_paths, 0);
+	this->charge_path.add_path(inl_window->curve_paths, inl_window->selected_model_option, inl_window->path_type);
 
 
 	// Geometry is loaded
@@ -512,7 +494,7 @@ void geom_store::paint_model()
 		inl_window->execute_apply_path = false;
 
 		// Create new path
-		this->charge_path.add_path(inl_window->curve_paths, inl_window->selected_curvepath_option);
+		this->charge_path.add_path(inl_window->curve_paths, inl_window->selected_model_option, inl_window->path_type);
 	}
 
 	if (md_window->is_show_window == true)
@@ -578,7 +560,7 @@ void geom_store::paint_postprocess()
 		{
 			node_vector.paint_vectors(sol_window->time_step);
 		}
-		
+
 		// Paint the Electric potential
 		if (sol_window->show_contour_plot == true)
 		{
@@ -591,28 +573,18 @@ void geom_store::paint_postprocess()
 	if (sol_window->execute_open == true)
 	{
 		// Execute the open sequence
-		if (inl_window->curve_imported == false)
-		{
-			// Exit the window (when modal analysis is not complete)
-			sol_window->is_show_window = false;
-		}
-		else
-		{
-
 			// Modal analysis is complete (check whether frequency response analysis is complete or not)
-			if (is_analysis_complete == true)
-			{
-				// Set the charge oscillation analysis result
-				sol_window->is_analysis_complete = true;
+		if (is_analysis_complete == true)
+		{
+			// Set the charge oscillation analysis result
+			sol_window->is_analysis_complete = true;
 
-				// Reset the buffers for charge analysis (charge path)
-				// pulse_result_lineelements.set_buffer();
-				//pulse_result_nodes.set_buffer();
+			// Reset the buffers for charge analysis (charge path)
+			// pulse_result_lineelements.set_buffer();
+			//pulse_result_nodes.set_buffer();
 
-				// Charge analysis is complete
-				update_model_transperency(true);
-			}
-
+			// Charge analysis is complete
+			update_model_transperency(true);
 		}
 		sol_window->execute_open = false;
 	}

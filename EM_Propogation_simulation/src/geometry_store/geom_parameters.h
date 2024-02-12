@@ -32,7 +32,6 @@ struct geom_color_theme
 	glm::vec3 ptmass_color = glm::vec3(0);
 };
 
-
 class geom_parameters
 {
 public:
@@ -40,6 +39,8 @@ public:
 	const float font_size = static_cast<float>(16.0f * std::pow(10, -5));
 	const float node_circle_radii = 0.005f;
 	const float charge_circle_radii = 0.002f;
+	const double m_pi = 3.141592653589793238463;
+
 
 	// Precision for various values
 	const int length_precision = 3;

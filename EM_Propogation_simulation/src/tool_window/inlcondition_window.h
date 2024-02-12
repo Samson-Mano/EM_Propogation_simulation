@@ -8,6 +8,8 @@
 #include <Windows.h>
 #include <vector>
 #include <iomanip>
+#include <glm/glm.hpp>
+#include "../geometry_store/geom_parameters.h"
 #include "../ImGui/imgui.h"
 #include "../ImGui/imgui_impl_glfw.h"
 #include "../ImGui/imgui_impl_opengl3.h"
@@ -17,14 +19,14 @@ class inlcondition_window
 public:
 	bool is_show_window = false;
 	bool execute_apply_path = false;
-	bool curve_imported = false;
 	
 	// Initial Condition values
-	// Store the path points as list of string	
-	std::vector<std::string> curve_paths;
-	int selected_curvepath_option = 0; // type of curve path
+	// Store the path points as vec2
+	int path_type = 0; // 0 - closed curve, 1 - open curve
+	std::vector<glm::vec2> curve_paths;
+
 	int path_scale_factor = 100;
-	// double oscillation_freq = 1.0; // Oscillation frequency
+	int previous_selected_option = 0;
 	int selected_model_option = 0; // Option to control the model
 
 
@@ -33,8 +35,7 @@ public:
 	void init();
 	void render_window();
 private:
-	std::string ShowOpenFileDialog_dxf();
-	void import_dxfdata_geometry();
-
+	void set_linear_curve();
+	void set_circular_curve();
 
 };

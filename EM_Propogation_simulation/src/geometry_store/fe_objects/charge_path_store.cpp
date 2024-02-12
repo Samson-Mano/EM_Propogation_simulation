@@ -28,7 +28,7 @@ void charge_path_store::init(geom_parameters* geom_param_ptr)
 	chargePathMap.clear();
 }
 
-void charge_path_store::add_path(std::vector<std::string> curve_paths, int path_type)
+void charge_path_store::add_path(std::vector<glm::vec2>& curve_paths, const int& curve_type, const int& path_type)
 {
 	// Check the input
 	if (curve_paths.size() < 2)
@@ -50,26 +50,12 @@ void charge_path_store::add_path(std::vector<std::string> curve_paths, int path_
 	glm::vec3 temp_color = geom_param_ptr->geom_colors.charge_path_color;
 
 	// Loop through all the path
-	for (const auto& str_path : curve_paths)
+	for (const auto& path : curve_paths)
 	{
-		std::istringstream iss(str_path);
-		std::string id_str, x_str, y_str;
-
-		// Split the line using the comma as the delimiter
-		if (std::getline(iss, id_str, ',') &&
-			std::getline(iss, x_str, ',') &&
-			std::getline(iss, y_str))
-		{
-
-			// Convert the extracted strings to the appropriate data types
-			int pt_id = std::stoi(id_str);
-			double scaled_x = std::stod(x_str);
-			double scaled_y = std::stod(y_str);
-
 			// Add the charge path point to the list
 			charge_path_points temp_chargepath;
-			temp_chargepath.path_id = pt_id;
-			temp_chargepath.path_pts = glm::vec2(scaled_x, scaled_y);
+			temp_chargepath.path_id = path_point_count;
+			temp_chargepath.path_pts = glm::vec2(path.x, path.y);
 
 			// Insert to the points to the charge path map
 			chargePathMap.push_back(temp_chargepath);
@@ -80,8 +66,8 @@ void charge_path_store::add_path(std::vector<std::string> curve_paths, int path_
 			//__________________________ Add the path points
 			glm::vec2 path_pt_offset = glm::vec2(0);
 
-			path_points.add_point(pt_id, temp_chargepath.path_pts, path_pt_offset, temp_color, false);
-		}
+			path_points.add_point(temp_chargepath.path_id, temp_chargepath.path_pts, 
+				path_pt_offset, temp_color, false);
 	}
 
 	// ---------------- Add the path lines
@@ -126,7 +112,7 @@ void charge_path_store::add_path(std::vector<std::string> curve_paths, int path_
 	}
 
 	// Assign Path type & charge oscillation
-	this->path_type = path_type;
+	this->curve_type = curve_type;
 	is_pathset = true;
 
 	// Set the buffer
