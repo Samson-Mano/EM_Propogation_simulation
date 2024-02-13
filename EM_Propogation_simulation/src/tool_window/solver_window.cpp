@@ -15,6 +15,11 @@ void solver_window::init()
 {
     // Initialize the options
     is_show_window = false;
+
+	stopwatch.start();
+	time_interval_atrun = 0.0; // Value of time interval used in the pulse response 
+	time_step_count = 0;
+	time_step = 0;
 }
 
 void solver_window::render_window()
@@ -225,7 +230,7 @@ void solver_window::render_window()
 
 	//_________________________________________________________________________________________
 
-	if (ImGui::CollapsingHeader("Animate"))
+	if (ImGui::CollapsingHeader("Animate", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		// Animate the solution
 		// Start a horizontal layout
@@ -264,6 +269,7 @@ void solver_window::render_window()
 			// Handle Stop button click
 			animate_play = false;
 			animate_pause = true;
+			time_step = time_step_count - 1;
 		}
 
 		// Animation speed control
@@ -337,15 +343,15 @@ void solver_window::render_window()
 	//______________________________________________ END of Imgui interface ___________________
 
 	// Cycle through the pulse response time step
-	if (is_analysis_complete == true)
+	if (time_step_count != 0)
 	{
 
 		if (animate_play == true)
 		{
 			// Stop watch
-			if ((stopwatch.current_elapsed() * animation_speed) > time_interval_atrun)
+			if ((stopwatch.elapsed() * animation_speed) > time_interval_atrun)
 			{
-				stopwatch.reset_time(); // reset the time
+				stopwatch.start(); // reset the time
 				time_step++; // increment the time step
 
 				// Adjust the time step such that it didnot exceed the time_step_total
@@ -358,11 +364,7 @@ void solver_window::render_window()
 		else if (animate_pause == true)
 		{
 			// Pause the animation
-		}
-		else
-		{
-			// Stop the animation (show the end of animation)
-			time_step = time_step_count - 1;
+		
 		}
 	}
 

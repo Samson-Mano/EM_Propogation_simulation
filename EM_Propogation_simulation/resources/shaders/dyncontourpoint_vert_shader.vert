@@ -4,7 +4,7 @@ uniform mat4 modelMatrix;
 uniform mat4 panTranslation;
 uniform float zoomscale;
 
-uniform float transparency = 0.7f;
+uniform float transparency = 0.9f;
 
 layout(location = 0) in vec2 node_position;
 layout(location = 1) in float defl_length; // Deflection length Normalized to 1.0

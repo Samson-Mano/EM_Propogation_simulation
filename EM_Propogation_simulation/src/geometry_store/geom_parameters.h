@@ -7,15 +7,21 @@
 #include "geometry_buffers/font_atlas.h"
 #include <chrono>
 
-class Stopwatch
+
+class Stopwatch_events
 {
 public:
-	void reset_time();
-	double current_elapsed() const;
+	Stopwatch_events();
+	~Stopwatch_events();
+	void start();
+	void stop();
+	double elapsed();
+
 
 private:
-	std::chrono::time_point<std::chrono::high_resolution_clock> m_startTime = std::chrono::high_resolution_clock::time_point();
-	// std::chrono::time_point<std::chrono::high_resolution_clock> m_endTime;
+	std::chrono::time_point<std::chrono::high_resolution_clock> m_StartTime;
+	std::chrono::time_point<std::chrono::high_resolution_clock> m_EndTime;
+	bool m_bRunning = false;
 };
 
 struct geom_color_theme
@@ -65,7 +71,9 @@ public:
 	glm::vec2 center = glm::vec2(0); // center of the geometry
 	glm::mat4 modelMatrix = glm::mat4(0); // Geometry model matrix
 	double geom_scale = 0.0; // Scale of the geometry
-	double geom_transparency = 0.0; // Value to control the geometry transparency
+	double vec_transparency = 0.9f; // Value to control the vector transparency
+	double cntr_transparency = 0.5f; // Value to control the contour transparency
+	double geom_transparency = 0.0f; // Value to control the geometry transparency
 	double normalized_defl_scale = 0.0f; // Value of deflection scale
 	double defl_scale = 0.0f; // Value of deflection scale
 

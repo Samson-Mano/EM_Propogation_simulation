@@ -67,37 +67,17 @@ void app_window::init()
 	is_glwindow_success = true;
 
 	//___________________________________________________________________________
-	std::ifstream model_file("model_data.txt", std::ifstream::in);
-	// Read the Raw Data
-	// Read the entire file into a string
-	std::string file_contents((std::istreambuf_iterator<char>(model_file)),
-		std::istreambuf_iterator<char>());
-
-	// Split the string into lines
-	std::istringstream iss(file_contents);
-	std::string line;
-	std::vector<std::string> lines;
-	while (std::getline(iss, line))
-	{
-		lines.push_back(line);
-	}
-	//___________________________________________________________________________
-
-	double grid_length = std::stod(lines[0]); // Grid length
-	double segment_length = std::stoi(lines[1]); // Segement length
-	double space_permittivity = std::stod(lines[2]); // Space permittivity (electric constant)
-	double material_density = std::stod(lines[3]);  // Material density
+	std::ifstream grid_file("square_grid_100x100.txt", std::ifstream::in);
 
 	// Intialize tool windows
 	inl_window.init(); // Initial condition window
-	md_window.init(grid_length, segment_length, space_permittivity, material_density); // Model window
 	op_window.init(); // Option window
 	sol_window.init(); // Solver window
 
 	geom.update_WindowDimension(window_width, window_height);
 
 	// Initialize the geometry
-	geom.init(&op_window, &sol_window,&md_window,&inl_window);
+	geom.init(&op_window, &sol_window,&inl_window, grid_file);
 
 
 	// Set the mouse button callback function with the user pointer pointing to the mouseHandler object
@@ -168,7 +148,7 @@ void app_window::app_render()
 	// Set the point size and line width
 	// Set the point size
 	glPointSize(3.2f);
-	glLineWidth(1.6f);
+	glLineWidth(1.0f);
 
 	// Main rendering loop
 	while (!glfwWindowShouldClose(window))
@@ -229,13 +209,7 @@ void app_window::menu_events()
 		// File menu item
 		if (ImGui::BeginMenu("File"))
 		{
-			if (ImGui::MenuItem("Model"))
-			{
-				// Handle menu Model
-				md_window.is_show_window = true;
-			}
-
-			if (ImGui::MenuItem("Condition"))
+			if (ImGui::MenuItem("Charge Path"))
 			{
 				// Handle menu Condition
 				inl_window.is_show_window = true;
@@ -266,7 +240,6 @@ void app_window::menu_events()
 	}
 
 	// Execute window render operation
-	md_window.render_window(isWindowSizeChanging); // model window
 	inl_window.render_window();  // initial condition window
 	op_window.render_window();  // Option window
 	sol_window.render_window();  // Solver window

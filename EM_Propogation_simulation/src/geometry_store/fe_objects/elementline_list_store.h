@@ -22,9 +22,7 @@ public:
 	void add_elementline(int& line_id, node_store* startNode, node_store* endNode);
 	void set_buffer();
 	void paint_elementlines();
-	int is_line_hit(glm::vec2& loc);
-	bool isClickPointOnLine(const glm::vec2& clickPoint, const glm::vec2& lineStart, const glm::vec2& lineEnd, float threshold);
-
+	
 	void update_geometry_matrices(bool set_modelmatrix, bool set_pantranslation, bool set_zoomtranslation, bool set_transparency, bool set_deflscale);
 
 private:

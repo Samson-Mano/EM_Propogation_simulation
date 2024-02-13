@@ -64,10 +64,8 @@ void charge_path_store::add_path(std::vector<glm::vec2>& curve_paths, const int&
 
 
 			//__________________________ Add the path points
-			glm::vec2 path_pt_offset = glm::vec2(0);
-
 			path_points.add_point(temp_chargepath.path_id, temp_chargepath.path_pts, 
-				path_pt_offset, temp_color, false);
+				 temp_color);
 	}
 
 	// ---------------- Add the path lines
@@ -83,7 +81,7 @@ void charge_path_store::add_path(std::vector<glm::vec2>& curve_paths, const int&
 	{
 		glm::vec2 point2 = path_points.pointMap[i].point_loc;
 
-		path_lines.add_line(line_id, point1, point2, glm::vec2(0), glm::vec2(0), temp_color, temp_color, false);
+		path_lines.add_line(line_id, point1, point2,temp_color);
 		line_id++;
 
 		// Calculate the length
@@ -99,7 +97,7 @@ void charge_path_store::add_path(std::vector<glm::vec2>& curve_paths, const int&
 	{
 		// closed path so close the loop
 		glm::vec2 point2 = path_points.pointMap[0].point_loc;
-		path_lines.add_line(line_id, point1, point2, glm::vec2(0), glm::vec2(0), temp_color, temp_color, false);
+		path_lines.add_line(line_id, point1, point2, temp_color);
 
 		// Calculate the length
 		segment_length = std::sqrt(std::pow(point2.x - point1.x, 2) + std::pow(point2.y - point1.y, 2));
@@ -108,7 +106,7 @@ void charge_path_store::add_path(std::vector<glm::vec2>& curve_paths, const int&
 		this->segment_length.push_back(segment_length);
 
 		// Add the first point as end point to complete the loop
-		path_points.add_point(path_points.pointMap[0].point_id, path_points.pointMap[0].point_loc, path_points.pointMap[0].point_offset, temp_color, false);
+		path_points.add_point(path_points.pointMap[0].point_id, path_points.pointMap[0].point_loc, temp_color);
 	}
 
 	// Assign Path type & charge oscillation

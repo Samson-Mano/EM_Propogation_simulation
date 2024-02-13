@@ -41,7 +41,8 @@ public:
 
 	charge_oscillation_solver();
 	~charge_oscillation_solver();
-	void charge_oscillation_analysis_start(const nodes_list_store& grid_nodes,
+	void charge_oscillation_analysis_start(const nodes_list_store& grid_vector_nodes, 
+										   const nodes_list_store& grid_nodes,
 										   const elementtri_list_store& grid_trimesh,
 										   charge_path_store& charge_path,
 											const double charge_oscillation_freq,
@@ -72,7 +73,9 @@ private:
 	void get_charge_location_data(const int& curve_type, 
 		const double& displ_mag, 
 		const double& velocity_mag,
-		const double& acceleration_mag, glm::vec2& loc_at_t,
+		const double& acceleration_mag,
+		const int& cycle_count,
+		glm::vec2& loc_at_t,
 		glm::vec2& velo_at_t,
 		glm::vec2& accl_at_t);
 

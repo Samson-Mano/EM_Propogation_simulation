@@ -160,7 +160,7 @@ void dynamic_vector_list_store::update_opengl_uniforms(bool set_modelmatrix, boo
 	if (set_transparency == true)
 	{
 		// set the alpha transparency
-		dyn_vector_shader.setUniform("transparency", static_cast<float>(geom_param_ptr->geom_transparency));
+		dyn_vector_shader.setUniform("transparency", static_cast<float>(geom_param_ptr->vec_transparency));
 	}
 
 	if (set_deflscale == true)

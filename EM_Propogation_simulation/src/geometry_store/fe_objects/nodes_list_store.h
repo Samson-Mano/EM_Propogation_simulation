@@ -26,7 +26,6 @@ public:
 	void add_node(int& node_id, glm::vec2& node_pt);
 	void set_buffer();
 	void paint_model_nodes();
-	int is_node_hit(glm::vec2& loc);
 	void update_geometry_matrices(bool set_modelmatrix, bool set_pantranslation, bool set_zoomtranslation, bool set_transparency, bool set_deflscale);
 
 private:

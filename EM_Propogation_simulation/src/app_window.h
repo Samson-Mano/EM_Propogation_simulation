@@ -15,7 +15,6 @@
 #include "events_handler/mouse_event_handler.h"
 //____ Tool Window
 #include "tool_window/inlcondition_window.h"
-#include "tool_window/model_window.h"
 #include "tool_window/options_window.h"
 #include "tool_window/solver_window.h"
 
@@ -39,7 +38,6 @@ public:
 
 	// Tool window variable
 	inlcondition_window inl_window;
-	model_window md_window;
 	options_window op_window;
 	solver_window sol_window;
 

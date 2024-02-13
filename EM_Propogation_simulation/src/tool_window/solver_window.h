@@ -44,5 +44,5 @@ public:
 	void init();
 	void render_window();
 private:
-	Stopwatch stopwatch;
+	Stopwatch_events stopwatch;
 };

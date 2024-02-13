@@ -21,8 +21,8 @@ void geom_parameters::init()
 
 	// Initialize the color theme
 	geom_colors.background_color = glm::vec3(0.62f, 0.62f, 0.62f);
-	geom_colors.node_color = glm::vec3(0.0f, 0.0f, 0.4f);
-	geom_colors.line_color = glm::vec3(0.0f, 0.2f, 0.6f);
+	geom_colors.node_color = glm::vec3(0.54509f, 0.0f, 0.4f); // Dark Red
+	geom_colors.line_color = glm::vec3(1.0f, 0.54901f, 0.6f); // Dark Orange
 	geom_colors.constraint_color = glm::vec3(0.6f, 0.0f, 0.6f);
 	geom_colors.load_color = glm::vec3(0.0f, 1.0f, 0.0f);
 	geom_colors.ptmass_color = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -32,7 +32,7 @@ void geom_parameters::init()
 	geom_colors.charge_path_color = glm::vec3(0.54f, 0.06f, 0.31f);
 
 	// Traingle mesh
-	geom_colors.triangle_color = glm::vec3(0.82f, 0.77f, 0.92f);
+	geom_colors.triangle_color = glm::vec3(0.90196f, 0.90196f, 0.98039f); // Lavender
 	geom_colors.triangle_boundary = geom_colors.triangle_color*0.8f;
 	geom_colors.triangle_node = geom_colors.triangle_color * 0.6f;
 }
@@ -82,12 +82,45 @@ void geom_parameters::init()
 
 
 
- void Stopwatch::reset_time()
+ Stopwatch_events::Stopwatch_events()
  {
-	 m_startTime = std::chrono::high_resolution_clock::now();
+	 // Empty constructor
  }
 
- double Stopwatch::current_elapsed() const
+ Stopwatch_events::~Stopwatch_events()
  {
-	 return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_startTime).count() / 1000.0;
+	 // Empty destructor
+ }
+
+ void Stopwatch_events::start()
+ {
+	 // Start of the stop watch
+	 m_StartTime = std::chrono::high_resolution_clock::now();
+	 m_bRunning = true;
+ }
+
+ void Stopwatch_events::stop()
+ {
+	 // Stop the watch
+	 m_EndTime = std::chrono::high_resolution_clock::now();
+	 m_bRunning = false;
+ }
+
+ double Stopwatch_events::elapsed()
+ {
+	 std::chrono::time_point<std::chrono::high_resolution_clock> endTime;
+
+	 if (m_bRunning == true)
+	 {
+		 // Stop watch is running (so no end time)
+		 endTime = std::chrono::high_resolution_clock::now();
+	 }
+	 else
+	 {
+		 // Stop watch is stopped
+		 endTime = m_EndTime;
+	 }
+
+	 // Returns the value in seconds
+	 return std::chrono::duration_cast<std::chrono::microseconds>(endTime - m_StartTime).count() / 1000000.0;
  }

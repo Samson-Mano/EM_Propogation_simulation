@@ -7,7 +7,6 @@
 
 // Window includes
 #include "../tool_window/inlcondition_window.h"
-#include "../tool_window/model_window.h"
 #include "../tool_window/options_window.h"
 #include "../tool_window/solver_window.h"
 
@@ -42,7 +41,8 @@ public:
 	geom_store();
 	~geom_store();
 	void init(options_window* op_window, solver_window* sol_window,
-		model_window* md_window, inlcondition_window* inl_window);
+		inlcondition_window* inl_window, 
+		std::ifstream& grid_file);
 	void fini();
 
 	// Functions to control the origin
@@ -58,15 +58,15 @@ public:
 
 private:
 	// General geometry properties
-	double gird_length = 0.0;
-	double gird_spacing = 0.0;
-	double space_permittivity = 0.0;
-	double material_density = 0.0;
+	double grid_size = 2000.0;
 
 	// geomerty object
 	charge_path_store charge_path;
+	elementline_list_store grid_lines;
 	elementtri_list_store grid_trimesh;
 	nodes_list_store grid_nodes;
+	nodes_list_store grid_vector_nodes;
+
 	nodes_list_store boundary_nodes;
 	elementline_list_store boundary_lines;
 	label_list_store model_labels;
@@ -78,11 +78,10 @@ private:
 	// View options ptr and Material window ptr
 	options_window* op_window = nullptr;
 	solver_window* sol_window = nullptr;
-	model_window* md_window = nullptr;
 	inlcondition_window* inl_window = nullptr;
 
 	// Create geometry
-	void create_geometry();
+	void create_geometry(std::ifstream& grid_file);
 
 	std::pair<glm::vec2, glm::vec2> findMinMaxXY(const std::unordered_map<int, node_store>& model_nodes);
 	glm::vec2 findGeometricCenter(const std::unordered_map<int, node_store>& model_nodes);

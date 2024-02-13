@@ -157,7 +157,7 @@ void dynamictricontour_list_store::update_opengl_uniforms(bool set_modelmatrix, 
 	if (set_transparency == true)
 	{
 		// set the alpha transparency
-		dyn_contour_shader.setUniform("transparency", static_cast<float>(geom_param_ptr->geom_transparency));
+		dyn_contour_shader.setUniform("transparency", static_cast<float>(geom_param_ptr->cntr_transparency));
 	}
 
 	if (set_deflscale == true)

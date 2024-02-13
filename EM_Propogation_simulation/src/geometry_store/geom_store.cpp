@@ -10,7 +10,7 @@ geom_store::~geom_store()
 	// Empty Destructor
 }
 
-void geom_store::init(options_window* op_window, solver_window* sol_window, model_window* md_window, inlcondition_window* inl_window)
+void geom_store::init(options_window* op_window, solver_window* sol_window,inlcondition_window* inl_window, std::ifstream& grid_file)
 {
 	// Initialize
 	// Initialize the geometry parameters
@@ -20,13 +20,12 @@ void geom_store::init(options_window* op_window, solver_window* sol_window, mode
 	// is_modal_analysis_complete = false;
 
 	// Add the window pointers
-	this->md_window = md_window;
 	this->inl_window = inl_window;
 	this->op_window = op_window;
 	this->sol_window = sol_window;
 
 	// Intialize the model grid
-	create_geometry();
+	create_geometry(grid_file);
 }
 
 void geom_store::fini()
@@ -80,6 +79,8 @@ void geom_store::update_model_matrix()
 	model_labels.update_opengl_uniforms(true, false, false, false, false);
 
 	grid_nodes.update_geometry_matrices(true, false, false, false, false);
+	grid_vector_nodes.update_geometry_matrices(true, false, false, false, false);
+	grid_lines.update_geometry_matrices(true, false, false, false, false);
 	grid_trimesh.update_geometry_matrices(true, false, false, false, false);
 	charge_path.update_geometry_matrices(true, false, false, false, false);
 
@@ -106,6 +107,8 @@ void geom_store::update_model_zoomfit()
 	model_labels.update_opengl_uniforms(false, true, true, false, false);
 
 	grid_nodes.update_geometry_matrices(false, true, true, false, false);
+	grid_vector_nodes.update_geometry_matrices(false, true, true, false, false);
+	grid_lines.update_geometry_matrices(false, true, true, false, false);
 	grid_trimesh.update_geometry_matrices(false, true, true, false, false);
 	charge_path.update_geometry_matrices(false, true, true, false, false);
 
@@ -132,6 +135,8 @@ void geom_store::update_model_pan(glm::vec2& transl)
 	model_labels.update_opengl_uniforms(false, true, false, false, false);
 
 	grid_nodes.update_geometry_matrices(false, true, false, false, false);
+	grid_vector_nodes.update_geometry_matrices(false, true, false, false, false);
+	grid_lines.update_geometry_matrices(false, true, false, false, false);
 	grid_trimesh.update_geometry_matrices(false, true, false, false, false);
 	charge_path.update_geometry_matrices(false, true, false, false, false);
 
@@ -155,6 +160,8 @@ void geom_store::update_model_zoom(double& z_scale)
 	model_labels.update_opengl_uniforms(false, false, true, false, false);
 
 	grid_nodes.update_geometry_matrices(false, false, true, false, false);
+	grid_vector_nodes.update_geometry_matrices(false, false, true, false, false);
+	grid_lines.update_geometry_matrices(false, false, true, false, false);
 	grid_trimesh.update_geometry_matrices(false, false, true, false, false);
 	charge_path.update_geometry_matrices(false, false, true, false, false);
 
@@ -186,6 +193,8 @@ void geom_store::update_model_transperency(bool is_transparent)
 	model_labels.update_opengl_uniforms(false, false, false, true, false);
 
 	grid_nodes.update_geometry_matrices(false, false, false, true, false);
+	grid_vector_nodes.update_geometry_matrices(false, false, false, true, false);
+	grid_lines.update_geometry_matrices(false, false, false, true, false);
 	grid_trimesh.update_geometry_matrices(false, false, false, true, false);
 	charge_path.update_geometry_matrices(false, false, false, true, false);
 
@@ -196,14 +205,8 @@ void geom_store::update_model_transperency(bool is_transparent)
 }
 
 
-void geom_store::create_geometry()
+void geom_store::create_geometry(std::ifstream& grid_file)
 {
-	// Create the geometry based on the input
-	this->gird_length = md_window->grid_length; // Grid length
-	this->gird_spacing = md_window->segment_length; // Grid spacing
-	this->space_permittivity = md_window->space_permittivity; // Space permittivity
-	this->material_density = md_window->material_density;  // Material density
-
 	// Reinitialize the model geometry
 	is_geometry_set = false;
 
@@ -215,7 +218,9 @@ void geom_store::create_geometry()
 
 	// Triangle mesh
 	this->grid_trimesh.init(&geom_param);
+	this->grid_lines.init(&geom_param);
 	this->grid_nodes.init(&geom_param);
+	this->grid_vector_nodes.init(&geom_param);
 	this->charge_path.init(&geom_param);
 
 	// Result initialization
@@ -228,7 +233,7 @@ void geom_store::create_geometry()
 	int line_id = 0;
 	glm::vec2 node_pt = glm::vec2(0.0, 0.0);
 	double percent_increase = 0.05;
-	double pt = (gird_length + (gird_length * percent_increase)) * 0.5;
+	double pt = (grid_size + (grid_size * percent_increase)) * 0.5;
 
 	// Add the origin pt and four boundary nodes
 	// Orgin point
@@ -271,76 +276,123 @@ void geom_store::create_geometry()
 	this->model_labels.clear_labels();
 
 	std::stringstream ss;
-	ss << std::fixed << std::setprecision(geom_param.length_precision) << gird_length;
+	ss << std::fixed << std::setprecision(geom_param.length_precision) << grid_size;
 
-	std::string temp_str = "Gird Length = " + ss.str();
+	std::string temp_str = "Gird Size = " + ss.str() + "x " + ss.str();
 
-	ss.str("");
-	ss << std::fixed << std::setprecision(geom_param.length_precision) << gird_spacing;
-
-	temp_str = temp_str + " (Gird spacing = " + ss.str() + ")";
 	node_pt = glm::vec2(0.0, -pt);
 	this->model_labels.add_text(temp_str, node_pt, glm::vec2(0), geom_param.geom_colors.node_color, 0, false, false);
 
 	//_______________________________________________________________________________________________________________
 	// Create the mesh
-	// Calculate the number of rows and columns
-	int numRows = static_cast<int>(gird_length / gird_spacing);
-	int numCols = numRows; // Assuming a square grid
 
-	// Calculate the origin (center) of the grid
-	double originX = gird_length / 2.0f;
-	double originY = gird_length / 2.0f;
+	std::cout << "Grid creation started" << std::endl;
 
-	// Iterate over the rows and columns to create triangle nodes
-	node_id = 0;
-	for (int row = 0; row <= numRows; ++row)
+	// Read the Raw Data
+	// Read the entire file into a string
+	std::string file_contents((std::istreambuf_iterator<char>(grid_file)),
+		std::istreambuf_iterator<char>());
+
+	// Split the string into lines
+	std::istringstream iss(file_contents);
+	std::string line;
+	std::vector<std::string> lines;
+	while (std::getline(iss, line))
 	{
-		for (int col = 0; col <= numCols; ++col)
-		{
-			// Calculate the coordinates of the nodes
-			double left_x = (col * gird_spacing) - originX;
-			double bottom_y = originY - (row * gird_spacing);
+		lines.push_back(line);
+	}
 
-			node_pt = glm::vec2(left_x, bottom_y);
-			// Create the node
+	// Create stopwatch
+	Stopwatch_events stopwatch;
+	stopwatch.start();
+	std::stringstream stopwatch_elapsed_str;
+	stopwatch_elapsed_str << std::fixed << std::setprecision(6);
+
+	stopwatch_elapsed_str << stopwatch.elapsed();
+	std::cout << "Lines loaded at " << stopwatch_elapsed_str.str() << " secs" << std::endl;
+
+	//Node Point list
+	std::vector<glm::vec2> node_pts_list;
+
+	int j = 0;
+	for (int x_i = 0; x_i <= grid_size; x_i += 50)
+	{
+		for (int y_i = 0; y_i <= grid_size; y_i += 50)
+		{
+			double x = -1000 + x_i;
+			double y = -1000 + y_i;
+
+			glm::vec2 node_pt = glm::vec2(x, y);
+			this->grid_vector_nodes.add_node(j, node_pt);
+			j++;
+		}
+	}
+
+	stopwatch_elapsed_str.str("");
+	stopwatch_elapsed_str << stopwatch.elapsed();
+	std::cout << "Grid nodes created at " << stopwatch_elapsed_str.str() << " secs" << std::endl;
+
+	// Process the lines
+	j = 0;
+	while (j < lines.size())
+	{
+		std::string line = lines[j];
+		std::string type = line.substr(0, 4);  // Extract the first 4 characters of the line
+
+		// Split the line into comma-separated fields
+		std::istringstream iss(line);
+		std::string field;
+		std::vector<std::string> fields;
+		while (std::getline(iss, field, ','))
+		{
+			fields.push_back(field);
+		}
+
+		if (type == "node")
+		{
+			// Read the nodes
+			int node_id = std::stoi(fields[1]); // node ID
+			double x = std::stod(fields[2]); // Node coordinate x
+			double y = std::stod(fields[3]); // Node coordinate y
+
+			// Add to node Map
+			glm::vec2 node_pt = glm::vec2(x, y);
 			this->grid_nodes.add_node(node_id, node_pt);
 
-			node_id++;
-		}
-	}
+			//Add to the node list
+			node_pts_list.push_back(node_pt);
 
-	// Iterate over the rows and columns to create triangles
-	node_id = 0;
-	int tri_id = 0;
-	for (int row = 0; row <= numRows - 1; ++row)
-	{
-		for (int col = 0; col <= numCols - 1; ++col)
+		}
+		else if (type == "line")
 		{
-			// Calculate the IDs of the four corner nodes of the square
-			int bottomLeftNode = node_id;
-			int bottomRightNode = node_id + 1;
-			int topLeftNode = node_id + (numCols + 1);
-			int topRightNode = (node_id + (numCols + 1)) + 1;
+			int line_id = std::stoi(fields[1]); // line ID
+			int start_node_id = std::stoi(fields[2]); // line id start node
+			int end_node_id = std::stoi(fields[3]); // line id end node
 
-			// Create the lower triangle
-			this->grid_trimesh.add_elementtriangle(tri_id,
-				&grid_nodes.nodeMap[bottomLeftNode],
-				&grid_nodes.nodeMap[bottomRightNode],
-				&grid_nodes.nodeMap[topLeftNode]);
-			tri_id++;
-
-			// Create the upper triangle
-			this->grid_trimesh.add_elementtriangle(tri_id,
-				&grid_nodes.nodeMap[topRightNode],
-				&grid_nodes.nodeMap[topLeftNode],
-				&grid_nodes.nodeMap[bottomRightNode]);
-			tri_id++;
-
-			node_id++;
+			// Add to line Map (Note that Nodes needed to be added before the start of line addition !!!!)
+			this->grid_lines.add_elementline(line_id, &grid_nodes.nodeMap[start_node_id], &grid_nodes.nodeMap[end_node_id]);
 		}
-		node_id++; // Skip the last node in each row
+		else if (type == "tria")
+		{
+			int tri_id = std::stoi(fields[1]); // triangle ID
+			int nd1_id = std::stoi(fields[2]); // triangle node 1
+			int nd2_id = std::stoi(fields[3]); // triangle node 2
+			int nd3_id = std::stoi(fields[4]); // triangle node 3
+
+			// Add to constraint map
+			this->grid_trimesh.add_elementtriangle(tri_id, 
+				&grid_nodes.nodeMap[nd1_id], 
+				&grid_nodes.nodeMap[nd2_id],
+				&grid_nodes.nodeMap[nd3_id]);
+		}
+		
+		// Iterate line
+		j++;
 	}
+
+	stopwatch_elapsed_str.str("");
+	stopwatch_elapsed_str << stopwatch.elapsed();
+	std::cout << "Grid mesh created at " << stopwatch_elapsed_str.str() << " secs" << std::endl;
 
 	// Create a simple initial oscillation path
 	// Add the path
@@ -371,7 +423,9 @@ void geom_store::create_geometry()
 
 	// Triangle mesh
 	this->grid_trimesh.set_buffer();
+	this->grid_lines.set_buffer();
 	this->grid_nodes.set_buffer();
+	this->grid_vector_nodes.set_buffer();
 	this->charge_path.set_buffer();
 }
 
@@ -464,27 +518,20 @@ void geom_store::paint_model()
 	if (op_window->is_show_gridtris == true)
 	{
 		// Paint the triangle mesh
-		if (op_window->is_show_gridtris_shrunk == false)
-		{
-			grid_trimesh.paint_elementtriangles();
-		}
-		else
-		{
-			// Paint the traingle mesh shrunk
-			grid_trimesh.paint_elementtriangles_shrunk();
-		}
+		grid_trimesh.paint_elementtriangles();
 	}
 
 	if (op_window->is_show_gridboundary == true)
 	{
 		// Paint the triangle mesh boundary
-		grid_trimesh.paint_elementtriangles_boundarylines();
+		grid_lines.paint_elementlines();
 	}
 
 	if (op_window->is_show_gridnode == true)
 	{
 		// Paint the grid nodes
-		grid_nodes.paint_model_nodes();
+		grid_vector_nodes.paint_model_nodes();
+
 
 	}
 
@@ -496,18 +543,6 @@ void geom_store::paint_model()
 		// Create new path
 		this->charge_path.add_path(inl_window->curve_paths, inl_window->selected_model_option, inl_window->path_type);
 	}
-
-	if (md_window->is_show_window == true)
-	{
-		// Edit model window is open
-		if (md_window->is_execute_apply == true)
-		{
-			// Apply model changes
-			create_geometry();
-			md_window->is_execute_apply = false;
-		}
-	}
-
 
 	// Paint the charge path
 	charge_path.paint_charge_path();
@@ -551,7 +586,6 @@ void geom_store::paint_postprocess()
 		node_contour.update_geometry_matrices(false, false, false, true, true);
 
 		// ______________________________________________________________________________________
-
 		// Paint the charge path
 		charge_path.paint_charge_oscillation(sol_window->time_step);
 
@@ -595,7 +629,8 @@ void geom_store::paint_postprocess()
 		// Execute the Charge oscillation solve
 		charge_oscillation_solver ch_solver;
 
-		ch_solver.charge_oscillation_analysis_start(grid_nodes,
+		ch_solver.charge_oscillation_analysis_start(grid_vector_nodes,
+			grid_nodes,
 			grid_trimesh,
 			charge_path,
 			sol_window->charge_oscillation_freq,
