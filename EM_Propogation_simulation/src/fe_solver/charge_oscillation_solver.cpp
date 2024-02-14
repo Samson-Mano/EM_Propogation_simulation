@@ -35,25 +35,11 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 
 	for (time_t = 0.0; time_t <= total_simulation_time; time_t = time_t + time_interval)
 	{
-		double displ_mag = 0.0; // Displacement magnitude
-		double velocity_mag = 0.0; // Velocity magnitude
-		double acceleration_mag = 0.0; // Acceleration magnitude
-
 		// Calculate the cycle count
 		if ((angular_freq * time_t) > (cycle_n * angular_freq))
 		{
 			cycle_n++;
 		}
-
-		// Displacement
-		displ_mag = std::sin(angular_freq * time_t);
-
-		// Velocity
-		velocity_mag = angular_freq * std::cos(angular_freq * time_t);
-
-		// Acceleration
-		acceleration_mag = -1.0 * angular_freq * angular_freq * std::sin(angular_freq * time_t);
-
 
 		// get the charge location
 		glm::vec2 loc_at_t = glm::vec2(0); // charge_path.get_charge_path_location_at_t(param_t).first;
@@ -63,9 +49,8 @@ void charge_oscillation_solver::charge_oscillation_analysis_start(const nodes_li
 		glm::vec2 accl_at_t = glm::vec2(0);
 
 		get_charge_location_data(charge_path.curve_type,
-			displ_mag,
-			velocity_mag,
-			acceleration_mag,
+			time_t,
+			angular_freq,
 			cycle_n,
 			loc_at_t,
 			velo_at_t,
@@ -357,9 +342,8 @@ glm::vec2 charge_oscillation_solver::larmour_field(const glm::vec2& grid_node_pt
 
 
 void charge_oscillation_solver::get_charge_location_data(const int& curve_type,
-	const double& displ_mag,
-	const double& velocity_mag,
-	const double& acceleration_mag, 
+	const double& time_t,
+	const double& angular_freq,
 	const int& cycle_count,
 	glm::vec2& loc_at_t,
 	glm::vec2& velo_at_t,
@@ -369,39 +353,36 @@ void charge_oscillation_solver::get_charge_location_data(const int& curve_type,
 
 	if (curve_type == 0)
 	{
+
+
+		// Displacement
+		double displ_mag = std::sin(angular_freq * time_t);
+
+		// Velocity
+		double velocity_mag = angular_freq * std::cos(angular_freq * time_t);
+
+		// Acceleration
+		double acceleration_mag = -1.0 * angular_freq * angular_freq * std::sin(angular_freq * time_t);
+
 		// Linear curve
 		// get the param_t by converting -1 to 1 data to 0 to 1 data
 		double param_t = (displ_mag * 0.5) + 0.5;
 
 		loc_at_t = glm::vec2(0.0, (-100.0 * (1.0 - param_t)) + (100.0 * param_t));
-		velo_at_t = glm::vec2(0.0, -200.0 * velocity_mag);
+		velo_at_t = -1.0f * glm::vec2(0.0, 200.0 * velocity_mag);
 		accl_at_t = glm::vec2(0.0, 200.0 * acceleration_mag);
 	}
 	else if (curve_type == 1)
 	{
 		// Circular curve
-		double param_t = (displ_mag * 0.5) + 0.5;
-		double cyc_t = 0.0;
 
-		if (cycle_count % 2 == 0)
-		{
-			// Cycles 1,3,5,7,....
-			cyc_t = (cycle_count + displ_mag)*0.5;
-		}
-		else
-		{
-			// Cycles 2,4,6,8,....
-			cyc_t =( (cycle_count - 1) + (2 * (1.0 - displ_mag)) + displ_mag)*0.5;
-		}
+		loc_at_t = glm::vec2(100.0 * std::cos(time_t * 2.0 * m_pi),
+							 100.0 * std::sin(time_t * 2.0 * m_pi));
 
-
-		loc_at_t = glm::vec2(100.0 * std::cos(cyc_t * 2.0 * m_pi),
-							 100.0 * std::sin(cyc_t * 2.0 * m_pi));
-
-		velo_at_t = glm::vec2(-100.0 * std::sin(cyc_t * 2.0 * m_pi) * velocity_mag,
-							 100.0 * std::cos(cyc_t * 2.0 * m_pi) * velocity_mag);
-		accl_at_t = glm::vec2(-100.0 * std::cos(cyc_t * 2.0 * m_pi) * acceleration_mag,
-							   -100.0 * std::sin(cyc_t * 2.0 * m_pi) * acceleration_mag);
+		velo_at_t = - 1.0f * glm::vec2(-100.0 * std::sin(time_t * 2.0 * m_pi),
+							 100.0 * std::cos(time_t * 2.0 * m_pi));
+		accl_at_t = glm::vec2(-100.0 * std::cos(time_t * 2.0 * m_pi),
+							   -100.0 * std::sin(time_t * 2.0 * m_pi));
 	}
 
 

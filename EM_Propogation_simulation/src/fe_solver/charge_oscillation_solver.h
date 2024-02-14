@@ -71,9 +71,8 @@ private:
 		const glm::vec2& ref_zero);
 
 	void get_charge_location_data(const int& curve_type, 
-		const double& displ_mag, 
-		const double& velocity_mag,
-		const double& acceleration_mag,
+		const double& time_t,
+		const double& angular_freq,
 		const int& cycle_count,
 		glm::vec2& loc_at_t,
 		glm::vec2& velo_at_t,
