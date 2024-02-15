@@ -72,7 +72,7 @@ public:
 	glm::mat4 modelMatrix = glm::mat4(0); // Geometry model matrix
 	double geom_scale = 0.0; // Scale of the geometry
 	double vec_transparency = 0.9f; // Value to control the vector transparency
-	double cntr_transparency = 0.5f; // Value to control the contour transparency
+	double cntr_transparency = 0.6f; // Value to control the contour transparency
 	double geom_transparency = 0.0f; // Value to control the geometry transparency
 	double normalized_defl_scale = 0.0f; // Value of deflection scale
 	double defl_scale = 0.0f; // Value of deflection scale

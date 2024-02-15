@@ -17,9 +17,13 @@
 class inlcondition_window
 {
 public:
+	const int num_of_pts = 50;
 	bool is_show_window = false;
 	bool execute_apply_path = false;
-	
+
+	double param_c = 1.0;
+	double param_b = 1.0;
+
 	// Initial Condition values
 	// Store the path points as vec2
 	int path_type = 0; // 0 - closed curve, 1 - open curve
@@ -37,5 +41,9 @@ public:
 private:
 	void set_linear_curve();
 	void set_circular_curve();
-
+	void set_elliptical_curve();
+	void set_cardioid_curve();
+	void set_trifolliate_curve();
+	void get_param_c_value_input();
+	void get_param_b_value_input();
 };

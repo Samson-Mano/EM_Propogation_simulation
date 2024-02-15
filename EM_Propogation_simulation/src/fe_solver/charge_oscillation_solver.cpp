@@ -364,7 +364,7 @@ void charge_oscillation_solver::get_charge_location_data(const int& curve_type,
 		// Acceleration
 		double acceleration_mag = -1.0 * angular_freq * angular_freq * std::sin(angular_freq * time_t);
 
-		// Linear curve
+		// Linear path
 		// get the param_t by converting -1 to 1 data to 0 to 1 data
 		double param_t = (displ_mag * 0.5) + 0.5;
 
@@ -374,7 +374,7 @@ void charge_oscillation_solver::get_charge_location_data(const int& curve_type,
 	}
 	else if (curve_type == 1)
 	{
-		// Circular curve
+		// Circular path
 
 		loc_at_t = glm::vec2(100.0 * std::cos(time_t * 2.0 * m_pi),
 							 100.0 * std::sin(time_t * 2.0 * m_pi));
@@ -384,7 +384,47 @@ void charge_oscillation_solver::get_charge_location_data(const int& curve_type,
 		accl_at_t = glm::vec2(-100.0 * std::cos(time_t * 2.0 * m_pi),
 							   -100.0 * std::sin(time_t * 2.0 * m_pi));
 	}
+	else if (curve_type == 2)
+	{
+		// Elliptical path
 
+		loc_at_t = glm::vec2(150.0 * std::cos(time_t * 2.0 * m_pi),
+			75.0 * std::sin(time_t * 2.0 * m_pi));
+
+		velo_at_t = -1.0f * glm::vec2(-150.0 * std::sin(time_t * 2.0 * m_pi),
+			75.0 * std::cos(time_t * 2.0 * m_pi));
+		accl_at_t = glm::vec2(-150.0 * std::cos(time_t * 2.0 * m_pi),
+			-75.0 * std::sin(time_t * 2.0 * m_pi));
+
+	}
+	else if (curve_type == 3)
+	{
+		// Cardioid path
+		double angle = time_t * 2.0 * m_pi;
+
+		loc_at_t = glm::vec2(100.0 * (1.0 - std::cos(angle)) * std::cos(angle),
+							100.0 * (1.0 - std::cos(angle)) * std::sin(angle));
+
+		velo_at_t = -1.0f * glm::vec2(100.0 * (2.0 * std::cos(angle) - 1.0) * std::sin(angle),
+									  100.0 * ((std::sin(angle) * std::sin(angle)) + (1.0 - std::cos(angle)) * std::cos(angle)));
+		accl_at_t = glm::vec2(100.0 * (std::cos(angle) * (2.0 * std::cos(angle) - 1.0) - 2.0 * std::sin(angle) *  std::sin(angle)),
+							  100.0 * (4.0 * std::cos(angle) - 1.0) * std::sin(angle));
+
+	}
+	else if (curve_type == 4)
+	{
+		// Tri-folliate path
+		double angle = time_t * 1.0 * m_pi;
+
+		loc_at_t = glm::vec2(100.0 * std::cos(angle) * std::cos(3.0 * angle),
+							 100.0 * std::sin(angle) * std::cos(3.0 * angle));
+
+		velo_at_t = -1.0f * glm::vec2(100.0 * ((- 3.0 * std::cos(angle) * std::sin(3.0 * angle)) - (std::sin(angle) * std::cos(3.0 * angle))),
+									  100.0 * ((std::cos(angle) * std::cos(3.0 * angle))-(3.0 * std::sin(angle) * std::sin(3.0 * angle))));
+		accl_at_t = glm::vec2(100.0 * ((6.0* std::sin(angle) * std::sin(3.0 * angle))-(10.0* std::cos(angle) * std::cos(3.0 * angle))),
+							  100.0 * ((-10.0 * std::sin(angle) * std::cos(3.0 * angle)) - (6.0 * std::cos(angle) * std::sin(3.0 * angle))));
+
+	}
 
 
 }
