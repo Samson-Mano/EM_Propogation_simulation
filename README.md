@@ -52,7 +52,7 @@ Here are some screenshots of the EM Propagation Visualization Tool in action:
 
 ![Circular Path oscillation](Images/circular_path_gif.gif)
 
-###Cardioid Path Oscillation
+### Cardioid Path Oscillation
 
 ![Cardioid Path oscillation](Images/cardioid_path_gif.gif)
 
